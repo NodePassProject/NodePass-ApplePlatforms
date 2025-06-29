@@ -1,0 +1,252 @@
+//
+//  AddNATPassthroughServiceView.swift
+//  NodePass
+//
+//  Created by Junhui Lou on 7/2/25.
+//
+
+import SwiftUI
+import SwiftData
+
+struct AddNATPassthroughServiceView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var context
+    @Query(sort: \Server.timestamp) private var servers: [Server]
+    
+    @State private var name: String = ""
+    @State private var server: Server?
+    @State private var serverConnectPort: String = ""
+    @State private var serverTunnelPort: String = ""
+    @State private var client: Server?
+    @State private var clientServicePort: String = ""
+    
+    @State private var isShowErrorAlert: Bool = false
+    @State private var errorMessage: String = ""
+    @State private var isShowAddServerSheet: Bool = false
+    @State private var isAddingServer: Bool = false
+    @State private var isAddingClient: Bool = false
+    @State private var newServer: Server?
+    
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Name", text: $name)
+                }
+                
+                Section {
+                    Picker("Server", selection: $server) {
+                        Text("Select")
+                            .tag(nil as Server?)
+                        ForEach(servers) { server in
+                            Text(server.name!)
+                                .tag(server)
+                        }
+                    }
+                    if server == nil {
+                        Button {
+                            isAddingServer = true
+                            isShowAddServerSheet = true
+                        } label: {
+                            Text("New Server")
+                        }
+                    }
+                    LabeledTextField("Listen Port", prompt: "10022", text: $serverConnectPort, isNumberOnly: true)
+                    LabeledTextField("Tunnel Port", prompt: "10101", text: $serverTunnelPort, isNumberOnly: true)
+                } header: {
+                    Text("Remote Server (with Public IP)")
+                } footer: {
+                    VStack(alignment: .leading) {
+                        Text("Remote Server: Server with a public IP.")
+                        Text("Listen Port: Port you use to connect to the remote server.")
+                        Text("Tunnel Port: Any available port.")
+                    }
+                }
+                
+                Section {
+                    Picker("Server", selection: $client) {
+                        Text("Select")
+                            .tag(nil as Server?)
+                        ForEach(servers) { server in
+                            Text(server.name!)
+                                .tag(server)
+                        }
+                    }
+                    if client == nil {
+                        Button {
+                            isAddingClient = true
+                            isShowAddServerSheet = true
+                        } label: {
+                            Text("New Server")
+                        }
+                    }
+                    LabeledTextField("Service Port", prompt: "22", text: $clientServicePort, isNumberOnly: true)
+                } header: {
+                    Text("Local Server (Behind NAT)")
+                } footer: {
+                    VStack(alignment: .leading) {
+                        Text("Local Server: Server without a public IP.")
+                        Text("Service Port: Port on which your service like SSH(22) is running.")
+                    }
+                }
+                
+                Section("Preview") {
+                    let serverConnectPort = Int(serverConnectPort) ?? 10022
+                    let serverTunnelPort = Int(serverTunnelPort) ?? 10101
+                    let clientServicePort = Int(clientServicePort) ?? 22
+                    
+                    let name = NPCore.noEmptyName(name)
+                    let previewService = Service(
+                        name: name,
+                        type: .natPassthrough,
+                        implementations: [
+                            Implementation(
+                                name: String(localized: "\(name) Remote"),
+                                type: .natPassthroughServer,
+                                position: 0,
+                                serverID: "",
+                                instanceID: "",
+                                tunnelAddress: "",
+                                tunnelPort: serverTunnelPort,
+                                destinationAddress: "",
+                                destinationPort: serverConnectPort,
+                                command: ""
+                            ),
+                            Implementation(
+                                name: String(localized: "\(name) Local"),
+                                type: .natPassthroughClient,
+                                position: 1,
+                                serverID: "",
+                                instanceID: "",
+                                tunnelAddress: "",
+                                tunnelPort: serverTunnelPort,
+                                destinationAddress: "",
+                                destinationPort: clientServicePort,
+                                command: ""
+                            )
+                        ]
+                    )
+                    
+                    NATPassthroughCardView(service: previewService, isPreview: true)
+                }
+                
+#if DEBUG
+                Section {
+                    Button("Sample") {
+                        name = "Sample NAT Passthrough"
+                        server = servers.first
+                        serverConnectPort = "60001"
+                        serverTunnelPort = "60002"
+                        client = servers.first
+                        clientServicePort = "60003"
+                    }
+                }
+#endif
+            }
+            .formStyle(.grouped)
+            .navigationTitle("Add NAT Passthrough")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Label("Cancel", systemImage: "xmark")
+                    }
+                }
+                
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        execute()
+                    } label: {
+                        Label("Done", systemImage: "checkmark")
+                    }
+                    .disabled(server == nil || client == nil)
+                }
+            }
+            .alert("Error", isPresented: $isShowErrorAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(errorMessage)
+            }
+            .sheet(isPresented: $isShowAddServerSheet) {
+                if isAddingServer {
+                    server = newServer
+                }
+                if isAddingClient {
+                    client = newServer
+                }
+            } content: {
+                EditServerView(server: $newServer)
+            }
+        }
+    }
+    
+    private func execute() {
+        let serverCommand = "server://:\(serverTunnelPort)/:\(serverConnectPort)?log=warn&tls=0"
+        let clientCommand = "client://\(server!.getHost()):\(serverTunnelPort)/127.0.0.1:\(clientServicePort)?log=warn"
+
+        Task {
+            do {
+                let serverInstanceService = InstanceService()
+                let serverInstance = try await serverInstanceService.createInstance(
+                    baseURLString: server!.url!,
+                    apiKey: server!.key!,
+                    url: serverCommand
+                )
+                
+                let clientInstanceService = InstanceService()
+                let clientInstance = try await clientInstanceService.createInstance(
+                    baseURLString: client!.url!,
+                    apiKey: client!.key!,
+                    url: clientCommand
+                )
+                
+                let serverConnectPort = Int(serverConnectPort)!
+                let serverTunnelPort = Int(serverTunnelPort)!
+                let clientServicePort = Int(clientServicePort)!
+                
+                let name = NPCore.noEmptyName(name)
+                let service = Service(
+                    name: name,
+                    type: .natPassthrough,
+                    implementations: [
+                        Implementation(
+                            name: String(localized: "\(name) Remote"),
+                            type: .natPassthroughServer,
+                            position: 0,
+                            serverID: server!.id!,
+                            instanceID: serverInstance.id,
+                            tunnelAddress: "",
+                            tunnelPort: serverTunnelPort,
+                            destinationAddress: "",
+                            destinationPort: serverConnectPort,
+                            command: serverCommand
+                        ),
+                        Implementation(
+                            name: String(localized: "\(name) Local"),
+                            type: .natPassthroughClient,
+                            position: 1,
+                            serverID: client!.id!,
+                            instanceID: clientInstance.id,
+                            tunnelAddress: server!.getHost(),
+                            tunnelPort: serverTunnelPort,
+                            destinationAddress: "127.0.0.1",
+                            destinationPort: clientServicePort,
+                            command: clientCommand
+                        )
+                    ]
+                )
+                context.insert(service)
+                
+                dismiss()
+            } catch {
+#if DEBUG
+                print("Error Creating Instances: \(error.localizedDescription)")
+#endif
+                
+                errorMessage = error.localizedDescription
+                isShowErrorAlert = true
+            }
+        }
+    }
+}
