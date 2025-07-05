@@ -9,9 +9,16 @@ import SwiftUI
 import SwiftData
 
 struct ServiceListView: View {
+    @Environment(\.colorScheme) private var scheme
     @Environment(\.modelContext) private var context
     @Query(sort: \Service.timestamp) private var services: [Service]
     @Query private var servers: [Server]
+    
+    @State private var searchText: String = ""
+    private var filteredServices: [Service] {
+        services
+            .filter { searchText == "" || $0.name!.localizedCaseInsensitiveContains(searchText) }
+    }
     
     @State private var isShowAddNATPassthroughSheet: Bool = false
     @State private var isShowAddDirectForwardSheet: Bool = false
@@ -27,17 +34,44 @@ struct ServiceListView: View {
     
     var body: some View {
         ZStack {
-            MeshGradient(width: 3, height: 3, points: [
-                .init(0, 0), .init(0.5, 0), .init(1, 0),
-                .init(0, 0.5), .init(0.5, 0.5), .init(1, 0.5),
-                .init(0, 1), .init(0.5, 1), .init(1, 1)
-            ], colors: [
-                .red, .purple, .indigo,
-                .orange, .white, .blue,
-                .yellow, .green, .mint
-            ])
-            .ignoresSafeArea()
+            switch(scheme) {
+            case .light:
+                MeshGradient(width: 3, height: 3, points: [
+                    .init(0, 0), .init(0.5, 0), .init(1, 0),
+                    .init(0, 0.5), .init(0.5, 0.5), .init(1, 0.5),
+                    .init(0, 1), .init(0.5, 1), .init(1, 1)
+                ], colors: [
+                    .red, .purple, .indigo,
+                    .orange, .white, .blue,
+                    .yellow, .green, .mint
+                ])
+                .ignoresSafeArea()
+            default:
+                MeshGradient(width: 3, height: 3, points: [
+                    .init(0, 0), .init(0.5, 0), .init(1, 0),
+                    .init(0, 0.5), .init(0.5, 0.5), .init(1, 0.5),
+                    .init(0, 1), .init(0.5, 1), .init(1, 1)
+                ], colors: [
+                    .init(red: 0.2, green: 0, blue: 0.3),
+                    .init(red: 0.1, green: 0, blue: 0.2),
+                    .init(red: 0, green: 0, blue: 0.15),
+                    
+                    .init(red: 0.3, green: 0.1, blue: 0),
+                    .init(red: 0.05, green: 0.05, blue: 0.1),
+                    .init(red: 0, green: 0.1, blue: 0.2),
+                    
+                    .init(red: 0.3, green: 0.2, blue: 0),
+                    .init(red: 0, green: 0.15, blue: 0.1),
+                    .init(red: 0, green: 0.2, blue: 0.15)
+                ])
+                .ignoresSafeArea()
+            }
             
+#if os(macOS)
+            ScrollView {
+                servicesList
+            }
+#else
             if services.isEmpty {
                 ContentUnavailableView("No Service", systemImage: "square.stack.3d.up.fill", description: Text("To add a service, tap the add service icon in the toolbar.").font(.caption))
             }
@@ -46,8 +80,10 @@ struct ServiceListView: View {
                     servicesList
                 }
             }
+#endif
         }
         .navigationTitle("Services")
+        .searchable(text: $searchText)
         .toolbar {
             ToolbarItem {
                 addServiceMenu
@@ -102,7 +138,7 @@ struct ServiceListView: View {
     
     private var servicesList: some View {
         LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(services) { service in
+            ForEach(filteredServices) { service in
                 ServiceCardView(service: service)
                     .contextMenu {
                         Button(role: .destructive) {

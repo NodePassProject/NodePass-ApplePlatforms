@@ -15,6 +15,7 @@ class Implementation {
     var type: ImplementationType?
     var position: Int?
     var serverID: String?
+    var serverName: String?
     var instanceID: String?
     var tunnelAddress: String?
     var tunnelPort: Int?
@@ -24,12 +25,13 @@ class Implementation {
     
     var service: Service?
     
-    init(name: String, type: ImplementationType, position: Int, serverID: String, instanceID: String, tunnelAddress: String, tunnelPort: Int, destinationAddress: String, destinationPort: Int, command: String) {
+    init(name: String, type: ImplementationType, position: Int, serverID: String, serverName: String, instanceID: String, tunnelAddress: String, tunnelPort: Int, destinationAddress: String, destinationPort: Int, command: String) {
         self.id = UUID().uuidString
         self.name = name
         self.type = type
         self.position = position
         self.serverID = serverID
+        self.serverName = serverName
         self.instanceID = instanceID
         self.tunnelAddress = tunnelAddress
         self.tunnelPort = tunnelPort

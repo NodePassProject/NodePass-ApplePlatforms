@@ -43,18 +43,20 @@ struct AddTunnelForwardServiceView: View {
                                 .tag(server)
                         }
                     }
-                    if server == nil {
+                    LabeledTextField("Listen Port", prompt: "10022", text: $serverConnectPort, isNumberOnly: true)
+                    LabeledTextField("Tunnel Port", prompt: "10101", text: $serverTunnelPort, isNumberOnly: true)
+                } header: {
+                    HStack {
+                        Text("Relay Server")
+                        Spacer()
                         Button {
                             isAddingServer = true
                             isShowAddServerSheet = true
                         } label: {
-                            Text("New Server")
+                            Text("\(Image(systemName: "plus")) New Server")
+                                .font(.caption)
                         }
                     }
-                    LabeledTextField("Listen Port", prompt: "10022", text: $serverConnectPort, isNumberOnly: true)
-                    LabeledTextField("Tunnel Port", prompt: "10101", text: $serverTunnelPort, isNumberOnly: true)
-                } header: {
-                    Text("Relay Server")
                 } footer: {
                     VStack(alignment: .leading) {
                         Text("Relay Server: Server you want to use as a relay.")
@@ -72,17 +74,19 @@ struct AddTunnelForwardServiceView: View {
                                 .tag(server)
                         }
                     }
-                    if client == nil {
+                    LabeledTextField("Service Port", prompt: "1080", text: $clientServicePort, isNumberOnly: true)
+                } header: {
+                    HStack {
+                        Text("Destination Server")
+                        Spacer()
                         Button {
                             isAddingClient = true
                             isShowAddServerSheet = true
                         } label: {
-                            Text("New Server")
+                            Text("\(Image(systemName: "plus")) New Server")
+                                .font(.caption)
                         }
                     }
-                    LabeledTextField("Service Port", prompt: "1080", text: $clientServicePort, isNumberOnly: true)
-                } header: {
-                    Text("Destination Server")
                 } footer: {
                     VStack(alignment: .leading) {
                         Text("Destination Server: Server you want your traffic to relay to.")
@@ -105,6 +109,7 @@ struct AddTunnelForwardServiceView: View {
                                 type: .tunnelForwardServer,
                                 position: 0,
                                 serverID: "",
+                                serverName: server?.name ?? "",
                                 instanceID: "",
                                 tunnelAddress: "",
                                 tunnelPort: serverTunnelPort,
@@ -117,6 +122,7 @@ struct AddTunnelForwardServiceView: View {
                                 type: .tunnelForwardClient,
                                 position: 1,
                                 serverID: "",
+                                serverName: client?.name ?? "",
                                 instanceID: "",
                                 tunnelAddress: "",
                                 tunnelPort: serverTunnelPort,
@@ -215,6 +221,7 @@ struct AddTunnelForwardServiceView: View {
                             type: .tunnelForwardServer,
                             position: 0,
                             serverID: server!.id!,
+                            serverName: server!.name!,
                             instanceID: serverInstance.id,
                             tunnelAddress: "",
                             tunnelPort: serverTunnelPort,
@@ -227,6 +234,7 @@ struct AddTunnelForwardServiceView: View {
                             type: .tunnelForwardClient,
                             position: 1,
                             serverID: client!.id!,
+                            serverName: client!.name!,
                             instanceID: clientInstance.id,
                             tunnelAddress: server!.getHost(),
                             tunnelPort: serverTunnelPort,

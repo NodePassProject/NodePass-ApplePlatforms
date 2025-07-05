@@ -17,12 +17,14 @@ struct InstanceListView: View {
     @State private var errorMessage: String = ""
     
     var body: some View {
-        List {
+        Form {
             ForEach(instances.filter({ [.running, .stopped, .error].contains($0.status) })) { instance in
                 InstanceCardView(instance: instance)
                     .swipeActions(edge: .trailing) {
-                        Button("Delete", role: .destructive) {
+                        Button(role: .destructive) {
                             deleteInstance(instance: instance)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
                         }
                     }
                     .contextMenu {
@@ -34,6 +36,7 @@ struct InstanceListView: View {
                     }
             }
         }
+        .formStyle(.grouped)
         .navigationTitle(server.name!)
         .loadingState(loadingState: loadingState) {
             listInstances()

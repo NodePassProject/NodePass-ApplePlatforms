@@ -43,18 +43,20 @@ struct AddNATPassthroughServiceView: View {
                                 .tag(server)
                         }
                     }
-                    if server == nil {
+                    LabeledTextField("Listen Port", prompt: "10022", text: $serverConnectPort, isNumberOnly: true)
+                    LabeledTextField("Tunnel Port", prompt: "10101", text: $serverTunnelPort, isNumberOnly: true)
+                } header: {
+                    HStack {
+                        Text("Remote Server (with Public IP)")
+                        Spacer()
                         Button {
                             isAddingServer = true
                             isShowAddServerSheet = true
                         } label: {
-                            Text("New Server")
+                            Text("\(Image(systemName: "plus")) New Server")
+                                .font(.caption)
                         }
                     }
-                    LabeledTextField("Listen Port", prompt: "10022", text: $serverConnectPort, isNumberOnly: true)
-                    LabeledTextField("Tunnel Port", prompt: "10101", text: $serverTunnelPort, isNumberOnly: true)
-                } header: {
-                    Text("Remote Server (with Public IP)")
                 } footer: {
                     VStack(alignment: .leading) {
                         Text("Remote Server: Server with a public IP.")
@@ -72,17 +74,19 @@ struct AddNATPassthroughServiceView: View {
                                 .tag(server)
                         }
                     }
-                    if client == nil {
+                    LabeledTextField("Service Port", prompt: "22", text: $clientServicePort, isNumberOnly: true)
+                } header: {
+                    HStack {
+                        Text("Local Server (Behind NAT)")
+                        Spacer()
                         Button {
                             isAddingClient = true
                             isShowAddServerSheet = true
                         } label: {
-                            Text("New Server")
+                            Text("\(Image(systemName: "plus")) New Server")
+                                .font(.caption)
                         }
                     }
-                    LabeledTextField("Service Port", prompt: "22", text: $clientServicePort, isNumberOnly: true)
-                } header: {
-                    Text("Local Server (Behind NAT)")
                 } footer: {
                     VStack(alignment: .leading) {
                         Text("Local Server: Server without a public IP.")
@@ -105,6 +109,7 @@ struct AddNATPassthroughServiceView: View {
                                 type: .natPassthroughServer,
                                 position: 0,
                                 serverID: "",
+                                serverName: server?.name ?? "",
                                 instanceID: "",
                                 tunnelAddress: "",
                                 tunnelPort: serverTunnelPort,
@@ -117,6 +122,7 @@ struct AddNATPassthroughServiceView: View {
                                 type: .natPassthroughClient,
                                 position: 1,
                                 serverID: "",
+                                serverName: client?.name ?? "",
                                 instanceID: "",
                                 tunnelAddress: "",
                                 tunnelPort: serverTunnelPort,
@@ -215,6 +221,7 @@ struct AddNATPassthroughServiceView: View {
                             type: .natPassthroughServer,
                             position: 0,
                             serverID: server!.id!,
+                            serverName: server!.name!,
                             instanceID: serverInstance.id,
                             tunnelAddress: "",
                             tunnelPort: serverTunnelPort,
@@ -227,6 +234,7 @@ struct AddNATPassthroughServiceView: View {
                             type: .natPassthroughClient,
                             position: 1,
                             serverID: client!.id!,
+                            serverName: client!.name!,
                             instanceID: clientInstance.id,
                             tunnelAddress: server!.getHost(),
                             tunnelPort: serverTunnelPort,

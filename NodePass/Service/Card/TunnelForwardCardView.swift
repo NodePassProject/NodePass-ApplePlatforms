@@ -35,38 +35,30 @@ struct TunnelForwardCardView: View {
                     Image(systemName: "arrowshape.right")
                     Spacer()
                     VStack(spacing: 3) {
-                        if !isPreview, let server = servers.first(where: { $0.id == service.implementations![0].serverID! }) {
-                            Text(server.name!)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.5)
-                                .font(.system(size: 8))
-                                .foregroundStyle(.gray)
-                                .frame(maxWidth: 60)
-                        }
+                        Text(service.implementations![0].serverName!)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                            .font(.system(size: 8))
+                            .foregroundStyle(.gray)
+                            .frame(maxWidth: 60)
                         Image(systemName: "airplane.cloud")
                             .font(.title)
-                        VStack {
-                            Text("\(Image(systemName: "arrow.right")) \(service.implementations![0].destinationPort!, format: .number.grouping(.never))")
-                                .font(.system(size: 8))
-                            Text("\(service.implementations![0].tunnelPort!, format: .number.grouping(.never)) \(Image(systemName: "arrow.left"))")
-                                .font(.system(size: 8))
-                        }
+                        Text("\(Image(systemName: "arrow.right")) \(service.implementations![0].destinationPort!, format: .number.grouping(.never))")
+                            .font(.system(size: 8))
                     }
                     Spacer()
                     Image(systemName: "arrowshape.right")
                     Spacer()
                     VStack(spacing: 3) {
-                        if !isPreview, let server = servers.first(where: { $0.id == service.implementations![1].serverID! }) {
-                            Text(server.name!)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.5)
-                                .font(.system(size: 8))
-                                .foregroundStyle(.gray)
-                                .frame(maxWidth: 60)
-                        }
+                        Text(service.implementations![1].serverName!)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                            .font(.system(size: 8))
+                            .foregroundStyle(.gray)
+                            .frame(maxWidth: 60)
                         Image(systemName: "airplane.arrival")
                             .font(.title)
-                        Text("\(Image(systemName: "arrow.right")) \(service.implementations![1].destinationPort!, format: .number.grouping(.never))")
+                        Text("\(Image(systemName: "arrow.left")) \(service.implementations![1].destinationPort!, format: .number.grouping(.never))")
                             .font(.system(size: 8))
                     }
                 }

@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 struct LoadingStateModifier: ViewModifier {
     let loadingState: LoadingState
@@ -13,6 +16,11 @@ struct LoadingStateModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         ZStack {
+#if canImport(UIKit)
+            Color(UIColor.systemGroupedBackground)
+                .ignoresSafeArea()
+#endif
+            
             switch(loadingState) {
             case .idle:
                 EmptyView()

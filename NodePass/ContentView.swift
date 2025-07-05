@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         TabView {
-            Tab("Services", systemImage: "arrow.left.and.right.circle") {
+            Tab("Services", systemImage: "arrow.left.and.right.circle", role: .search) {
                 NavigationStack {
                     ServiceListView()
                 }
@@ -22,5 +22,6 @@ struct ContentView: View {
                 }
             }
         }
+        .tabViewStyle(.sidebarAdaptable)
     }
 }

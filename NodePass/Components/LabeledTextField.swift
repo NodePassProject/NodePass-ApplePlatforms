@@ -28,7 +28,9 @@ struct LabeledTextField: View {
     }
     
     var body: some View {
-#if os(iOS)
+#if os(macOS)
+        TextField(title, text: text, prompt: Text(prompt))
+#else
         HStack {
             Text(title)
                 .fixedSize()
@@ -42,8 +44,6 @@ struct LabeledTextField: View {
                     .multilineTextAlignment(.trailing)
             }
         }
-#else
-        TextField(title, text: text, prompt: Text(prompt))
 #endif
     }
 }

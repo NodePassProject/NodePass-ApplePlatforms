@@ -40,16 +40,18 @@ struct AddDirectForwardServiceView: View {
                                 .tag(server)
                         }
                     }
-                    if client == nil {
+                    LabeledTextField("Listen Port", prompt: "1080", text: $clientConnectPort, isNumberOnly: true)
+                } header: {
+                    HStack {
+                        Text("Relay Server")
+                        Spacer()
                         Button {
                             isShowAddServerSheet = true
                         } label: {
-                            Text("New Server")
+                            Text("\(Image(systemName: "plus")) New Server")
+                                .font(.caption)
                         }
                     }
-                    LabeledTextField("Listen Port", prompt: "1080", text: $clientConnectPort, isNumberOnly: true)
-                } header: {
-                    Text("Relay Server")
                 } footer: {
                     VStack(alignment: .leading) {
                         Text("Relay Server: Server you want to use as a relay.")
@@ -84,10 +86,11 @@ struct AddDirectForwardServiceView: View {
                                 type: .directForwardClient,
                                 position: 0,
                                 serverID: "",
+                                serverName: client?.name ?? "",
                                 instanceID: "",
                                 tunnelAddress: "",
                                 tunnelPort: clientConnectPort,
-                                destinationAddress: "",
+                                destinationAddress: clientDestinationAddress,
                                 destinationPort: clientDestinationPort,
                                 command: ""
                             )
@@ -167,6 +170,7 @@ struct AddDirectForwardServiceView: View {
                             type: .directForwardClient,
                             position: 0,
                             serverID: client!.id!,
+                            serverName: client!.name!,
                             instanceID: clientInstance.id,
                             tunnelAddress: "",
                             tunnelPort: clientConnectPort,

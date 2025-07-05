@@ -40,7 +40,7 @@ struct ServerListView: View {
     }
     
     private var serverList: some View {
-        List {
+        Form {
             ForEach(servers) { server in
                 NavigationLink {
                     InstanceListView(server: server)
@@ -60,5 +60,6 @@ struct ServerListView: View {
                 })
             }
         }
+        .formStyle(.grouped)
     }
 }

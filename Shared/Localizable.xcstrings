@@ -11,21 +11,21 @@
         }
       }
     },
-    "%@ %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ %2$@ %3$@"
-          }
-        }
-      }
-    },
     "%@ Destination" : {
 
     },
     "%@ Local" : {
 
+    },
+    "%@ New Server" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 新服务器"
+          }
+        }
+      }
     },
     "%@ Relay" : {
 
@@ -248,7 +248,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Key：你的主控API Key"
+            "value" : "Key：你的主控API Key。"
           }
         }
       }
@@ -334,6 +334,7 @@
       }
     },
     "New Server" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

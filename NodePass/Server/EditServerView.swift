@@ -40,6 +40,7 @@ struct EditServerView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
+                        self.server = nil
                         dismiss()
                     } label: {
                         Label("Cancel", systemImage: "xmark")
@@ -49,20 +50,21 @@ struct EditServerView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
                         if let server {
-                            server.name = name
+                            server.name = NPCore.noEmptyName(name)
                             server.url = url
                             server.key = key
-                            self.server = nil
                         }
                         else {
                             let newServer = Server(name: name, url: url, key: key)
                             context.insert(newServer)
                             self.server = newServer
                         }
+                        self.server = nil
                         dismiss()
                     } label: {
                         Label("Done", systemImage: "checkmark")
                     }
+                    .disabled(url == "" || key == "")
                 }
             }
             .onAppear {
