@@ -20,7 +20,7 @@ struct NATPassthroughCardView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         Text("NAT Passthrough")
-                            .foregroundStyle(.gray)
+                            .foregroundStyle(.secondary)
                             .font(.caption)
                             .bold()
                         Text(service.name!)
@@ -39,7 +39,7 @@ struct NATPassthroughCardView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                             .font(.system(size: 8))
-                            .foregroundStyle(.gray)
+                            .foregroundStyle(.secondary)
                             .frame(maxWidth: 60)
                         Image(systemName: "cloud.fill")
                             .font(.title)
@@ -54,7 +54,7 @@ struct NATPassthroughCardView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                             .font(.system(size: 8))
-                            .foregroundStyle(.gray)
+                            .foregroundStyle(.secondary)
                             .frame(maxWidth: 60)
                         Image(systemName: "house.fill")
                             .font(.title)

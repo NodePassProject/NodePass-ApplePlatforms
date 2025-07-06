@@ -12,6 +12,16 @@ struct ServerListView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Server.timestamp) private var servers: [Server]
     
+    @State private var searchText: String = ""
+    private var filteredServers: [Server] {
+        if searchText == "" {
+            return servers
+        }
+        else {
+            return servers.filter { $0.name!.localizedCaseInsensitiveContains(searchText) }
+        }
+    }
+    
     @State private var isShowEditServerSheet: Bool = false
     @State var serverToEdit: Server?
     
@@ -25,6 +35,10 @@ struct ServerListView: View {
             }
         }
         .navigationTitle("Servers")
+        .navigationDestination(for: Server.self) { server in
+            InstanceListView(server: server)
+        }
+        .searchable(text: $searchText, placement: .toolbar)
         .toolbar {
             ToolbarItem {
                 Button {
@@ -41,15 +55,13 @@ struct ServerListView: View {
     
     private var serverList: some View {
         Form {
-            ForEach(servers) { server in
-                NavigationLink {
-                    InstanceListView(server: server)
-                } label: {
+            ForEach(filteredServers) { server in
+                NavigationLink(value: server) {
                     VStack(alignment: .leading) {
                         Text(server.name!)
                         Text(server.url!)
                             .font(.caption)
-                            .foregroundStyle(.gray)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .renamableAndDeletable(renameAction: {

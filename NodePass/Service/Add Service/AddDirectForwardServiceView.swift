@@ -129,7 +129,7 @@ struct AddDirectForwardServiceView: View {
                     } label: {
                         Label("Done", systemImage: "checkmark")
                     }
-                    .disabled(client == nil)
+                    .disabled(client == nil || clientDestinationAddress == "")
                 }
             }
             .alert("Error", isPresented: $isShowErrorAlert) {
@@ -157,8 +157,8 @@ struct AddDirectForwardServiceView: View {
                     url: command
                 )
                 
-                let clientConnectPort = Int(clientConnectPort)!
-                let clientDestinationPort = Int(clientDestinationPort)!
+                let clientConnectPort = Int(clientConnectPort) ?? 1080
+                let clientDestinationPort = Int(clientDestinationPort) ?? 1080
                 
                 let name = NPCore.noEmptyName(name)
                 let service = Service(

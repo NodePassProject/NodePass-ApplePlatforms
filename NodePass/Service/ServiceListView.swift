@@ -16,8 +16,12 @@ struct ServiceListView: View {
     
     @State private var searchText: String = ""
     private var filteredServices: [Service] {
-        services
-            .filter { searchText == "" || $0.name!.localizedCaseInsensitiveContains(searchText) }
+        if searchText == "" {
+            return services
+        }
+        else {
+            return services.filter { $0.name!.localizedCaseInsensitiveContains(searchText) }
+        }
     }
     
     @State private var isShowAddNATPassthroughSheet: Bool = false
@@ -83,7 +87,7 @@ struct ServiceListView: View {
 #endif
         }
         .navigationTitle("Services")
-        .searchable(text: $searchText)
+        .searchable(text: $searchText, placement: .toolbar)
         .toolbar {
             ToolbarItem {
                 addServiceMenu

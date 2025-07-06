@@ -36,7 +36,7 @@ struct InstanceCardView: View {
                 Text("TCP")
                     .modifier(EqualWidthModifier(width: $widthForTCPAndUDPText))
                 Text("↓ \(NPCore.formatBytes(instance.tcpReceive)) ↑ \(NPCore.formatBytes(instance.tcpTransmit))")
-                    .foregroundStyle(.gray)
+                    .foregroundStyle(.secondary)
             }
             .font(.caption)
             
@@ -44,7 +44,7 @@ struct InstanceCardView: View {
                 Text("UDP")
                     .modifier(EqualWidthModifier(width: $widthForTCPAndUDPText))
                 Text("↓ \(NPCore.formatBytes(instance.udpReceive)) ↑ \(NPCore.formatBytes(instance.udpTransmit))")
-                    .foregroundStyle(.gray)
+                    .foregroundStyle(.secondary)
             }
             .font(.caption)
         }

@@ -20,7 +20,7 @@ struct DirectForwardCardView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         Text("Direct Forward")
-                            .foregroundStyle(.gray)
+                            .foregroundStyle(.secondary)
                             .font(.caption)
                             .bold()
                         Text(service.name!)
@@ -39,7 +39,7 @@ struct DirectForwardCardView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                             .font(.system(size: 8))
-                            .foregroundStyle(.gray)
+                            .foregroundStyle(.secondary)
                             .frame(maxWidth: 60)
                         Image(systemName: "airplane.cloud")
                             .font(.title)
@@ -54,7 +54,7 @@ struct DirectForwardCardView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                             .font(.system(size: 8))
-                            .foregroundStyle(.gray)
+                            .foregroundStyle(.secondary)
                             .frame(maxWidth: 60)
                         Image(systemName: "airplane.arrival")
                             .font(.title)

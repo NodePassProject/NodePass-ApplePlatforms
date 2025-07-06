@@ -8,14 +8,34 @@
             "state" : "new",
             "value" : "%1$@ %2$@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@"
+          }
         }
       }
     },
     "%@ Destination" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 目标"
+          }
+        }
+      }
     },
     "%@ Local" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 本地"
+          }
+        }
+      }
     },
     "%@ New Server" : {
       "localizations" : {
@@ -28,16 +48,36 @@
       }
     },
     "%@ Relay" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 中转"
+          }
+        }
+      }
     },
     "%@ Remote" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 公网"
+          }
+        }
+      }
     },
     "↓ %@ ↑ %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "↓ %1$@ ↑ %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "↓ %1$@ ↑ %2$@"
           }
         }
@@ -149,6 +189,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "删除"
+          }
+        }
+      }
+    },
+    "Delete Instance" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除实例"
           }
         }
       }
@@ -329,17 +379,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "NAT穿透"
-          }
-        }
-      }
-    },
-    "New Server" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新服务器"
           }
         }
       }
@@ -565,7 +604,14 @@
       }
     },
     "TCP" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TCP"
+          }
+        }
+      }
     },
     "To add a server, tap the add server icon in the toolbar." : {
       "localizations" : {
@@ -678,7 +724,14 @@
       }
     },
     "UDP" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UDP"
+          }
+        }
+      }
     },
     "Unknown" : {
       "localizations" : {
@@ -701,7 +754,14 @@
       }
     },
     "URL" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL"
+          }
+        }
+      }
     },
     "URL Example: https://17.253.144.10:1000/api/v1" : {
       "localizations" : {

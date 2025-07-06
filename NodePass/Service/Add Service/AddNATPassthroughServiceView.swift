@@ -207,9 +207,9 @@ struct AddNATPassthroughServiceView: View {
                     url: clientCommand
                 )
                 
-                let serverConnectPort = Int(serverConnectPort)!
-                let serverTunnelPort = Int(serverTunnelPort)!
-                let clientServicePort = Int(clientServicePort)!
+                let serverConnectPort = Int(serverConnectPort) ?? 10022
+                let serverTunnelPort = Int(serverTunnelPort) ?? 10101
+                let clientServicePort = Int(clientServicePort) ?? 22
                 
                 let name = NPCore.noEmptyName(name)
                 let service = Service(

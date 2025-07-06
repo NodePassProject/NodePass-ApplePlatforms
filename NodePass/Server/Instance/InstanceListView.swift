@@ -13,6 +13,9 @@ struct InstanceListView: View {
     var server: Server
     @State var instances: [Instance] = []
     
+    @State private var isShowDeleteInstanceAlert: Bool = false
+    @State private var instanceToDelete: Instance?
+    
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
     
@@ -22,14 +25,16 @@ struct InstanceListView: View {
                 InstanceCardView(instance: instance)
                     .swipeActions(edge: .trailing) {
                         Button(role: .destructive) {
-                            deleteInstance(instance: instance)
+                            instanceToDelete = instance
+                            isShowDeleteInstanceAlert = true
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
                     }
                     .contextMenu {
                         Button(role: .destructive) {
-                            deleteInstance(instance: instance)
+                            instanceToDelete = instance
+                            isShowDeleteInstanceAlert = true
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
@@ -43,6 +48,15 @@ struct InstanceListView: View {
         }
         .onAppear {
             listInstances()
+        }
+        .alert("Delete Instance", isPresented: $isShowDeleteInstanceAlert) {
+            Button("Delete", role: .destructive) {
+                deleteInstance(instance: instanceToDelete!)
+                instanceToDelete = nil
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You are about to delete this service. This action is irreversible. Are you sure?")
         }
         .alert("Error", isPresented: $isShowErrorAlert) {
             Button("OK", role: .cancel) {
