@@ -73,7 +73,7 @@ struct EditServerView: View {
                     } label: {
                         Label("Done", systemImage: "checkmark")
                     }
-                    .disabled(url == "" || key == "")
+                    .disabled(!isValidAPIURL(url) || key == "")
                 }
             }
             .onAppear {
@@ -84,5 +84,25 @@ struct EditServerView: View {
                 }
             }
         }
+    }
+    
+    private func isValidAPIURL(_ urlString: String) -> Bool {
+        guard let url = URL(string: urlString) else {
+            return false
+        }
+        
+        guard let scheme = url.scheme?.lowercased(), ["http", "https"].contains(scheme) else {
+            return false
+        }
+        
+        guard url.host != nil else {
+            return false
+        }
+        
+        if let port = url.port, !(0...65535).contains(port) {
+            return false
+        }
+        
+        return true
     }
 }

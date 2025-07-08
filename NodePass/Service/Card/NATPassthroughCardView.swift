@@ -16,77 +16,90 @@ struct NATPassthroughCardView: View {
     
     var body: some View {
         if service.type == .natPassthrough {
-            VStack(spacing: 20) {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("NAT Passthrough")
-                            .foregroundStyle(.secondary)
-                            .font(.caption)
-                            .bold()
-                        Text(service.name!)
-                    }
-                    Spacer()
-                }
-                
-                HStack {
-                    let implementation0 = service.implementations!.first(where: { $0.position == 0 })!
-                    let implementation1 = service.implementations!.first(where: { $0.position == 1 })!
-                    Image(systemName: "laptopcomputer.and.iphone")
-                        .font(.title)
-                    Spacer()
-                    Image(systemName: "arrowshape.right")
-                    Spacer()
-                    VStack(spacing: 3) {
-                        let serverName = servers.first(where: { $0.id == implementation0.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
-                        let addressesAndPorts = implementation0.extractAddressesAndPorts()
-                        Text(serverName)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
-                            .font(.system(size: 8))
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: 60)
-                        Image(systemName: "cloud.fill")
-                            .font(.title)
-                        Text(addressesAndPorts.destination.port)
-                            .font(.system(size: 8))
-                    }
-                    Spacer()
-                    VStack(spacing: 3) {
-                        let queryParameters = implementation0.extractQueryParameters()
-                        if ["1", "2"].contains(queryParameters["tls"]) {
-                            Image(systemName: "lock")
-                                .font(.caption)
-                        }
-                        Image(systemName: "arrowshape.right")
-                            .fixedSize()
-                    }
-                    Spacer()
-                    VStack(spacing: 3) {
-                        let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
-                        let addressesAndPorts = implementation1.extractAddressesAndPorts()
-                        Text(serverName)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
-                            .font(.system(size: 8))
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: 60)
-                        Image(systemName: "house.fill")
-                            .font(.title)
-                        Text(addressesAndPorts.destination.port)
-                            .font(.system(size: 8))
-                    }
-                }
+            if #available(iOS 26.0, macOS 26.0, *) {
+                cardContent
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .foregroundStyle(.white.opacity(0.01))
+                    )
+                    .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
             }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .foregroundStyle(.white.opacity(0.01))
-            )
-            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
+            else {
+                cardContent
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .foregroundStyle(.regularMaterial)
+                    )
+            }
         }
         else {
             Image(systemName: "exclamationmark.circle")
                 .foregroundStyle(.red)
         }
+    }
+    
+    private var cardContent: some View {
+        VStack(spacing: 20) {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text("NAT Passthrough")
+                        .foregroundStyle(.secondary)
+                        .font(.caption)
+                        .bold()
+                    Text(service.name!)
+                }
+                Spacer()
+            }
+            
+            HStack {
+                let implementation0 = service.implementations!.first(where: { $0.position == 0 })!
+                let implementation1 = service.implementations!.first(where: { $0.position == 1 })!
+                Image(systemName: "laptopcomputer.and.iphone")
+                    .font(.title)
+                Spacer()
+                Image(systemName: "arrowshape.right")
+                Spacer()
+                VStack(spacing: 3) {
+                    let serverName = servers.first(where: { $0.id == implementation0.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                    let addressesAndPorts = implementation0.extractAddressesAndPorts()
+                    Text(serverName)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                        .font(.system(size: 8))
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: 60)
+                    Image(systemName: "cloud.fill")
+                        .font(.title)
+                    Text(addressesAndPorts.destination.port)
+                        .font(.system(size: 8))
+                }
+                Spacer()
+                VStack(spacing: 3) {
+                    let queryParameters = implementation0.extractQueryParameters()
+                    if ["1", "2"].contains(queryParameters["tls"]) {
+                        Image(systemName: "lock")
+                            .font(.caption)
+                    }
+                    Image(systemName: "arrowshape.right")
+                        .fixedSize()
+                }
+                Spacer()
+                VStack(spacing: 3) {
+                    let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                    let addressesAndPorts = implementation1.extractAddressesAndPorts()
+                    Text(serverName)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                        .font(.system(size: 8))
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: 60)
+                    Image(systemName: "house.fill")
+                        .font(.title)
+                    Text(addressesAndPorts.destination.port)
+                        .font(.system(size: 8))
+                }
+            }
+        }
+        .padding()
     }
 }

@@ -47,6 +47,7 @@
 		CB6682C72E17FD0400A27696 /* EmptyResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682C62E17FCF900A27696 /* EmptyResponse.swift */; };
 		CB6682CA2E1899A100A27696 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CB6682C92E1899A100A27696 /* AppIcon.icon */; };
 		CB6682CC2E189FAC00A27696 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CB6682CB2E189FAC00A27696 /* Localizable.xcstrings */; };
+		CB6682D02E1DD9C700A27696 /* UpdateInstanceStatusAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682CF2E1DD9BD00A27696 /* UpdateInstanceStatusAction.swift */; };
 		CBD4335F2E10FA4C002B153F /* NodePassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD4335E2E10FA4C002B153F /* NodePassApp.swift */; };
 		CBD433612E10FA4C002B153F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433602E10FA4C002B153F /* ContentView.swift */; };
 		CBD433632E10FA4D002B153F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CBD433622E10FA4D002B153F /* Assets.xcassets */; };
@@ -93,6 +94,7 @@
 		CB6682CB2E189FAC00A27696 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		CB6682CD2E1D4BE300A27696 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		CB6682CE2E1D4C6300A27696 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		CB6682CF2E1DD9BD00A27696 /* UpdateInstanceStatusAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateInstanceStatusAction.swift; sourceTree = "<group>"; };
 		CBD4335B2E10FA4C002B153F /* NodePass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NodePass.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBD4335E2E10FA4C002B153F /* NodePassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodePassApp.swift; sourceTree = "<group>"; };
 		CBD433602E10FA4C002B153F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 				CB6682942E135C5900A27696 /* ImplementationType.swift */,
 				CB6682922E135B3C00A27696 /* InstanceType.swift */,
 				CB66829B2E140CD900A27696 /* InstanceStatus.swift */,
+				CB6682CF2E1DD9BD00A27696 /* UpdateInstanceStatusAction.swift */,
 			);
 			path = enums;
 			sourceTree = "<group>";
@@ -360,6 +363,7 @@
 				CB66827D2E1181DF00A27696 /* NetworkService.swift in Sources */,
 				CB66827A2E1181D200A27696 /* APIEndpoint.swift in Sources */,
 				CB6682A32E172F3C00A27696 /* LoadingStateModifier.swift in Sources */,
+				CB6682D02E1DD9C700A27696 /* UpdateInstanceStatusAction.swift in Sources */,
 				CB6682782E1181CA00A27696 /* Server.swift in Sources */,
 				CB6682AE2E17345D00A27696 /* AddDirectForwardServiceView.swift in Sources */,
 				CB6682932E135B4500A27696 /* InstanceType.swift in Sources */,
@@ -526,7 +530,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -547,10 +551,10 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -575,7 +579,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -596,10 +600,10 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass;
 				PRODUCT_NAME = "$(TARGET_NAME)";

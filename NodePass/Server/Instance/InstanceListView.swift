@@ -22,31 +22,20 @@ struct InstanceListView: View {
     var body: some View {
         Form {
             ForEach(instances.filter({ [.running, .stopped, .error].contains($0.status) })) { instance in
-                InstanceCardView(instance: instance)
-                    .swipeActions(edge: .trailing) {
-                        Button(role: .destructive) {
-                            instanceToDelete = instance
-                            isShowDeleteInstanceAlert = true
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                    }
-                    .contextMenu {
-                        Button(role: .destructive) {
-                            instanceToDelete = instance
-                            isShowDeleteInstanceAlert = true
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                    }
+                instanceCardView(instance: instance)
             }
         }
         .formStyle(.grouped)
+#if os(iOS)
+        .listRowSpacing(5)
+#endif
         .navigationTitle(server.name!)
         .loadingState(loadingState: loadingState) {
+            loadingState = .loading
             listInstances()
         }
         .onAppear {
+            loadingState = .loading
             listInstances()
         }
         .alert("Delete Instance", isPresented: $isShowDeleteInstanceAlert) {
@@ -67,8 +56,67 @@ struct InstanceListView: View {
         }
     }
     
+    @ViewBuilder
+    private func instanceCardView(instance: Instance) -> some View {
+        InstanceCardView(instance: instance)
+            .swipeActions(edge: .trailing) {
+                Button(role: .destructive) {
+                    instanceToDelete = instance
+                    isShowDeleteInstanceAlert = true
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+            }
+            .contextMenu {
+#if os(iOS)
+                ControlGroup {
+                    Button {
+                        updateInstanceStatus(instance: instance, action: .start)
+                    } label: {
+                        Label("Start", systemImage: "play")
+                    }
+                    Button {
+                        updateInstanceStatus(instance: instance, action: .stop)
+                    } label: {
+                        Label("Stop", systemImage: "stop")
+                    }
+                    Button {
+                        updateInstanceStatus(instance: instance, action: .restart)
+                    } label: {
+                        Label("Restart", systemImage: "restart")
+                    }
+                }
+#endif
+#if os(macOS)
+                ControlGroup("Actions") {
+                    Button {
+                        updateInstanceStatus(instance: instance, action: .start)
+                    } label: {
+                        Label("Start", systemImage: "play")
+                    }
+                    Button {
+                        updateInstanceStatus(instance: instance, action: .stop)
+                    } label: {
+                        Label("Stop", systemImage: "stop")
+                    }
+                    Button {
+                        updateInstanceStatus(instance: instance, action: .restart)
+                    } label: {
+                        Label("Restart", systemImage: "restart")
+                    }
+                }
+#endif
+                Divider()
+                Button(role: .destructive) {
+                    instanceToDelete = instance
+                    isShowDeleteInstanceAlert = true
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+            }
+    }
+    
     private func listInstances() {
-        loadingState = .loading
         Task {
             let instanceService = InstanceService()
             do {
@@ -87,17 +135,31 @@ struct InstanceListView: View {
             let instanceService = InstanceService()
             do {
                 try await instanceService.deleteInstance(baseURLString: server.url!, apiKey: server.key!, id: instance.id)
-                
-                do {
-                    let instances = try await instanceService.listInstances(baseURLString: server.url!, apiKey: server.key!)
-                    self.instances = instances
-                }
-                catch {
-                    loadingState = .error("Error Listing Instances: \(error.localizedDescription)")
-                }
+                listInstances()
             }
             catch {
                 errorMessage = "Error Deleting Instances: \(error.localizedDescription)"
+                isShowErrorAlert = true
+            }
+        }
+    }
+    
+    private func updateInstanceStatus(instance: Instance, action: UpdateInstanceStatusAction) {
+        Task {
+            let instanceService = InstanceService()
+            do {
+                try await instanceService.updateInstanceStatus(baseURLString: server.url!, apiKey: server.key!, id: instance.id, action: action.rawValue)
+                listInstances()
+            }
+            catch {
+                switch(action) {
+                case .start:
+                    errorMessage = "Error Starting Instances: \(error.localizedDescription)"
+                case .stop:
+                    errorMessage = "Error Stopping Instances: \(error.localizedDescription)"
+                case .restart:
+                    errorMessage = "Error Restarting Instances: \(error.localizedDescription)"
+                }
                 isShowErrorAlert = true
             }
         }

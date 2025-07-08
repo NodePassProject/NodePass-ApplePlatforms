@@ -11,12 +11,14 @@ enum InstanceAPI: APIEndpoint {
     case listInstances(baseURLString: String, apiKey: String)
     case createInstance(baseURLString: String, apiKey: String, url: String)
     case deleteInstance(baseURLString: String, apiKey: String, id: String)
+    case updateInstanceStatus(baseURLString: String, apiKey: String, id: String, action: String)
     
     var baseURL: URL {
         switch self {
         case .listInstances(let baseURLString, _): return URL(string: baseURLString)!
         case .createInstance(let baseURLString, _, _): return URL(string: baseURLString)!
         case .deleteInstance(let baseURLString, _, _): return URL(string: baseURLString)!
+        case .updateInstanceStatus(let baseURLString, _, _, _): return URL(string: baseURLString)!
         }
     }
     
@@ -25,6 +27,7 @@ enum InstanceAPI: APIEndpoint {
         case .listInstances: return "/instances"
         case .createInstance: return "/instances"
         case .deleteInstance(_, _, let id): return "/instances/\(id)"
+        case .updateInstanceStatus(_, _, let id, _): return "/instances/\(id)"
         }
     }
     
@@ -33,6 +36,7 @@ enum InstanceAPI: APIEndpoint {
         case .listInstances: return .get
         case .createInstance: return .post
         case .deleteInstance: return .delete
+        case .updateInstanceStatus: return .patch
         }
     }
     
@@ -41,6 +45,7 @@ enum InstanceAPI: APIEndpoint {
         case .listInstances(_, let apiKey): return ["X-API-Key": apiKey]
         case .createInstance(_, let apiKey, _): return ["X-API-Key": apiKey]
         case .deleteInstance(_, let apiKey, _): return ["X-API-Key": apiKey]
+        case .updateInstanceStatus(_, let apiKey, _, _): return ["X-API-Key": apiKey]
         }
     }
     
@@ -49,6 +54,7 @@ enum InstanceAPI: APIEndpoint {
         case .listInstances: return nil
         case .createInstance: return nil
         case .deleteInstance: return nil
+        case .updateInstanceStatus: return nil
         }
     }
     
@@ -57,6 +63,7 @@ enum InstanceAPI: APIEndpoint {
         case .listInstances: return nil
         case .createInstance(_, _, let url): return ["url": url]
         case .deleteInstance: return nil
+        case .updateInstanceStatus(_, _, _, let action): return ["action": action]
         }
     }
 }
@@ -90,6 +97,16 @@ class InstanceService {
     
     func deleteInstance(baseURLString: String, apiKey: String, id: String) async throws {
         let endpoint = InstanceAPI.deleteInstance(baseURLString: baseURLString, apiKey: apiKey, id: id)
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            networkService.request(endpoint) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func updateInstanceStatus(baseURLString: String, apiKey: String, id: String, action: String) async throws {
+        let endpoint = InstanceAPI.updateInstanceStatus(baseURLString: baseURLString, apiKey: apiKey, id: id, action: action)
         
         return try await withCheckedThrowingContinuation { continuation in
             networkService.request(endpoint) { result in

@@ -34,35 +34,4 @@ class NPCore {
         
         return "\(formattedValue) \(units[unitIndex])"
     }
-    
-    static func parseNPURLString(_ urlString: String) -> (scheme: String, tunnelHost: String, destinationHost: String, logLevel: String?, tlsLevel: String?)? {
-        guard let schemeEndIndex = urlString.range(of: "://")?.lowerBound else {
-            return nil
-        }
-        let scheme = String(urlString[..<schemeEndIndex])
-        
-        let afterScheme = urlString.suffix(from: urlString.index(schemeEndIndex, offsetBy: 3))
-        guard let firstSlashIndex = afterScheme.firstIndex(of: "/") else {
-            return nil
-        }
-        let tunnelHost = String(afterScheme[..<firstSlashIndex])
-        
-        let afterSlash = afterScheme.suffix(from: afterScheme.index(after: firstSlashIndex))
-        guard let questionIndex = afterSlash.firstIndex(of: "?") else {
-            return nil
-        }
-        let destinationHost = String(afterSlash[..<questionIndex])
-        
-        let queryString = String(afterSlash.suffix(from: afterSlash.index(after: questionIndex)))
-        let queryItems = queryString.split(separator: "&").reduce(into: [String: String]()) { result, pair in
-            let components = pair.split(separator: "=", maxSplits: 1).map(String.init)
-            guard components.count == 2 else { return }
-            result[components[0]] = components[1]
-        }
-        
-        let logLevel = queryItems["log"]
-        let tlsLevel = queryItems["tls"]
-        
-        return (scheme, tunnelHost, destinationHost, logLevel, tlsLevel)
-    }
 }
