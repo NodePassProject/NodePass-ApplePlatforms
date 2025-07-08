@@ -19,6 +19,7 @@ struct AddNATPassthroughServiceView: View {
     @State private var serverTunnelPort: String = ""
     @State private var client: Server?
     @State private var clientServicePort: String = ""
+    @State private var isTLS: Bool = false
     
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
@@ -94,10 +95,19 @@ struct AddNATPassthroughServiceView: View {
                     }
                 }
                 
+                Section {
+                    Toggle("TLS", isOn: $isTLS)
+                } footer: {
+                    Text("Use TLS encryption for tunnel communication.")
+                }
+                
                 Section("Preview") {
                     let serverConnectPort = Int(serverConnectPort) ?? 10022
                     let serverTunnelPort = Int(serverTunnelPort) ?? 10101
                     let clientServicePort = Int(clientServicePort) ?? 22
+                    
+                    let serverCommand = "server://:\(serverTunnelPort)/:\(serverConnectPort)?log=warn&tls=\(isTLS ? "1" : "0")"
+                    let clientCommand = "client://\(server?.getHost() ?? ""):\(serverTunnelPort)/127.0.0.1:\(clientServicePort)?log=warn"
                     
                     let name = NPCore.noEmptyName(name)
                     let previewService = Service(
@@ -108,27 +118,17 @@ struct AddNATPassthroughServiceView: View {
                                 name: String(localized: "\(name) Remote"),
                                 type: .natPassthroughServer,
                                 position: 0,
-                                serverID: "",
-                                serverName: server?.name ?? "",
+                                serverID: server?.id ?? "",
                                 instanceID: "",
-                                tunnelAddress: "",
-                                tunnelPort: serverTunnelPort,
-                                destinationAddress: "",
-                                destinationPort: serverConnectPort,
-                                command: ""
+                                command: serverCommand
                             ),
                             Implementation(
                                 name: String(localized: "\(name) Local"),
                                 type: .natPassthroughClient,
                                 position: 1,
-                                serverID: "",
-                                serverName: client?.name ?? "",
+                                serverID: client?.id ?? "",
                                 instanceID: "",
-                                tunnelAddress: "",
-                                tunnelPort: serverTunnelPort,
-                                destinationAddress: "",
-                                destinationPort: clientServicePort,
-                                command: ""
+                                command: clientCommand
                             )
                         ]
                     )
@@ -188,7 +188,11 @@ struct AddNATPassthroughServiceView: View {
     }
     
     private func execute() {
-        let serverCommand = "server://:\(serverTunnelPort)/:\(serverConnectPort)?log=warn&tls=0"
+        let serverConnectPort = Int(serverConnectPort) ?? 10022
+        let serverTunnelPort = Int(serverTunnelPort) ?? 10101
+        let clientServicePort = Int(clientServicePort) ?? 22
+        
+        let serverCommand = "server://:\(serverTunnelPort)/:\(serverConnectPort)?log=warn&tls=\(isTLS ? "1" : "0")"
         let clientCommand = "client://\(server!.getHost()):\(serverTunnelPort)/127.0.0.1:\(clientServicePort)?log=warn"
 
         Task {
@@ -207,10 +211,6 @@ struct AddNATPassthroughServiceView: View {
                     url: clientCommand
                 )
                 
-                let serverConnectPort = Int(serverConnectPort) ?? 10022
-                let serverTunnelPort = Int(serverTunnelPort) ?? 10101
-                let clientServicePort = Int(clientServicePort) ?? 22
-                
                 let name = NPCore.noEmptyName(name)
                 let service = Service(
                     name: name,
@@ -221,12 +221,7 @@ struct AddNATPassthroughServiceView: View {
                             type: .natPassthroughServer,
                             position: 0,
                             serverID: server!.id!,
-                            serverName: server!.name!,
                             instanceID: serverInstance.id,
-                            tunnelAddress: "",
-                            tunnelPort: serverTunnelPort,
-                            destinationAddress: "",
-                            destinationPort: serverConnectPort,
                             command: serverCommand
                         ),
                         Implementation(
@@ -234,12 +229,7 @@ struct AddNATPassthroughServiceView: View {
                             type: .natPassthroughClient,
                             position: 1,
                             serverID: client!.id!,
-                            serverName: client!.name!,
                             instanceID: clientInstance.id,
-                            tunnelAddress: server!.getHost(),
-                            tunnelPort: serverTunnelPort,
-                            destinationAddress: "127.0.0.1",
-                            destinationPort: clientServicePort,
                             command: clientCommand
                         )
                     ]

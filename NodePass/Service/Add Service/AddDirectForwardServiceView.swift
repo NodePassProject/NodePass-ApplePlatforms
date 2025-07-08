@@ -76,6 +76,8 @@ struct AddDirectForwardServiceView: View {
                     let clientConnectPort = Int(clientConnectPort) ?? 1080
                     let clientDestinationPort = Int(clientDestinationPort) ?? 1080
                     
+                    let command = "client://:\(clientConnectPort)/\(clientDestinationAddress):\(clientDestinationPort)?log=warn"
+                    
                     let name = NPCore.noEmptyName(name)
                     let previewService = Service(
                         name: name,
@@ -86,13 +88,8 @@ struct AddDirectForwardServiceView: View {
                                 type: .directForwardClient,
                                 position: 0,
                                 serverID: "",
-                                serverName: client?.name ?? "",
                                 instanceID: "",
-                                tunnelAddress: "",
-                                tunnelPort: clientConnectPort,
-                                destinationAddress: clientDestinationAddress,
-                                destinationPort: clientDestinationPort,
-                                command: ""
+                                command: command
                             )
                         ]
                     )
@@ -146,6 +143,9 @@ struct AddDirectForwardServiceView: View {
     }
     
     private func execute() {
+        let clientConnectPort = Int(clientConnectPort) ?? 1080
+        let clientDestinationPort = Int(clientDestinationPort) ?? 1080
+        
         let command = "client://:\(clientConnectPort)/\(clientDestinationAddress):\(clientDestinationPort)?log=warn"
 
         Task {
@@ -157,9 +157,6 @@ struct AddDirectForwardServiceView: View {
                     url: command
                 )
                 
-                let clientConnectPort = Int(clientConnectPort) ?? 1080
-                let clientDestinationPort = Int(clientDestinationPort) ?? 1080
-                
                 let name = NPCore.noEmptyName(name)
                 let service = Service(
                     name: name,
@@ -170,12 +167,7 @@ struct AddDirectForwardServiceView: View {
                             type: .directForwardClient,
                             position: 0,
                             serverID: client!.id!,
-                            serverName: client!.name!,
                             instanceID: clientInstance.id,
-                            tunnelAddress: "",
-                            tunnelPort: clientConnectPort,
-                            destinationAddress: clientDestinationAddress,
-                            destinationPort: clientDestinationPort,
                             command: command
                         )
                     ]

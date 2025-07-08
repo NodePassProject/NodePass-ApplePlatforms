@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@"
+          }
+        }
+      }
+    },
     "%@ %@" : {
       "localizations" : {
         "en" : {
@@ -63,6 +73,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ 公网"
+          }
+        }
+      }
+    },
+    "%lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
           }
         }
       }
@@ -613,6 +633,16 @@
         }
       }
     },
+    "TLS" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TLS"
+          }
+        }
+      }
+    },
     "To add a server, tap the add server icon in the toolbar." : {
       "localizations" : {
         "en" : {
@@ -779,6 +809,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "URL：你的主控API URL。"
+          }
+        }
+      }
+    },
+    "Use TLS encryption for tunnel communication." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用TLS加密隧道连接。"
           }
         }
       }

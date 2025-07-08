@@ -25,7 +25,16 @@ struct EditServerView: View {
                 
                 Section {
                     TextField("URL", text: $url)
+                        .autocorrectionDisabled()
+#if os(iOS)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.URL)
+#endif
                     TextField("Key", text: $key)
+                        .autocorrectionDisabled()
+#if os(iOS)
+                        .textInputAutocapitalization(.never)
+#endif
                 } footer: {
                     VStack(alignment: .leading) {
                         Text("URL: URL of your master API.")

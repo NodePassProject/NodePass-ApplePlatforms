@@ -29,13 +29,17 @@ struct NATPassthroughCardView: View {
                 }
                 
                 HStack {
+                    let implementation0 = service.implementations!.first(where: { $0.position == 0 })!
+                    let implementation1 = service.implementations!.first(where: { $0.position == 1 })!
                     Image(systemName: "laptopcomputer.and.iphone")
                         .font(.title)
                     Spacer()
                     Image(systemName: "arrowshape.right")
                     Spacer()
                     VStack(spacing: 3) {
-                        Text(service.implementations![0].serverName!)
+                        let serverName = servers.first(where: { $0.id == implementation0.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                        let addressesAndPorts = implementation0.extractAddressesAndPorts()
+                        Text(serverName)
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                             .font(.system(size: 8))
@@ -43,14 +47,24 @@ struct NATPassthroughCardView: View {
                             .frame(maxWidth: 60)
                         Image(systemName: "cloud.fill")
                             .font(.title)
-                        Text("\(Image(systemName: "arrow.right")) \(service.implementations![0].destinationPort!, format: .number.grouping(.never))")
+                        Text(addressesAndPorts.destination.port)
                             .font(.system(size: 8))
                     }
                     Spacer()
-                    Image(systemName: "arrowshape.right")
+                    VStack(spacing: 3) {
+                        let queryParameters = implementation0.extractQueryParameters()
+                        if ["1", "2"].contains(queryParameters["tls"]) {
+                            Image(systemName: "lock")
+                                .font(.caption)
+                        }
+                        Image(systemName: "arrowshape.right")
+                            .fixedSize()
+                    }
                     Spacer()
                     VStack(spacing: 3) {
-                        Text(service.implementations![1].serverName!)
+                        let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                        let addressesAndPorts = implementation1.extractAddressesAndPorts()
+                        Text(serverName)
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                             .font(.system(size: 8))
@@ -58,7 +72,7 @@ struct NATPassthroughCardView: View {
                             .frame(maxWidth: 60)
                         Image(systemName: "house.fill")
                             .font(.title)
-                        Text("\(Image(systemName: "arrow.left")) \(service.implementations![1].destinationPort!, format: .number.grouping(.never))")
+                        Text(addressesAndPorts.destination.port)
                             .font(.system(size: 8))
                     }
                 }

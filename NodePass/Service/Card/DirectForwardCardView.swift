@@ -29,13 +29,16 @@ struct DirectForwardCardView: View {
                 }
                 
                 HStack {
+                    let implementation = service.implementations!.first(where: { $0.position == 0 })!
+                    let serverName = servers.first(where: { $0.id == implementation.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                    let addressesAndPorts = implementation.extractAddressesAndPorts()
                     Image(systemName: "laptopcomputer.and.iphone")
                         .font(.title)
                     Spacer()
                     Image(systemName: "arrowshape.right")
                     Spacer()
                     VStack(spacing: 3) {
-                        Text(service.implementations![0].serverName!)
+                        Text(serverName)
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                             .font(.system(size: 8))
@@ -43,14 +46,14 @@ struct DirectForwardCardView: View {
                             .frame(maxWidth: 60)
                         Image(systemName: "airplane.cloud")
                             .font(.title)
-                        Text("\(Image(systemName: "arrow.right")) \(service.implementations![0].tunnelPort!, format: .number.grouping(.never))")
+                        Text(addressesAndPorts.tunnel.port)
                             .font(.system(size: 8))
                     }
                     Spacer()
                     Image(systemName: "arrowshape.right")
                     Spacer()
                     VStack(spacing: 3) {
-                        Text(service.implementations![0].destinationAddress!)
+                        Text(addressesAndPorts.destination.address)
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                             .font(.system(size: 8))
@@ -58,7 +61,7 @@ struct DirectForwardCardView: View {
                             .frame(maxWidth: 60)
                         Image(systemName: "airplane.arrival")
                             .font(.title)
-                        Text("\(Image(systemName: "arrow.right")) \(service.implementations![0].destinationPort!, format: .number.grouping(.never))")
+                        Text(addressesAndPorts.destination.port)
                             .font(.system(size: 8))
                     }
                 }
