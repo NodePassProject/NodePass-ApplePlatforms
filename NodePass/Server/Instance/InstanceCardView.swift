@@ -48,5 +48,8 @@ struct InstanceCardView: View {
             }
             .font(.caption)
         }
+#if os(macOS)
+        .background(.white.opacity(0.01))
+#endif
     }
 }

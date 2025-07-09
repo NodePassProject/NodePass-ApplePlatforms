@@ -58,13 +58,13 @@ struct QRCodeScannerView: View {
                 }
             }
             .ignoresSafeArea()
-        }
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button {
-                    dismiss()
-                } label: {
-                    Label("Cancel", systemImage: "xmark")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Label("Cancel", systemImage: "xmark")
+                    }
                 }
             }
         }

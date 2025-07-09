@@ -42,6 +42,7 @@ struct ServerListView: View {
         .toolbar {
             ToolbarItem {
                 Button {
+                    state.editServerSheetMode = .adding
                     state.isShowEditServerSheet = true
                 } label: {
                     Label("Add", systemImage: "plus")
@@ -49,9 +50,10 @@ struct ServerListView: View {
             }
         }
         .sheet(isPresented: $state.isShowEditServerSheet) {
-            state.serverToEdit = nil
+            state.editServerSheetMode = .adding
+            state.editServerSheetServer = nil
         } content: {
-            EditServerView(server: $state.serverToEdit)
+            EditServerView(server: $state.editServerSheetServer)
         }
     }
     
@@ -67,7 +69,8 @@ struct ServerListView: View {
                     }
                 }
                 .editableAndDeletable(editAction: {
-                    state.serverToEdit = server
+                    state.editServerSheetMode = .editing
+                    state.editServerSheetServer = server
                     state.isShowEditServerSheet = true
                 }, deleteAction: {
                     context.delete(server)

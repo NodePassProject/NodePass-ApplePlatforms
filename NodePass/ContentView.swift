@@ -74,7 +74,8 @@ struct ContentView: View {
             }
             
             state.tab = .servers
-            state.serverToEdit = Server(name: "", url: result["url"] ?? "", key: result["key"] ?? "")
+            state.editServerSheetMode = .adding
+            state.editServerSheetServer = Server(name: "", url: result["url"] ?? "", key: result["key"] ?? "")
             state.isShowEditServerSheet = true
             
             return

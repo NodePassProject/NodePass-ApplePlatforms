@@ -61,12 +61,16 @@ struct AddDirectForwardServiceView: View {
                 
                 Section {
                     LabeledTextField("Address", prompt: "17.253.144.10", text: $clientDestinationAddress)
+                        .autocorrectionDisabled()
+#if os(iOS)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.URL)
+#endif
                     LabeledTextField("Port", prompt: "1080", text: $clientDestinationPort, isNumberOnly: true)
                 } header: {
                     Text("Destination Server")
                 } footer: {
                     VStack(alignment: .leading) {
-                        Text("Destination Server: Server you want your traffic to relay to.")
                         Text("Address: Domain/IP of the destination server.")
                         Text("Port: Port on which your service like Socks5(1080) is running.")
                     }

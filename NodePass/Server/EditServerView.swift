@@ -8,7 +8,14 @@
 import SwiftUI
 import SwiftData
 
+enum EditServerSheetMode {
+    case adding
+    case editing
+}
+
 struct EditServerView: View {
+    @Environment(NPState.self) var state
+    
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     
@@ -57,7 +64,7 @@ struct EditServerView: View {
 #endif
             }
             .formStyle(.grouped)
-            .navigationTitle(server == nil ? "Add Server" : "Edit Server")
+            .navigationTitle(state.editServerSheetMode == .adding ? "Add Server" : "Edit Server")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
@@ -69,15 +76,24 @@ struct EditServerView: View {
                 
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        if let server {
+                        switch(state.editServerSheetMode) {
+                        case .adding:
+                            if let server {
+                                server.name = NPCore.noEmptyName(name)
+                                server.url = url
+                                server.key = key
+                                print(server)
+                                context.insert(server)
+                            }
+                            else {
+                                let server = Server(name: NPCore.noEmptyName(name), url: url, key: key)
+                                context.insert(server)
+                            }
+                        case .editing:
+                            let server = server!
                             server.name = NPCore.noEmptyName(name)
                             server.url = url
                             server.key = key
-                        }
-                        else {
-                            let newServer = Server(name: name, url: url, key: key)
-                            context.insert(newServer)
-                            self.server = newServer
                         }
                         dismiss()
                     } label: {

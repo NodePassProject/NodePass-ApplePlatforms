@@ -58,6 +58,9 @@ struct NATPassthroughCardView: View {
                     .font(.title)
                 Spacer()
                 Image(systemName: "arrowshape.right")
+                    .alignmentGuide(VerticalAlignment.center) { d in
+                        d[.bottom] - 7
+                    }
                 Spacer()
                 VStack(spacing: 3) {
                     let serverName = servers.first(where: { $0.id == implementation0.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
@@ -81,7 +84,9 @@ struct NATPassthroughCardView: View {
                             .font(.caption)
                     }
                     Image(systemName: "arrowshape.right")
-                        .fixedSize()
+                }
+                .alignmentGuide(VerticalAlignment.center) { d in
+                    d[.bottom] - 7
                 }
                 Spacer()
                 VStack(spacing: 3) {
