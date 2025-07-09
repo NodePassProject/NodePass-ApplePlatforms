@@ -1,5 +1,5 @@
 //
-//  RenamableAndDeletable.swift
+//  EditableAndDeletable.swift
 //  NodePass
 //
 //  Created by Junhui Lou on 7/4/25.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct RenamableAndDeletable: ViewModifier {
-    let renameAction: () -> Void
+struct EditableAndDeletable: ViewModifier {
+    let editAction: () -> Void
     let deleteAction: () -> Void
     
     func body(content: Content) -> some View {
@@ -21,16 +21,16 @@ struct RenamableAndDeletable: ViewModifier {
                 }
                 
                 Button {
-                    renameAction()
+                    editAction()
                 } label: {
-                    Label("Rename", systemImage: "pencil")
+                    Label("Edit", systemImage: "pencil")
                 }
             }
             .contextMenu {
                 Button {
-                    renameAction()
+                    editAction()
                 } label: {
-                    Label("Rename", systemImage: "pencil")
+                    Label("Edit", systemImage: "pencil")
                 }
                 
                 Button(role: .destructive) {
@@ -43,7 +43,7 @@ struct RenamableAndDeletable: ViewModifier {
 }
 
 extension View {
-    func renamableAndDeletable(renameAction: @escaping () -> Void, deleteAction: @escaping () -> Void) -> some View {
-        modifier(RenamableAndDeletable(renameAction: renameAction, deleteAction: deleteAction))
+    func editableAndDeletable(editAction: @escaping () -> Void, deleteAction: @escaping () -> Void) -> some View {
+        modifier(EditableAndDeletable(editAction: editAction, deleteAction: deleteAction))
     }
 }

@@ -48,5 +48,41 @@ struct ContentView: View {
             }
         }
         .tabViewStyle(.sidebarAdaptable)
+        .onOpenURL { url in
+            handleDeepLink(url: url)
+        }
+    }
+    
+    private func handleDeepLink(url: URL) {
+        if url.host == "master" {
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+                  let queryItems = components.queryItems else {
+#if DEBUG
+                print("Failed to parse URL components")
+#endif
+                return
+            }
+            
+            var result = [String: String]()
+            
+            for item in queryItems {
+                if let value = item.value,
+                   let decodedData = Data(base64Encoded: value),
+                   let decodedString = String(data: decodedData, encoding: .utf8) {
+                    result[item.name] = decodedString
+                }
+            }
+            
+            state.tab = .servers
+            state.serverToEdit = Server(name: "", url: result["url"] ?? "", key: result["key"] ?? "")
+            state.isShowEditServerSheet = true
+            
+            return
+        }
+        
+#if DEBUG
+        print("Invalid host")
+#endif
+        return
     }
 }

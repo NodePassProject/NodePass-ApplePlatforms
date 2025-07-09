@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct ServerListView: View {
+    @Environment(NPState.self) var state
+    
     @Environment(\.modelContext) private var context
     @Query(sort: \Server.timestamp) private var servers: [Server]
     
@@ -22,10 +24,8 @@ struct ServerListView: View {
         }
     }
     
-    @State private var isShowEditServerSheet: Bool = false
-    @State var serverToEdit: Server?
-    
     var body: some View {
+        @Bindable var state = state
         VStack {
             if servers.isEmpty {
                 ContentUnavailableView("No Server", systemImage: "square.stack.3d.up.fill", description: Text("To add a server, tap the add server icon in the toolbar.").font(.caption))
@@ -42,14 +42,16 @@ struct ServerListView: View {
         .toolbar {
             ToolbarItem {
                 Button {
-                    isShowEditServerSheet = true
+                    state.isShowEditServerSheet = true
                 } label: {
                     Label("Add", systemImage: "plus")
                 }
             }
         }
-        .sheet(isPresented: $isShowEditServerSheet) {
-            EditServerView(server: $serverToEdit)
+        .sheet(isPresented: $state.isShowEditServerSheet) {
+            state.serverToEdit = nil
+        } content: {
+            EditServerView(server: $state.serverToEdit)
         }
     }
     
@@ -64,9 +66,9 @@ struct ServerListView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                .renamableAndDeletable(renameAction: {
-                    serverToEdit = server
-                    isShowEditServerSheet = true
+                .editableAndDeletable(editAction: {
+                    state.serverToEdit = server
+                    state.isShowEditServerSheet = true
                 }, deleteAction: {
                     context.delete(server)
                 })

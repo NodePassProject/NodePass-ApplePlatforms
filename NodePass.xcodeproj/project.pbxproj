@@ -48,6 +48,9 @@
 		CB6682CA2E1899A100A27696 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CB6682C92E1899A100A27696 /* AppIcon.icon */; };
 		CB6682CC2E189FAC00A27696 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CB6682CB2E189FAC00A27696 /* Localizable.xcstrings */; };
 		CB6682D02E1DD9C700A27696 /* UpdateInstanceStatusAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682CF2E1DD9BD00A27696 /* UpdateInstanceStatusAction.swift */; };
+		CB6682D52E1E90EA00A27696 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = CB6682D42E1E90EA00A27696 /* CodeScanner */; };
+		CB6682D72E1E990D00A27696 /* QRCodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682D62E1E990300A27696 /* QRCodeScannerView.swift */; };
+		CB6682D92E1E9DA300A27696 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CB6682D82E1E9DA300A27696 /* InfoPlist.xcstrings */; };
 		CBD4335F2E10FA4C002B153F /* NodePassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD4335E2E10FA4C002B153F /* NodePassApp.swift */; };
 		CBD433612E10FA4C002B153F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433602E10FA4C002B153F /* ContentView.swift */; };
 		CBD433632E10FA4D002B153F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CBD433622E10FA4D002B153F /* Assets.xcassets */; };
@@ -95,6 +98,8 @@
 		CB6682CD2E1D4BE300A27696 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		CB6682CE2E1D4C6300A27696 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		CB6682CF2E1DD9BD00A27696 /* UpdateInstanceStatusAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateInstanceStatusAction.swift; sourceTree = "<group>"; };
+		CB6682D62E1E990300A27696 /* QRCodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScannerView.swift; sourceTree = "<group>"; };
+		CB6682D82E1E9DA300A27696 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		CBD4335B2E10FA4C002B153F /* NodePass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NodePass.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBD4335E2E10FA4C002B153F /* NodePassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodePassApp.swift; sourceTree = "<group>"; };
 		CBD433602E10FA4C002B153F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -110,6 +115,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB6682D52E1E90EA00A27696 /* CodeScanner in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +156,7 @@
 				CB6682C02E17F91A00A27696 /* Badge.swift */,
 				CB6682C22E17F9E100A27696 /* OutlinedBadge.swift */,
 				CB66829F2E172D2700A27696 /* LabeledTextField.swift */,
+				CB6682D62E1E990300A27696 /* QRCodeScannerView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -263,6 +270,7 @@
 			isa = PBXGroup;
 			children = (
 				CB6682CB2E189FAC00A27696 /* Localizable.xcstrings */,
+				CB6682D82E1E9DA300A27696 /* InfoPlist.xcstrings */,
 				CBD433712E111527002B153F /* NPCore.swift */,
 				CBD433722E11157B002B153F /* NPState.swift */,
 				CBD4336E2E1111DF002B153F /* Models */,
@@ -300,6 +308,7 @@
 			);
 			name = NodePass;
 			packageProductDependencies = (
+				CB6682D42E1E90EA00A27696 /* CodeScanner */,
 			);
 			productName = NodePass;
 			productReference = CBD4335B2E10FA4C002B153F /* NodePass.app */;
@@ -330,6 +339,9 @@
 			);
 			mainGroup = CBD433522E10FA4C002B153F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CB6682D32E1E90EA00A27696 /* XCRemoteSwiftPackageReference "CodeScanner" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CBD4335C2E10FA4C002B153F /* Products */;
 			projectDirPath = "";
@@ -347,6 +359,7 @@
 			files = (
 				CB6682CA2E1899A100A27696 /* AppIcon.icon in Resources */,
 				CBD433632E10FA4D002B153F /* Assets.xcassets in Resources */,
+				CB6682D92E1E9DA300A27696 /* InfoPlist.xcstrings in Resources */,
 				CB6682CC2E189FAC00A27696 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -393,6 +406,7 @@
 				CB6682772E1181C700A27696 /* NPState.swift in Sources */,
 				CB6682B92E17466000A27696 /* DirectForwardCardView.swift in Sources */,
 				CB6682832E1183EB00A27696 /* ErrorResponse.swift in Sources */,
+				CB6682D72E1E990D00A27696 /* QRCodeScannerView.swift in Sources */,
 				CB6682952E135C5B00A27696 /* ImplementationType.swift in Sources */,
 				CB66829C2E140CDE00A27696 /* InstanceStatus.swift in Sources */,
 				CB6682982E13FD5500A27696 /* ServiceCardView.swift in Sources */,
@@ -530,7 +544,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -539,8 +553,10 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NodePass/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NodePass;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSCameraUsageDescription = "NodePass needs your camera permission to scan QR code.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -579,7 +595,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -588,8 +604,10 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NodePass/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NodePass;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSCameraUsageDescription = "NodePass needs your camera permission to scan QR code.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -643,6 +661,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CB6682D32E1E90EA00A27696 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/CodeScanner.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CB6682D42E1E90EA00A27696 /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CB6682D32E1E90EA00A27696 /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CBD433532E10FA4C002B153F /* Project object */;
 }

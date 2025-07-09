@@ -10,7 +10,7 @@ import SwiftData
 
 @main
 struct NodePassApp: App {
-    private var state: NPState = .init()
+    let state: NPState = .init()
     
     var body: some Scene {
         WindowGroup {

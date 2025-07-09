@@ -11,10 +11,12 @@ import SwiftData
 struct EditServerView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
+    
     @Binding var server: Server?
     @State var name: String = ""
     @State var url: String = ""
     @State var key: String = ""
+    @State var isShowingScanner: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -43,13 +45,22 @@ struct EditServerView: View {
                         Text("Key Example: da101e32c7b8c296c8b0d08fca480edc")
                     }
                 }
+                
+#if os(iOS)
+                Section {
+                    Button {
+                        isShowingScanner = true
+                    } label: {
+                        Label("Scan QR Code", systemImage: "qrcode.viewfinder")
+                    }
+                }
+#endif
             }
             .formStyle(.grouped)
             .navigationTitle(server == nil ? "Add Server" : "Edit Server")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        self.server = nil
                         dismiss()
                     } label: {
                         Label("Cancel", systemImage: "xmark")
@@ -68,7 +79,6 @@ struct EditServerView: View {
                             context.insert(newServer)
                             self.server = newServer
                         }
-                        self.server = nil
                         dismiss()
                     } label: {
                         Label("Done", systemImage: "checkmark")
@@ -76,6 +86,11 @@ struct EditServerView: View {
                     .disabled(!isValidAPIURL(url) || key == "")
                 }
             }
+#if os(iOS)
+            .sheet(isPresented: $isShowingScanner) {
+                QRCodeScannerView(url: $url, key: $key)
+            }
+#endif
             .onAppear {
                 if let server {
                     name = server.name ?? ""

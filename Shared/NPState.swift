@@ -14,4 +14,7 @@ class NPState {
     
     var pathServices: NavigationPath = .init()
     var pathServers: NavigationPath = .init()
+    
+    var isShowEditServerSheet: Bool = false
+    var serverToEdit: Server?
 }

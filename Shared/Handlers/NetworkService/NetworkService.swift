@@ -137,7 +137,13 @@ final class NetworkService {
     private func buildURL(from endpoint: APIEndpoint) -> URL? {
         var components = URLComponents()
         components.scheme = endpoint.baseURL.scheme
-        components.host = endpoint.baseURL.host
+        
+        if let host = endpoint.baseURL.host, host.contains(":") && !host.hasPrefix("[") {
+            components.host = "[\(host)]"
+        } else {
+            components.host = endpoint.baseURL.host
+        }
+        
         components.port = endpoint.baseURL.port
         components.path = endpoint.baseURL.path + endpoint.path
         
