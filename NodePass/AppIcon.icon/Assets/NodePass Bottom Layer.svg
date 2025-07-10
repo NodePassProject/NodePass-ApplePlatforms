@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="450px" height="306px" viewBox="0 0 450 306" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>NodePass Bottom Layer</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="NodePass-Bottom-Layer" fill="#FFFFFF">
+            <circle id="Oval-RB" cx="393.5" cy="249.5" r="56.5"></circle>
+            <circle id="Oval-RT" cx="393.5" cy="56.5" r="56.5"></circle>
+            <circle id="Oval-LB" cx="56.5" cy="249.5" r="56.5"></circle>
+            <circle id="Oval-LT" cx="56.5" cy="56.5" r="56.5"></circle>
+            <rect id="Rectangle-R" x="369" y="106" width="50" height="94"></rect>
+            <rect id="Rectangle-L" x="31" y="106" width="50" height="94"></rect>
+            <rect id="Rectangle" transform="translate(225, 153) rotate(30) translate(-225, -153)" x="81" y="128" width="288" height="50"></rect>
+            <rect id="Rectangle" transform="translate(225, 153) rotate(-30) translate(-225, -153)" x="81" y="128" width="288" height="50"></rect>
+        </g>
+    </g>
+</svg>

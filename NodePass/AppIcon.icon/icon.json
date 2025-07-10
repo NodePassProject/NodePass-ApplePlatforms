@@ -4,35 +4,28 @@
   },
   "groups" : [
     {
+      "blend-mode" : "normal",
+      "blur-material" : null,
       "layers" : [
         {
-          "image-name" : "Oval.svg",
-          "name" : "Oval",
+          "blend-mode" : "normal",
+          "fill" : "automatic",
+          "glass" : true,
+          "image-name" : "NodePass Top Layer.svg",
+          "name" : "NodePass Top Layer",
           "position" : {
-            "scale" : 4,
+            "scale" : 1.5,
             "translation-in-points" : [
-              -140,
-              -2.25
+              0,
+              0
             ]
           }
-        }
-      ],
-      "shadow" : {
-        "kind" : "neutral",
-        "opacity" : 0.5
-      },
-      "translucency" : {
-        "enabled" : true,
-        "value" : 0.5
-      }
-    },
-    {
-      "layers" : [
+        },
         {
-          "image-name" : "Line.svg",
-          "name" : "Line",
+          "image-name" : "NodePass Bottom Layer.svg",
+          "name" : "NodePass Bottom Layer",
           "position" : {
-            "scale" : 3.5,
+            "scale" : 1.5,
             "translation-in-points" : [
               0,
               0
@@ -40,13 +33,14 @@
           }
         }
       ],
+      "lighting" : "individual",
       "shadow" : {
         "kind" : "neutral",
         "opacity" : 0.5
       },
       "translucency" : {
         "enabled" : true,
-        "value" : 0.5
+        "value" : 0.6
       }
     }
   ],
