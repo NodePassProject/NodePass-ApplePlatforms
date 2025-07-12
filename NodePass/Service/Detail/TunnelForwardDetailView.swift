@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct TunnelForwardDetailView: View {
+    @Environment(NPState.self) var state
+    
     let service: Service
     
     @Query private var servers: [Server]
@@ -38,12 +40,22 @@ struct TunnelForwardDetailView: View {
                     let addressesAndPorts = addressesAndPorts0
                     let queryParameters = queryParameters0
                     
-                    LabeledContent("Server") {
+                    HStack {
                         if let server {
-                            Text(server.name!)
+                            LabeledContent("Server") {
+                                Text(server.name!)
+                            }
+                            Button {
+                                state.tab = .servers
+                                state.pathServers.append(server)
+                            } label: {
+                                Image(systemName: "list.dash.header.rectangle")
+                            }
                         }
                         else {
-                            Text("Not on this device")
+                            LabeledContent("Server") {
+                                Text("Not on this device")
+                            }
                         }
                     }
                     LabeledContent("Listen Port") {
@@ -68,12 +80,22 @@ struct TunnelForwardDetailView: View {
                     let server = server1
                     let addressesAndPorts = addressesAndPorts1
                     
-                    LabeledContent("Server") {
+                    HStack {
                         if let server {
-                            Text(server.name!)
+                            LabeledContent("Server") {
+                                Text(server.name!)
+                            }
+                            Button {
+                                state.tab = .servers
+                                state.pathServers.append(server)
+                            } label: {
+                                Image(systemName: "list.dash.header.rectangle")
+                            }
                         }
                         else {
-                            Text("Not on this device")
+                            LabeledContent("Server") {
+                                Text("Not on this device")
+                            }
                         }
                     }
                     LabeledContent("Service Port") {

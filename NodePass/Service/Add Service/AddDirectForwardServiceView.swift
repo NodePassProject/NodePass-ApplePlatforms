@@ -91,7 +91,7 @@ struct AddDirectForwardServiceView: View {
                                 name: String(localized: "\(name) Relay"),
                                 type: .directForwardClient,
                                 position: 0,
-                                serverID: "",
+                                serverID: client?.id ?? "",
                                 instanceID: "",
                                 command: command
                             )
