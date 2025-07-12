@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CB1E97FF2E2262F600A175FD /* NATPassthroughDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E97FE2E2262E700A175FD /* NATPassthroughDetailView.swift */; };
+		CB1E98012E226C1E00A175FD /* DirectForwardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E98002E226C0F00A175FD /* DirectForwardDetailView.swift */; };
+		CB1E98032E226C2D00A175FD /* TunnelForwardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E98022E226C2300A175FD /* TunnelForwardDetailView.swift */; };
+		CB1E98052E2273E500A175FD /* CopiableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E98042E2273DE00A175FD /* CopiableModifier.swift */; };
 		CB6682762E1181C200A27696 /* NPCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433712E111527002B153F /* NPCore.swift */; };
 		CB6682772E1181C700A27696 /* NPState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433722E11157B002B153F /* NPState.swift */; };
 		CB6682782E1181CA00A27696 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433702E111275002B153F /* Server.swift */; };
@@ -57,6 +61,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CB1E97FE2E2262E700A175FD /* NATPassthroughDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NATPassthroughDetailView.swift; sourceTree = "<group>"; };
+		CB1E98002E226C0F00A175FD /* DirectForwardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectForwardDetailView.swift; sourceTree = "<group>"; };
+		CB1E98022E226C2300A175FD /* TunnelForwardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelForwardDetailView.swift; sourceTree = "<group>"; };
+		CB1E98042E2273DE00A175FD /* CopiableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopiableModifier.swift; sourceTree = "<group>"; };
 		CB6682702E11798200A27696 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		CB6682712E117D9200A27696 /* InstanceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceService.swift; sourceTree = "<group>"; };
 		CB6682722E117E2B00A27696 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
@@ -122,6 +130,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CB1E97FD2E2262DA00A175FD /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				CB1E97FE2E2262E700A175FD /* NATPassthroughDetailView.swift */,
+				CB1E98002E226C0F00A175FD /* DirectForwardDetailView.swift */,
+				CB1E98022E226C2300A175FD /* TunnelForwardDetailView.swift */,
+			);
+			path = Detail;
+			sourceTree = "<group>";
+		};
 		CB6682732E117E4800A27696 /* NetworkService */ = {
 			isa = PBXGroup;
 			children = (
@@ -167,6 +185,7 @@
 				CB6682A22E172F3800A27696 /* LoadingStateModifier.swift */,
 				CB6682A52E172F7D00A27696 /* RenamableAndDeletable.swift */,
 				CB6682BE2E17F54300A27696 /* EqualWidthModifier.swift */,
+				CB1E98042E2273DE00A175FD /* CopiableModifier.swift */,
 			);
 			path = "View Modifiers";
 			sourceTree = "<group>";
@@ -187,6 +206,7 @@
 				CB66828C2E12E1F100A27696 /* ServiceListView.swift */,
 				CB6682B52E1745FC00A27696 /* Card */,
 				CB6682A92E17340900A27696 /* Add Service */,
+				CB1E97FD2E2262DA00A175FD /* Detail */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -377,6 +397,7 @@
 				CB66827A2E1181D200A27696 /* APIEndpoint.swift in Sources */,
 				CB6682A32E172F3C00A27696 /* LoadingStateModifier.swift in Sources */,
 				CB6682D02E1DD9C700A27696 /* UpdateInstanceStatusAction.swift in Sources */,
+				CB1E98012E226C1E00A175FD /* DirectForwardDetailView.swift in Sources */,
 				CB6682782E1181CA00A27696 /* Server.swift in Sources */,
 				CB6682AE2E17345D00A27696 /* AddDirectForwardServiceView.swift in Sources */,
 				CB6682932E135B4500A27696 /* InstanceType.swift in Sources */,
@@ -389,18 +410,21 @@
 				CB6682A02E172D3200A27696 /* LabeledTextField.swift in Sources */,
 				CB6682A82E17300200A27696 /* LoadingState.swift in Sources */,
 				CB6682762E1181C200A27696 /* NPCore.swift in Sources */,
+				CB1E97FF2E2262F600A175FD /* NATPassthroughDetailView.swift in Sources */,
 				CB66828D2E12E1F900A27696 /* ServiceListView.swift in Sources */,
 				CB6682B72E17461D00A27696 /* NATPassthroughCardView.swift in Sources */,
 				CB6682B02E17348400A27696 /* AddTunnelForwardServiceView.swift in Sources */,
 				CB66828B2E12DB9800A27696 /* EditServerView.swift in Sources */,
 				CB66828F2E12E22B00A27696 /* Service.swift in Sources */,
 				CB66827B2E1181D600A27696 /* HTTPMethod.swift in Sources */,
+				CB1E98032E226C2D00A175FD /* TunnelForwardDetailView.swift in Sources */,
 				CB66829E2E154FDA00A27696 /* AddNATPassthroughServiceView.swift in Sources */,
 				CBD4335F2E10FA4C002B153F /* NodePassApp.swift in Sources */,
 				CB66827C2E1181DA00A27696 /* NetworkError.swift in Sources */,
 				CB6682C12E17F91B00A27696 /* Badge.swift in Sources */,
 				CB6682872E12B60700A27696 /* InstanceListView.swift in Sources */,
 				CB6682C72E17FD0400A27696 /* EmptyResponse.swift in Sources */,
+				CB1E98052E2273E500A175FD /* CopiableModifier.swift in Sources */,
 				CB6682792E1181CE00A27696 /* Instance.swift in Sources */,
 				CB6682892E12B74100A27696 /* ServerListView.swift in Sources */,
 				CB6682772E1181C700A27696 /* NPState.swift in Sources */,
@@ -542,9 +566,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -593,9 +618,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;

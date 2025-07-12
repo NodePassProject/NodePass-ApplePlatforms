@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct ServiceListView: View {
+    @Environment(NPState.self) var state
     @Environment(\.colorScheme) private var scheme
     @Environment(\.modelContext) private var context
     @Query(sort: \Service.timestamp) private var services: [Service]
@@ -87,6 +88,19 @@ struct ServiceListView: View {
 #endif
         }
         .navigationTitle("Services")
+        .navigationDestination(for: Service.self) { service in
+            switch(service.type) {
+            case .natPassthrough:
+                NATPassthroughDetailView(service: service)
+            case .directForward:
+                DirectForwardDetailView(service: service)
+            case .tunnelForward:
+                TunnelForwardDetailView(service: service)
+            case .none:
+                Image(systemName: "exclamationmark.circle")
+                    .foregroundStyle(.red)
+            }
+        }
         .searchable(text: $searchText, placement: .toolbar)
         .toolbar {
             ToolbarItem {
@@ -144,6 +158,9 @@ struct ServiceListView: View {
         LazyVGrid(columns: columns, spacing: 10) {
             ForEach(filteredServices) { service in
                 ServiceCardView(service: service)
+                    .onTapGesture {
+                        state.pathServices.append(service)
+                    }
                     .contextMenu {
                         Button(role: .destructive) {
                             serviceToDelete = service

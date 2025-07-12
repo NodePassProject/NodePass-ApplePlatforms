@@ -213,6 +213,26 @@
         }
       }
     },
+    "Command URL" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "命令URL"
+          }
+        }
+      }
+    },
+    "Copy" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制"
+          }
+        }
+      }
+    },
     "Delete" : {
       "localizations" : {
         "zh-Hans" : {
@@ -439,6 +459,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无服务"
+          }
+        }
+      }
+    },
+    "Not on this device" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不在此设备上"
           }
         }
       }
@@ -693,6 +723,16 @@
         }
       }
     },
+    "TLS Level" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TLS等级"
+          }
+        }
+      }
+    },
     "To add a server, tap the add server icon in the toolbar." : {
       "localizations" : {
         "en" : {
@@ -879,6 +919,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你将要删除这个服务。这个操作不可逆。你确定吗？"
+          }
+        }
+      }
+    },
+    "You Should Connect To" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你应该连接到"
           }
         }
       }

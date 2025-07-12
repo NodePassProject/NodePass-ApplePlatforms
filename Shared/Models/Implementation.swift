@@ -21,7 +21,7 @@ class Implementation {
     var service: Service?
     
     init(name: String, type: ImplementationType, position: Int, serverID: String, instanceID: String, command: String) {
-        self.id = UUID().uuidString
+        self.id = "\(serverID)\(instanceID)\(command)"
         self.name = name
         self.type = type
         self.position = position
