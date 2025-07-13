@@ -104,6 +104,8 @@ struct NATPassthroughDetailView: View {
                     }
                     LabeledContent("Command URL") {
                         Text(implementation.command!)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
                     }
                     .copiable(string: implementation.command!)
                 }

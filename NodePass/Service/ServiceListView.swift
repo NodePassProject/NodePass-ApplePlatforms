@@ -29,6 +29,10 @@ struct ServiceListView: View {
     @State private var isShowAddDirectForwardSheet: Bool = false
     @State private var isShowAddTunnelForwardSheet: Bool = false
     
+    @State private var isShowRenameServiceAlert: Bool = false
+    @State private var serviceToRename: Service?
+    @State private var newNameOfService: String = ""
+    
     @State private var isShowDeleteServiceAlert: Bool = false
     @State private var serviceToDelete: Service?
     
@@ -116,6 +120,15 @@ struct ServiceListView: View {
         .sheet(isPresented: $isShowAddTunnelForwardSheet) {
             AddTunnelForwardServiceView()
         }
+        .alert("Rename Service", isPresented: $isShowRenameServiceAlert) {
+            TextField("Name", text: $newNameOfService)
+            Button("OK") {
+                serviceToRename!.name = newNameOfService
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Enter a new name for the service.")
+        }
         .alert("Delete Service", isPresented: $isShowDeleteServiceAlert) {
             Button("Delete", role: .destructive) {
                 deleteService(service: serviceToDelete!)
@@ -162,6 +175,14 @@ struct ServiceListView: View {
                         state.pathServices.append(service)
                     }
                     .contextMenu {
+                        Button {
+                            serviceToRename = service
+                            newNameOfService = service.name!
+                            isShowRenameServiceAlert = true
+                        } label: {
+                            Label("Rename", systemImage: "pencil")
+                        }
+                        
                         Button(role: .destructive) {
                             serviceToDelete = service
                             isShowDeleteServiceAlert = true

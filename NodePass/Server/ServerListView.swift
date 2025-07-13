@@ -68,13 +68,42 @@ struct ServerListView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                .editableAndDeletable(editAction: {
-                    state.editServerSheetMode = .editing
-                    state.editServerSheetServer = server
-                    state.isShowEditServerSheet = true
-                }, deleteAction: {
-                    context.delete(server)
-                })
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        context.delete(server)
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                    
+                    Button {
+                        state.editServerSheetMode = .editing
+                        state.editServerSheetServer = server
+                        state.isShowEditServerSheet = true
+                    } label: {
+                        Label("Edit", systemImage: "pencil")
+                    }
+                }
+                .contextMenu {
+                    Button {
+                        state.editServerSheetMode = .editing
+                        state.editServerSheetServer = server
+                        state.isShowEditServerSheet = true
+                    } label: {
+                        Label("Edit", systemImage: "pencil")
+                    }
+                    
+                    let base64EncodedURL = server.url!.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
+                    let base64EncodedKey = server.key!.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
+                    ShareLink(item: "np://master?url=\(base64EncodedURL)&key=\(base64EncodedKey)") {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                    }
+                    
+                    Button(role: .destructive) {
+                        context.delete(server)
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
             }
         }
         .formStyle(.grouped)

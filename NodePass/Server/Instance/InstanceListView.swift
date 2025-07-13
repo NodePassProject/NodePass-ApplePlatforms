@@ -29,7 +29,7 @@ struct InstanceListView: View {
 #if os(iOS)
         .listRowSpacing(5)
 #endif
-        .navigationTitle(server.name!)
+        .navigationTitle("\(server.name!)'s Instances")
         .loadingState(loadingState: loadingState) {
             loadingState = .loading
             listInstances()

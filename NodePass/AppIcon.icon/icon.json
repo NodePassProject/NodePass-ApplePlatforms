@@ -9,8 +9,6 @@
       "layers" : [
         {
           "blend-mode" : "normal",
-          "fill" : "automatic",
-          "glass" : true,
           "image-name" : "NodePass Top Layer.svg",
           "name" : "NodePass Top Layer",
           "position" : {

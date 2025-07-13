@@ -37,7 +37,7 @@
 		CB66829E2E154FDA00A27696 /* AddNATPassthroughServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB66829D2E154FD200A27696 /* AddNATPassthroughServiceView.swift */; };
 		CB6682A02E172D3200A27696 /* LabeledTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB66829F2E172D2700A27696 /* LabeledTextField.swift */; };
 		CB6682A32E172F3C00A27696 /* LoadingStateModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682A22E172F3800A27696 /* LoadingStateModifier.swift */; };
-		CB6682A62E172F7F00A27696 /* RenamableAndDeletable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682A52E172F7D00A27696 /* RenamableAndDeletable.swift */; };
+		CB6682A62E172F7F00A27696 /* EditableAndDeletable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682A52E172F7D00A27696 /* EditableAndDeletable.swift */; };
 		CB6682A82E17300200A27696 /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682A72E172FFE00A27696 /* LoadingState.swift */; };
 		CB6682AE2E17345D00A27696 /* AddDirectForwardServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682AD2E17345200A27696 /* AddDirectForwardServiceView.swift */; };
 		CB6682B02E17348400A27696 /* AddTunnelForwardServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682AF2E17348300A27696 /* AddTunnelForwardServiceView.swift */; };
@@ -88,7 +88,7 @@
 		CB66829D2E154FD200A27696 /* AddNATPassthroughServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNATPassthroughServiceView.swift; sourceTree = "<group>"; };
 		CB66829F2E172D2700A27696 /* LabeledTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledTextField.swift; sourceTree = "<group>"; };
 		CB6682A22E172F3800A27696 /* LoadingStateModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingStateModifier.swift; sourceTree = "<group>"; };
-		CB6682A52E172F7D00A27696 /* RenamableAndDeletable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenamableAndDeletable.swift; sourceTree = "<group>"; };
+		CB6682A52E172F7D00A27696 /* EditableAndDeletable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableAndDeletable.swift; sourceTree = "<group>"; };
 		CB6682A72E172FFE00A27696 /* LoadingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingState.swift; sourceTree = "<group>"; };
 		CB6682AD2E17345200A27696 /* AddDirectForwardServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDirectForwardServiceView.swift; sourceTree = "<group>"; };
 		CB6682AF2E17348300A27696 /* AddTunnelForwardServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTunnelForwardServiceView.swift; sourceTree = "<group>"; };
@@ -183,7 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				CB6682A22E172F3800A27696 /* LoadingStateModifier.swift */,
-				CB6682A52E172F7D00A27696 /* RenamableAndDeletable.swift */,
+				CB6682A52E172F7D00A27696 /* EditableAndDeletable.swift */,
 				CB6682BE2E17F54300A27696 /* EqualWidthModifier.swift */,
 				CB1E98042E2273DE00A175FD /* CopiableModifier.swift */,
 			);
@@ -404,7 +404,7 @@
 				CBD433612E10FA4C002B153F /* ContentView.swift in Sources */,
 				CB6682912E135A4400A27696 /* Implementation.swift in Sources */,
 				CB6682C52E17FAA800A27696 /* InstanceCardView.swift in Sources */,
-				CB6682A62E172F7F00A27696 /* RenamableAndDeletable.swift in Sources */,
+				CB6682A62E172F7F00A27696 /* EditableAndDeletable.swift in Sources */,
 				CB66827E2E1181E300A27696 /* InstanceService.swift in Sources */,
 				CB6682812E1183BC00A27696 /* APIResponse.swift in Sources */,
 				CB6682A02E172D3200A27696 /* LabeledTextField.swift in Sources */,
@@ -569,7 +569,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -621,7 +621,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;

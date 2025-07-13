@@ -32,7 +32,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 目标"
+            "value" : "%@目标"
           }
         }
       }
@@ -42,7 +42,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 本地"
+            "value" : "%@本地"
           }
         }
       }
@@ -52,7 +52,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 新服务器"
+            "value" : "%@新服务器"
           }
         }
       }
@@ -62,7 +62,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 中转"
+            "value" : "%@中转"
           }
         }
       }
@@ -72,7 +72,17 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 公网"
+            "value" : "%@公网"
+          }
+        }
+      }
+    },
+    "%@'s Instances" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@的实例"
           }
         }
       }
@@ -323,6 +333,16 @@
         }
       }
     },
+    "Enter a new name for the service." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为此服务输入新名称。"
+          }
+        }
+      }
+    },
     "Error" : {
       "localizations" : {
         "zh-Hans" : {
@@ -563,6 +583,26 @@
         }
       }
     },
+    "Rename" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新命名"
+          }
+        }
+      }
+    },
+    "Rename Service" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新命名服务"
+          }
+        }
+      }
+    },
     "Restart" : {
       "localizations" : {
         "zh-Hans" : {
@@ -669,6 +709,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "服务"
+          }
+        }
+      }
+    },
+    "Share" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享"
           }
         }
       }
