@@ -31,7 +31,7 @@ struct TunnelForwardDetailView: View {
                     Section("You Should Connect To") {
                         Text(connectionString)
                     }
-                    .copiable(string: connectionString)
+                    .copiable(connectionString)
                 }
                 
                 Section("Relay Server") {
@@ -72,7 +72,7 @@ struct TunnelForwardDetailView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                     }
-                    .copiable(string: implementation.command!)
+                    .copiable(implementation.command!)
                 }
                 
                 Section("Destination Server") {
@@ -109,7 +109,7 @@ struct TunnelForwardDetailView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                     }
-                    .copiable(string: implementation.command!)
+                    .copiable(implementation.command!)
                 }
             }
             .navigationTitle(service.name!)

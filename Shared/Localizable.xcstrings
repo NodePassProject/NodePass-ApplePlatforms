@@ -143,6 +143,9 @@
         }
       }
     },
+    "Add Instance" : {
+
+    },
     "Add NAT Passthrough" : {
       "localizations" : {
         "zh-Hans" : {
@@ -209,6 +212,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "发生错误"
+          }
+        }
+      }
+    },
+    "As NodePass Server" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作为NodePass Server"
+          }
+        }
+      }
+    },
+    "As NodePass Server: If on, destination server receives tunnel requests from relay server." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作为NodePass Server：如果启用，目标服务器接收来自中转服务器的隧道请求。"
+          }
+        }
+      }
+    },
+    "As NodePass Server: If on, relay server receives tunnel requests from destination server." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作为NodePass Server：如果启用，中转服务器接收来自目标服务器的隧道请求。"
           }
         }
       }
@@ -342,6 +375,9 @@
           }
         }
       }
+    },
+    "Enter URL for the new instance." : {
+
     },
     "Error" : {
       "localizations" : {

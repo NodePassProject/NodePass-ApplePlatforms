@@ -14,18 +14,20 @@ struct AddTunnelForwardServiceView: View {
     @Query(sort: \Server.timestamp) private var servers: [Server]
     
     @State private var name: String = ""
-    @State private var server: Server?
-    @State private var serverConnectPort: String = ""
-    @State private var serverTunnelPort: String = ""
-    @State private var client: Server?
-    @State private var clientServicePort: String = ""
+    @State private var relayServer: Server?
+    @State private var relayServerConnectPort: String = ""
+    @State private var destinationServer: Server?
+    @State private var destinationServerServicePort: String = ""
+    @State private var tunnelPort: String = ""
+    @State private var isRelayServerAsNPServer: Bool = true
+    @State private var isDestinationServerAsNPServer: Bool = false
     @State private var isTLS: Bool = false
     
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
     @State private var isShowAddServerSheet: Bool = false
-    @State private var isAddingServer: Bool = false
-    @State private var isAddingClient: Bool = false
+    @State private var isAddingRelayServer: Bool = false
+    @State private var isAddingDestinationServer: Bool = false
     @State private var newServer: Server?
     
     var body: some View {
@@ -36,7 +38,7 @@ struct AddTunnelForwardServiceView: View {
                 }
                 
                 Section {
-                    Picker("Server", selection: $server) {
+                    Picker("Server", selection: $relayServer) {
                         Text("Select")
                             .tag(nil as Server?)
                         ForEach(servers) { server in
@@ -44,14 +46,20 @@ struct AddTunnelForwardServiceView: View {
                                 .tag(server)
                         }
                     }
-                    LabeledTextField("Listen Port", prompt: "10022", text: $serverConnectPort, isNumberOnly: true)
-                    LabeledTextField("Tunnel Port", prompt: "10101", text: $serverTunnelPort, isNumberOnly: true)
+                    LabeledTextField("Listen Port", prompt: "10022", text: $relayServerConnectPort, isNumberOnly: true)
+                    Toggle("As NodePass Server", isOn: $isRelayServerAsNPServer)
+                        .onChange(of: isRelayServerAsNPServer) { _, newValue in
+                            isDestinationServerAsNPServer = !newValue
+                        }
+                    if isRelayServerAsNPServer {
+                        LabeledTextField("Tunnel Port", prompt: "10101", text: $tunnelPort, isNumberOnly: true)
+                    }
                 } header: {
                     HStack {
                         Text("Relay Server")
                         Spacer()
                         Button {
-                            isAddingServer = true
+                            isAddingRelayServer = true
                             isShowAddServerSheet = true
                         } label: {
                             Text("\(Image(systemName: "plus")) New Server")
@@ -62,12 +70,15 @@ struct AddTunnelForwardServiceView: View {
                     VStack(alignment: .leading) {
                         Text("Relay Server: Server you want to use as a relay.")
                         Text("Listen Port: Port you use to connect to the relay server.")
-                        Text("Tunnel Port: Any available port.")
+                        Text("As NodePass Server: If on, relay server receives tunnel requests from destination server.")
+                        if isRelayServerAsNPServer {
+                            Text("Tunnel Port: Any available port.")
+                        }
                     }
                 }
                 
                 Section {
-                    Picker("Server", selection: $client) {
+                    Picker("Server", selection: $destinationServer) {
                         Text("Select")
                             .tag(nil as Server?)
                         ForEach(servers) { server in
@@ -75,13 +86,20 @@ struct AddTunnelForwardServiceView: View {
                                 .tag(server)
                         }
                     }
-                    LabeledTextField("Service Port", prompt: "1080", text: $clientServicePort, isNumberOnly: true)
+                    LabeledTextField("Service Port", prompt: "1080", text: $destinationServerServicePort, isNumberOnly: true)
+                    Toggle("As NodePass Server", isOn: $isDestinationServerAsNPServer)
+                        .onChange(of: isDestinationServerAsNPServer) { _, newValue in
+                            isRelayServerAsNPServer = !newValue
+                        }
+                    if isDestinationServerAsNPServer {
+                        LabeledTextField("Tunnel Port", prompt: "10101", text: $tunnelPort, isNumberOnly: true)
+                    }
                 } header: {
                     HStack {
                         Text("Destination Server")
                         Spacer()
                         Button {
-                            isAddingClient = true
+                            isAddingDestinationServer = true
                             isShowAddServerSheet = true
                         } label: {
                             Text("\(Image(systemName: "plus")) New Server")
@@ -92,6 +110,10 @@ struct AddTunnelForwardServiceView: View {
                     VStack(alignment: .leading) {
                         Text("Destination Server: Server you want your traffic to relay to.")
                         Text("Service Port: Port on which your service like Socks5(1080) is running.")
+                        Text("As NodePass Server: If on, destination server receives tunnel requests from relay server.")
+                        if isDestinationServerAsNPServer {
+                            Text("Tunnel Port: Any available port.")
+                        }
                     }
                 }
                 
@@ -102,12 +124,9 @@ struct AddTunnelForwardServiceView: View {
                 }
                 
                 Section("Preview") {
-                    let serverConnectPort = Int(serverConnectPort) ?? 10022
-                    let serverTunnelPort = Int(serverTunnelPort) ?? 10101
-                    let clientServicePort = Int(clientServicePort) ?? 1080
-                    
-                    let serverCommand = "server://:\(serverTunnelPort)/:\(serverConnectPort)?log=warn&tls=\(isTLS ? "1" : "0")"
-                    let clientCommand = "client://\(server?.getHost() ?? ""):\(serverTunnelPort)/127.0.0.1:\(clientServicePort)?log=warn"
+                    let commands = generateCommands()
+                    let relayServerCommand = commands.relayServerCommand
+                    let destinationServerCommand = commands.destinationServerCommand
                     
                     let name = NPCore.noEmptyName(name)
                     let previewService = Service(
@@ -118,17 +137,17 @@ struct AddTunnelForwardServiceView: View {
                                 name: String(localized: "\(name) Relay"),
                                 type: .tunnelForwardServer,
                                 position: 0,
-                                serverID: server?.id ?? "",
+                                serverID: relayServer?.id ?? "",
                                 instanceID: "",
-                                command: serverCommand
+                                command: relayServerCommand
                             ),
                             Implementation(
                                 name: String(localized: "\(name) Destination"),
                                 type: .tunnelForwardClient,
                                 position: 1,
-                                serverID: client?.id ?? "",
+                                serverID: destinationServer?.id ?? "",
                                 instanceID: "",
-                                command: clientCommand
+                                command: destinationServerCommand
                             )
                         ]
                     )
@@ -140,11 +159,11 @@ struct AddTunnelForwardServiceView: View {
                 Section {
                     Button("Sample") {
                         name = "Sample Tunnel Forward"
-                        server = servers.first
-                        serverConnectPort = "60001"
-                        serverTunnelPort = "60002"
-                        client = servers.first
-                        clientServicePort = "60003"
+                        relayServer = servers.first
+                        relayServerConnectPort = "60001"
+                        destinationServer = servers.first
+                        destinationServerServicePort = "60003"
+                        tunnelPort = "60002"
                     }
                 }
 #endif
@@ -166,7 +185,7 @@ struct AddTunnelForwardServiceView: View {
                     } label: {
                         Label("Done", systemImage: "checkmark")
                     }
-                    .disabled(server == nil || client == nil)
+                    .disabled(relayServer == nil || destinationServer == nil)
                 }
             }
             .alert("Error", isPresented: $isShowErrorAlert) {
@@ -175,11 +194,11 @@ struct AddTunnelForwardServiceView: View {
                 Text(errorMessage)
             }
             .sheet(isPresented: $isShowAddServerSheet) {
-                if isAddingServer {
-                    server = newServer
+                if isAddingRelayServer {
+                    relayServer = newServer
                 }
-                if isAddingClient {
-                    client = newServer
+                if isAddingDestinationServer {
+                    destinationServer = newServer
                 }
             } content: {
                 EditServerView(server: $newServer)
@@ -187,28 +206,61 @@ struct AddTunnelForwardServiceView: View {
         }
     }
     
-    private func execute() {
-        let serverConnectPort = Int(serverConnectPort) ?? 10022
-        let serverTunnelPort = Int(serverTunnelPort) ?? 10101
-        let clientServicePort = Int(clientServicePort) ?? 1080
+    private func generateCommands() -> (relayServerCommand: String, destinationServerCommand: String) {
+        let relayServerConnectPort = Int(relayServerConnectPort) ?? 10022
+        let destinationServerServicePort = Int(destinationServerServicePort) ?? 1080
+        let tunnelPort = Int(tunnelPort) ?? 10101
         
-        let serverCommand = "server://:\(serverTunnelPort)/:\(serverConnectPort)?log=warn&tls=\(isTLS ? "1" : "0")"
-        let clientCommand = "client://\(server!.getHost()):\(serverTunnelPort)/127.0.0.1:\(clientServicePort)?log=warn"
+        var relayServerCommand: String
+        if isRelayServerAsNPServer {
+            relayServerCommand = "server://:\(tunnelPort)/:\(relayServerConnectPort)"
+        }
+        else {
+            relayServerCommand = "client://\(destinationServer?.getHost() ?? ""):\(tunnelPort)/:\(relayServerConnectPort)"
+        }
+        relayServerCommand += "?"
+        relayServerCommand += "log=warn"
+        if isRelayServerAsNPServer {
+            relayServerCommand += "&"
+            relayServerCommand += isTLS ? "tls=1" : "tls=0"
+        }
+        
+        var destinationServerCommand: String
+        if isDestinationServerAsNPServer {
+            destinationServerCommand = "server://:\(tunnelPort)/127.0.0.1:\(destinationServerServicePort)"
+        }
+        else {
+            destinationServerCommand = "client://\(relayServer?.getHost() ?? ""):\(tunnelPort)/127.0.0.1:\(destinationServerServicePort)"
+        }
+        destinationServerCommand += "?"
+        destinationServerCommand += "log=warn"
+        if isDestinationServerAsNPServer {
+            destinationServerCommand += "&"
+            destinationServerCommand += isTLS ? "tls=1" : "tls=0"
+        }
+        
+        return (relayServerCommand: relayServerCommand, destinationServerCommand: destinationServerCommand)
+    }
+    
+    private func execute() {
+        let commands = generateCommands()
+        let relayServerCommand = commands.relayServerCommand
+        let destinationServerCommand = commands.destinationServerCommand
 
         Task {
             do {
-                let serverInstanceService = InstanceService()
-                let serverInstance = try await serverInstanceService.createInstance(
-                    baseURLString: server!.url!,
-                    apiKey: server!.key!,
-                    url: serverCommand
+                let relayServerInstanceService = InstanceService()
+                let relayServerInstance = try await relayServerInstanceService.createInstance(
+                    baseURLString: relayServer!.url!,
+                    apiKey: relayServer!.key!,
+                    url: relayServerCommand
                 )
                 
-                let clientInstanceService = InstanceService()
-                let clientInstance = try await clientInstanceService.createInstance(
-                    baseURLString: client!.url!,
-                    apiKey: client!.key!,
-                    url: clientCommand
+                let destinationServerInstanceService = InstanceService()
+                let destinationServerInstance = try await destinationServerInstanceService.createInstance(
+                    baseURLString: destinationServer!.url!,
+                    apiKey: destinationServer!.key!,
+                    url: destinationServerCommand
                 )
                 
                 let name = NPCore.noEmptyName(name)
@@ -220,17 +272,17 @@ struct AddTunnelForwardServiceView: View {
                             name: String(localized: "\(name) Relay"),
                             type: .tunnelForwardServer,
                             position: 0,
-                            serverID: server!.id!,
-                            instanceID: serverInstance.id,
-                            command: serverCommand
+                            serverID: relayServer!.id!,
+                            instanceID: relayServerInstance.id,
+                            command: relayServerCommand
                         ),
                         Implementation(
                             name: String(localized: "\(name) Destination"),
                             type: .tunnelForwardClient,
                             position: 1,
-                            serverID: client!.id!,
-                            instanceID: clientInstance.id,
-                            command: clientCommand
+                            serverID: destinationServer!.id!,
+                            instanceID: destinationServerInstance.id,
+                            command: destinationServerCommand
                         )
                     ]
                 )

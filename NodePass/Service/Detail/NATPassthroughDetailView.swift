@@ -31,7 +31,7 @@ struct NATPassthroughDetailView: View {
                     Section("You Should Connect To") {
                         Text(connectionString)
                     }
-                    .copiable(string: connectionString)
+                    .copiable(connectionString)
                 }
                 
                 Section("Remote Server (with Public IP)") {
@@ -70,7 +70,7 @@ struct NATPassthroughDetailView: View {
                     LabeledContent("Command URL") {
                         Text(implementation.command!)
                     }
-                    .copiable(string: implementation.command!)
+                    .copiable(implementation.command!)
                 }
                 
                 Section("Local Server (Behind NAT)") {
@@ -107,7 +107,7 @@ struct NATPassthroughDetailView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                     }
-                    .copiable(string: implementation.command!)
+                    .copiable(implementation.command!)
                 }
             }
             .navigationTitle(service.name!)

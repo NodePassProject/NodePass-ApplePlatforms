@@ -13,6 +13,9 @@ struct InstanceListView: View {
     var server: Server
     @State var instances: [Instance] = []
     
+    @State private var isShowAddInstanceAlert: Bool = false
+    @State private var commandOfNewInstance: String = ""
+    
     @State private var isShowDeleteInstanceAlert: Bool = false
     @State private var instanceToDelete: Instance?
     
@@ -30,6 +33,15 @@ struct InstanceListView: View {
         .listRowSpacing(5)
 #endif
         .navigationTitle("\(server.name!)'s Instances")
+        .toolbar {
+            ToolbarItem {
+                Button {
+                    isShowAddInstanceAlert = true
+                } label: {
+                    Label("Add Instance", systemImage: "plus")
+                }
+            }
+        }
         .loadingState(loadingState: loadingState) {
             loadingState = .loading
             listInstances()
@@ -37,6 +49,15 @@ struct InstanceListView: View {
         .onAppear {
             loadingState = .loading
             listInstances()
+        }
+        .alert("Add Instance", isPresented: $isShowAddInstanceAlert) {
+            TextField("URL", text: $commandOfNewInstance)
+            Button("Add") {
+                addInstance()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Enter URL for the new instance.")
         }
         .alert("Delete Instance", isPresented: $isShowDeleteInstanceAlert) {
             Button("Delete", role: .destructive) {
@@ -59,14 +80,6 @@ struct InstanceListView: View {
     @ViewBuilder
     private func instanceCardView(instance: Instance) -> some View {
         InstanceCardView(instance: instance)
-            .swipeActions(edge: .trailing) {
-                Button(role: .destructive) {
-                    instanceToDelete = instance
-                    isShowDeleteInstanceAlert = true
-                } label: {
-                    Label("Delete", systemImage: "trash")
-                }
-            }
             .contextMenu {
 #if os(iOS)
                 ControlGroup {
@@ -107,6 +120,12 @@ struct InstanceListView: View {
                 }
 #endif
                 Divider()
+                Button {
+                    NPUI.copyToClipboard(instance.url)
+                } label: {
+                    Label("Copy", systemImage: "document.on.document")
+                }
+                Divider()
                 Button(role: .destructive) {
                     instanceToDelete = instance
                     isShowDeleteInstanceAlert = true
@@ -126,6 +145,27 @@ struct InstanceListView: View {
             }
             catch {
                 loadingState = .error("Error Listing Instances: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func addInstance() {
+        Task {
+            let instanceService = InstanceService()
+            do {
+                _ = try await instanceService.createInstance(
+                    baseURLString: server.url!,
+                    apiKey: server.key!,
+                    url: commandOfNewInstance
+                )
+                listInstances()
+            } catch {
+#if DEBUG
+                print("Error Creating Instance: \(error.localizedDescription)")
+#endif
+                
+                errorMessage = error.localizedDescription
+                isShowErrorAlert = true
             }
         }
     }

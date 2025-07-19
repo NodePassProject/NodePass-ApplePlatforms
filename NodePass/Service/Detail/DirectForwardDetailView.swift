@@ -27,7 +27,7 @@ struct DirectForwardDetailView: View {
                     Section("You Should Connect To") {
                         Text(connectionString)
                     }
-                    .copiable(string: connectionString)
+                    .copiable(connectionString)
                 }
                 
                 Section("Relay Server") {
@@ -57,7 +57,7 @@ struct DirectForwardDetailView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                     }
-                    .copiable(string: implementation.command!)
+                    .copiable(implementation.command!)
                 }
                 
                 Section("Destination Server") {
@@ -66,7 +66,7 @@ struct DirectForwardDetailView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                     }
-                    .copiable(string: addressesAndPorts.destination.address)
+                    .copiable(addressesAndPorts.destination.address)
                     LabeledContent("Port") {
                         Text(addressesAndPorts.destination.port)
                     }

@@ -11,6 +11,7 @@
 		CB1E98012E226C1E00A175FD /* DirectForwardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E98002E226C0F00A175FD /* DirectForwardDetailView.swift */; };
 		CB1E98032E226C2D00A175FD /* TunnelForwardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E98022E226C2300A175FD /* TunnelForwardDetailView.swift */; };
 		CB1E98052E2273E500A175FD /* CopiableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E98042E2273DE00A175FD /* CopiableModifier.swift */; };
+		CB62C0812E2B90BA00919507 /* NPUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB62C0802E2B90B800919507 /* NPUI.swift */; };
 		CB6682762E1181C200A27696 /* NPCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433712E111527002B153F /* NPCore.swift */; };
 		CB6682772E1181C700A27696 /* NPState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433722E11157B002B153F /* NPState.swift */; };
 		CB6682782E1181CA00A27696 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433702E111275002B153F /* Server.swift */; };
@@ -65,6 +66,7 @@
 		CB1E98002E226C0F00A175FD /* DirectForwardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectForwardDetailView.swift; sourceTree = "<group>"; };
 		CB1E98022E226C2300A175FD /* TunnelForwardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelForwardDetailView.swift; sourceTree = "<group>"; };
 		CB1E98042E2273DE00A175FD /* CopiableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopiableModifier.swift; sourceTree = "<group>"; };
+		CB62C0802E2B90B800919507 /* NPUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPUI.swift; sourceTree = "<group>"; };
 		CB6682702E11798200A27696 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		CB6682712E117D9200A27696 /* InstanceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceService.swift; sourceTree = "<group>"; };
 		CB6682722E117E2B00A27696 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
@@ -293,6 +295,7 @@
 				CB6682D82E1E9DA300A27696 /* InfoPlist.xcstrings */,
 				CBD433712E111527002B153F /* NPCore.swift */,
 				CBD433722E11157B002B153F /* NPState.swift */,
+				CB62C0802E2B90B800919507 /* NPUI.swift */,
 				CBD4336E2E1111DF002B153F /* Models */,
 				CBD4336A2E11114B002B153F /* Handlers */,
 			);
@@ -425,6 +428,7 @@
 				CB6682872E12B60700A27696 /* InstanceListView.swift in Sources */,
 				CB6682C72E17FD0400A27696 /* EmptyResponse.swift in Sources */,
 				CB1E98052E2273E500A175FD /* CopiableModifier.swift in Sources */,
+				CB62C0812E2B90BA00919507 /* NPUI.swift in Sources */,
 				CB6682792E1181CE00A27696 /* Instance.swift in Sources */,
 				CB6682892E12B74100A27696 /* ServerListView.swift in Sources */,
 				CB6682772E1181C700A27696 /* NPState.swift in Sources */,
@@ -569,7 +573,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -621,7 +625,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;

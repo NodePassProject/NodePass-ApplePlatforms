@@ -14,13 +14,7 @@ struct CopiableModifier: ViewModifier {
         content
             .contextMenu {
                 Button {
-#if os(iOS) || os(visionOS)
-                    UIPasteboard.general.string = string
-#endif
-#if os(macOS)
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(string, forType: .string)
-#endif
+                    NPUI.copyToClipboard(string)
                 } label: {
                     Label("Copy", systemImage: "document.on.document")
                 }
@@ -29,7 +23,7 @@ struct CopiableModifier: ViewModifier {
 }
 
 extension View {
-    func copiable(string: String) -> some View {
+    func copiable(_ string: String) -> some View {
         modifier(CopiableModifier(string: string))
     }
 }
