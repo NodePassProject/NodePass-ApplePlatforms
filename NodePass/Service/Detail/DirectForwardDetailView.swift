@@ -72,6 +72,7 @@ struct DirectForwardDetailView: View {
                     }
                 }
             }
+            .formStyle(.grouped)
             .navigationTitle(service.name!)
         }
         else {

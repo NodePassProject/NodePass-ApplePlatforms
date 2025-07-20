@@ -25,14 +25,14 @@ struct InstanceListView: View {
     var body: some View {
         Form {
             ForEach(instances.filter({ [.running, .stopped, .error].contains($0.status) })) { instance in
-                instanceCardView(instance: instance)
+                instanceCard(instance: instance)
             }
         }
         .formStyle(.grouped)
 #if os(iOS)
         .listRowSpacing(5)
 #endif
-        .navigationTitle("\(server.name!)'s Instances")
+        .navigationTitle(server.name!)
         .toolbar {
             ToolbarItem {
                 Button {
@@ -78,7 +78,7 @@ struct InstanceListView: View {
     }
     
     @ViewBuilder
-    private func instanceCardView(instance: Instance) -> some View {
+    private func instanceCard(instance: Instance) -> some View {
         InstanceCardView(instance: instance)
             .contextMenu {
 #if os(iOS)
@@ -123,7 +123,7 @@ struct InstanceListView: View {
                 Button {
                     NPUI.copyToClipboard(instance.url)
                 } label: {
-                    Label("Copy", systemImage: "document.on.document")
+                    Label("Copy URL", systemImage: "document.on.document")
                 }
                 Divider()
                 Button(role: .destructive) {

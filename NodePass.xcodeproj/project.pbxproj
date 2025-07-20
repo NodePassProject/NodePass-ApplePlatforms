@@ -12,6 +12,9 @@
 		CB1E98032E226C2D00A175FD /* TunnelForwardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E98022E226C2300A175FD /* TunnelForwardDetailView.swift */; };
 		CB1E98052E2273E500A175FD /* CopiableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E98042E2273DE00A175FD /* CopiableModifier.swift */; };
 		CB62C0812E2B90BA00919507 /* NPUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB62C0802E2B90B800919507 /* NPUI.swift */; };
+		CB62C0832E2BDB5500919507 /* ServerMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB62C0822E2BDB5000919507 /* ServerMetadata.swift */; };
+		CB62C0852E2CA09800919507 /* ServerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB62C0842E2CA08F00919507 /* ServerService.swift */; };
+		CB62C0882E2CAA6F00919507 /* Cache in Frameworks */ = {isa = PBXBuildFile; productRef = CB62C0872E2CAA6F00919507 /* Cache */; };
 		CB6682762E1181C200A27696 /* NPCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433712E111527002B153F /* NPCore.swift */; };
 		CB6682772E1181C700A27696 /* NPState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433722E11157B002B153F /* NPState.swift */; };
 		CB6682782E1181CA00A27696 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433702E111275002B153F /* Server.swift */; };
@@ -67,6 +70,8 @@
 		CB1E98022E226C2300A175FD /* TunnelForwardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelForwardDetailView.swift; sourceTree = "<group>"; };
 		CB1E98042E2273DE00A175FD /* CopiableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopiableModifier.swift; sourceTree = "<group>"; };
 		CB62C0802E2B90B800919507 /* NPUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPUI.swift; sourceTree = "<group>"; };
+		CB62C0822E2BDB5000919507 /* ServerMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerMetadata.swift; sourceTree = "<group>"; };
+		CB62C0842E2CA08F00919507 /* ServerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerService.swift; sourceTree = "<group>"; };
 		CB6682702E11798200A27696 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		CB6682712E117D9200A27696 /* InstanceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceService.swift; sourceTree = "<group>"; };
 		CB6682722E117E2B00A27696 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
@@ -126,6 +131,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB6682D52E1E90EA00A27696 /* CodeScanner in Frameworks */,
+				CB62C0882E2CAA6F00919507 /* Cache in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,6 +289,7 @@
 			isa = PBXGroup;
 			children = (
 				CB6682732E117E4800A27696 /* NetworkService */,
+				CB62C0842E2CA08F00919507 /* ServerService.swift */,
 				CB6682712E117D9200A27696 /* InstanceService.swift */,
 			);
 			path = Handlers;
@@ -309,6 +316,7 @@
 				CB66828E2E12E22900A27696 /* Service.swift */,
 				CB6682902E135A3100A27696 /* Implementation.swift */,
 				CBD433702E111275002B153F /* Server.swift */,
+				CB62C0822E2BDB5000919507 /* ServerMetadata.swift */,
 				CBD4336D2E11119E002B153F /* Instance.swift */,
 			);
 			path = Models;
@@ -332,6 +340,7 @@
 			name = NodePass;
 			packageProductDependencies = (
 				CB6682D42E1E90EA00A27696 /* CodeScanner */,
+				CB62C0872E2CAA6F00919507 /* Cache */,
 			);
 			productName = NodePass;
 			productReference = CBD4335B2E10FA4C002B153F /* NodePass.app */;
@@ -364,6 +373,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CB6682D32E1E90EA00A27696 /* XCRemoteSwiftPackageReference "CodeScanner" */,
+				CB62C0862E2CAA6F00919507 /* XCRemoteSwiftPackageReference "Cache" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CBD4335C2E10FA4C002B153F /* Products */;
@@ -396,6 +406,7 @@
 			files = (
 				CB6682BB2E1746A700A27696 /* TunnelForwardCardView.swift in Sources */,
 				CB6682852E11866F00A27696 /* UnsafeURLSession.swift in Sources */,
+				CB62C0852E2CA09800919507 /* ServerService.swift in Sources */,
 				CB66827D2E1181DF00A27696 /* NetworkService.swift in Sources */,
 				CB66827A2E1181D200A27696 /* APIEndpoint.swift in Sources */,
 				CB6682A32E172F3C00A27696 /* LoadingStateModifier.swift in Sources */,
@@ -433,6 +444,7 @@
 				CB6682892E12B74100A27696 /* ServerListView.swift in Sources */,
 				CB6682772E1181C700A27696 /* NPState.swift in Sources */,
 				CB6682B92E17466000A27696 /* DirectForwardCardView.swift in Sources */,
+				CB62C0832E2BDB5500919507 /* ServerMetadata.swift in Sources */,
 				CB6682832E1183EB00A27696 /* ErrorResponse.swift in Sources */,
 				CB6682D72E1E990D00A27696 /* QRCodeScannerView.swift in Sources */,
 				CB6682952E135C5B00A27696 /* ImplementationType.swift in Sources */,
@@ -573,7 +585,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -625,7 +637,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -693,6 +705,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CB62C0862E2CAA6F00919507 /* XCRemoteSwiftPackageReference "Cache" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hyperoslo/Cache.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.4.0;
+			};
+		};
 		CB6682D32E1E90EA00A27696 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/twostraws/CodeScanner.git";
@@ -704,6 +724,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CB62C0872E2CAA6F00919507 /* Cache */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CB62C0862E2CAA6F00919507 /* XCRemoteSwiftPackageReference "Cache" */;
+			productName = Cache;
+		};
 		CB6682D42E1E90EA00A27696 /* CodeScanner */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CB6682D32E1E90EA00A27696 /* XCRemoteSwiftPackageReference "CodeScanner" */;

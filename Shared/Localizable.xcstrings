@@ -77,16 +77,6 @@
         }
       }
     },
-    "%@'s Instances" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@的实例"
-          }
-        }
-      }
-    },
     "%lld" : {
       "localizations" : {
         "zh-Hans" : {
@@ -144,7 +134,14 @@
       }
     },
     "Add Instance" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加实例"
+          }
+        }
+      }
     },
     "Add NAT Passthrough" : {
       "localizations" : {
@@ -276,6 +273,16 @@
         }
       }
     },
+    "Copy URL" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制URL"
+          }
+        }
+      }
+    },
     "Delete" : {
       "localizations" : {
         "zh-Hans" : {
@@ -377,7 +384,14 @@
       }
     },
     "Enter URL for the new instance." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为新实例输入URL。"
+          }
+        }
+      }
     },
     "Error" : {
       "localizations" : {

@@ -112,6 +112,7 @@ struct TunnelForwardDetailView: View {
                     .copiable(implementation.command!)
                 }
             }
+            .formStyle(.grouped)
             .navigationTitle(service.name!)
         }
         else {

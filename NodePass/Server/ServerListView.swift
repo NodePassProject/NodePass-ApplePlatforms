@@ -7,12 +7,15 @@
 
 import SwiftUI
 import SwiftData
+import Cache
 
 struct ServerListView: View {
     @Environment(NPState.self) var state
     
     @Environment(\.modelContext) private var context
     @Query(sort: \Server.timestamp) private var servers: [Server]
+    
+    @State private var serverMetadatas: [ServerMetadata] = .init()
     
     @State private var searchText: String = ""
     private var filteredServers: [Server] {
@@ -49,9 +52,20 @@ struct ServerListView: View {
                 }
             }
         }
+        .onAppear {
+            if serverMetadatas.isEmpty {
+                getServerMetadatas()
+            }
+        }
         .sheet(isPresented: $state.isShowEditServerSheet) {
+            if let server = state.editServerSheetServer {
+                Task {
+                    await getServerMetadata(server: server)
+                    state.editServerSheetServer = nil
+                }
+            }
+            
             state.editServerSheetMode = .adding
-            state.editServerSheetServer = nil
         } content: {
             EditServerView(server: $state.editServerSheetServer)
         }
@@ -60,52 +74,99 @@ struct ServerListView: View {
     private var serverList: some View {
         Form {
             ForEach(filteredServers) { server in
-                NavigationLink(value: server) {
-                    VStack(alignment: .leading) {
-                        Text(server.name!)
-                        Text(server.url!)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .swipeActions(edge: .trailing) {
-                    Button(role: .destructive) {
-                        context.delete(server)
-                    } label: {
-                        Label("Delete", systemImage: "trash")
-                    }
-                    
-                    Button {
-                        state.editServerSheetMode = .editing
-                        state.editServerSheetServer = server
-                        state.isShowEditServerSheet = true
-                    } label: {
-                        Label("Edit", systemImage: "pencil")
-                    }
-                }
-                .contextMenu {
-                    Button {
-                        state.editServerSheetMode = .editing
-                        state.editServerSheetServer = server
-                        state.isShowEditServerSheet = true
-                    } label: {
-                        Label("Edit", systemImage: "pencil")
-                    }
-                    
-                    let base64EncodedURL = server.url!.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
-                    let base64EncodedKey = server.key!.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
-                    ShareLink(item: "np://master?url=\(base64EncodedURL)&key=\(base64EncodedKey)") {
-                        Label("Share", systemImage: "square.and.arrow.up")
-                    }
-                    
-                    Button(role: .destructive) {
-                        context.delete(server)
-                    } label: {
-                        Label("Delete", systemImage: "trash")
+                serverCard(server: server)
+            }
+        }
+        .formStyle(.grouped)
+#if os(iOS)
+        .listRowSpacing(5)
+#endif
+    }
+    
+    private func serverCard(server: Server) -> some View {
+        NavigationLink(value: server) {
+            VStack(alignment: .leading) {
+                Text(server.name!)
+                Text(server.url!)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                if let metadata = serverMetadatas.first(where: { $0.serverID == server.id! }) {
+                    HStack {
+                        Badge(metadata.os, backgroundColor: .blue, textColor: .white)
+                        Badge(metadata.architecture, backgroundColor: .purple, textColor: .white)
+                        Badge(metadata.version, backgroundColor: .black, textColor: .white)
                     }
                 }
             }
         }
-        .formStyle(.grouped)
+        .swipeActions(edge: .trailing) {
+            Button(role: .destructive) {
+                context.delete(server)
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+            
+            Button {
+                state.editServerSheetMode = .editing
+                state.editServerSheetServer = server
+                state.isShowEditServerSheet = true
+            } label: {
+                Label("Edit", systemImage: "pencil")
+            }
+        }
+        .contextMenu {
+            Button {
+                state.editServerSheetMode = .editing
+                state.editServerSheetServer = server
+                state.isShowEditServerSheet = true
+            } label: {
+                Label("Edit", systemImage: "pencil")
+            }
+            
+            let base64EncodedURL = server.url!.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
+            let base64EncodedKey = server.key!.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
+            ShareLink(item: "np://master?url=\(base64EncodedURL)&key=\(base64EncodedKey)") {
+                Label("Share", systemImage: "square.and.arrow.up")
+            }
+            
+            Button(role: .destructive) {
+                context.delete(server)
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
+    }
+    
+    private func getServerMetadata(server: Server) async {
+        do {
+            let serverService = ServerService()
+            var serverMetadata = try await serverService.getServerInfo(baseURLString: server.url!, apiKey: server.key!)
+            
+            serverMetadata.serverID = server.id!
+            serverMetadatas.append(serverMetadata)
+            
+            try? NPCore.serverMetadataCacheStorage.setObject(serverMetadata, forKey: server.id!)
+        }
+        catch {
+#if DEBUG
+            print("Error Getting Server Metadatas: \(error.localizedDescription)")
+#endif
+        }
+    }
+    
+    private func getServerMetadatas() {
+        var serverMetadatas: [ServerMetadata] = .init()
+        Task {
+            for server in servers {
+                if var cachedServerMetadata = try? NPCore.serverMetadataCacheStorage.object(forKey: server.id!) {
+                    cachedServerMetadata.serverID = server.id!
+                    serverMetadatas.append(cachedServerMetadata)
+                }
+                else {
+                    await getServerMetadata(server: server)
+                }
+            }
+            self.serverMetadatas = serverMetadatas
+        }
     }
 }

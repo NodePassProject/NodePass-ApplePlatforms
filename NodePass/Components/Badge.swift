@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct Badge: View {
-    let text: LocalizedStringKey
+    let text: any StringProtocol
     let backgroundColor: Color
     let textColor: Color
     
-    init(_ text: LocalizedStringKey, backgroundColor: Color = .blue, textColor: Color = .white) {
+    init<S>(_ text: S, backgroundColor: Color = .blue, textColor: Color = .white) where S : StringProtocol {
         self.text = text
         self.backgroundColor = backgroundColor
         self.textColor = textColor

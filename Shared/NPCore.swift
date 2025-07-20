@@ -6,8 +6,20 @@
 //
 
 import Foundation
+import Cache
 
 class NPCore {
+    // MARK: - Cache
+    static let serverMetadataCacheStorage = try! Storage<String, ServerMetadata>(
+        diskConfig: DiskConfig(
+            name: "NPServerMetadataCache",
+            expiry: .date(Date().addingTimeInterval(7*24*3600))
+        ),
+        memoryConfig: MemoryConfig(),
+        fileManager: FileManager(),
+        transformer: TransformerFactory.forCodable(ofType: ServerMetadata.self)
+    )
+    
     // MARK: - Utilities
     static func noEmptyName(_ name: String) -> String {
         return name == "" ? String(localized: "Untitled") : name
