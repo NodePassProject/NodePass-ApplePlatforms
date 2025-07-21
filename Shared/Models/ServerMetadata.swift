@@ -16,6 +16,7 @@ struct ServerMetadata: Identifiable, Codable, Equatable {
     let architecture: String
     let version: String
     let name: String
+    let uptime: Int64?
     let logLevel: String
     let tlsLevel: String
     
@@ -24,6 +25,7 @@ struct ServerMetadata: Identifiable, Codable, Equatable {
         case architecture = "arch"
         case version = "ver"
         case name
+        case uptime
         case logLevel = "log"
         case tlsLevel = "tls"
     }

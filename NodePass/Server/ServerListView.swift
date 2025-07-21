@@ -15,7 +15,7 @@ struct ServerListView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Server.timestamp) private var servers: [Server]
     
-    @State private var serverMetadatas: [ServerMetadata] = .init()
+    @State private var serverMetadatas: [String: ServerMetadata] = .init()
     
     @State private var searchText: String = ""
     private var filteredServers: [Server] {
@@ -52,11 +52,6 @@ struct ServerListView: View {
                 }
             }
         }
-        .onAppear {
-            if serverMetadatas.isEmpty {
-                getServerMetadatas()
-            }
-        }
         .sheet(isPresented: $state.isShowEditServerSheet) {
             if let server = state.editServerSheetServer {
                 Task {
@@ -75,6 +70,12 @@ struct ServerListView: View {
         Form {
             ForEach(filteredServers) { server in
                 serverCard(server: server)
+                    .onAppear {
+                        serverMetadatas[server.id!] = try? NPCore.serverMetadataCacheStorage.object(forKey: server.id!)
+                        Task {
+                            await getServerMetadata(server: server)
+                        }
+                    }
             }
         }
         .formStyle(.grouped)
@@ -85,13 +86,24 @@ struct ServerListView: View {
     
     private func serverCard(server: Server) -> some View {
         NavigationLink(value: server) {
+            let metadata = serverMetadatas[server.id!]
             VStack(alignment: .leading) {
-                Text(server.name!)
+                HStack(spacing: 10) {
+                    Text(server.name!)
+                    if let uptime = metadata?.uptime {
+                        HStack(spacing: 3) {
+                            Image(systemName: "power")
+                            Text(NPCore.formatTimeInterval(seconds: uptime))
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    }
+                }
                 Text(server.url!)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                if let metadata = serverMetadatas.first(where: { $0.serverID == server.id! }) {
-                    HStack {
+                if let metadata {
+                    HStack(spacing: 4) {
                         Badge(metadata.os, backgroundColor: .blue, textColor: .white)
                         Badge(metadata.architecture, backgroundColor: .purple, textColor: .white)
                         Badge(metadata.version, backgroundColor: .black, textColor: .white)
@@ -143,30 +155,14 @@ struct ServerListView: View {
             var serverMetadata = try await serverService.getServerInfo(baseURLString: server.url!, apiKey: server.key!)
             
             serverMetadata.serverID = server.id!
-            serverMetadatas.append(serverMetadata)
+            serverMetadatas[server.id!] = serverMetadata
             
             try? NPCore.serverMetadataCacheStorage.setObject(serverMetadata, forKey: server.id!)
         }
         catch {
 #if DEBUG
-            print("Error Getting Server Metadatas: \(error.localizedDescription)")
+            print("Error Getting Server Metadata: \(error.localizedDescription)")
 #endif
-        }
-    }
-    
-    private func getServerMetadatas() {
-        var serverMetadatas: [ServerMetadata] = .init()
-        Task {
-            for server in servers {
-                if var cachedServerMetadata = try? NPCore.serverMetadataCacheStorage.object(forKey: server.id!) {
-                    cachedServerMetadata.serverID = server.id!
-                    serverMetadatas.append(cachedServerMetadata)
-                }
-                else {
-                    await getServerMetadata(server: server)
-                }
-            }
-            self.serverMetadatas = serverMetadatas
         }
     }
 }
