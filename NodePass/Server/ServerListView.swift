@@ -104,8 +104,7 @@ struct ServerListView: View {
                     .foregroundStyle(.secondary)
                 if let metadata {
                     HStack(spacing: 4) {
-                        Badge(metadata.os, backgroundColor: .blue, textColor: .white)
-                        Badge(metadata.architecture, backgroundColor: .purple, textColor: .white)
+                        Badge("\(metadata.os)/\(metadata.architecture)", backgroundColor: .purple, textColor: .white)
                         Badge(metadata.version, backgroundColor: .black, textColor: .white)
                     }
                 }

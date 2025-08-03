@@ -397,6 +397,16 @@
         }
       }
     },
+    "Edit Instance" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑实例"
+          }
+        }
+      }
+    },
     "Edit Server" : {
       "localizations" : {
         "zh-Hans" : {
@@ -413,6 +423,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "为此服务输入新名称。"
+          }
+        }
+      }
+    },
+    "Enter a new URL for this instance." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为此实例输入新URL。"
           }
         }
       }
@@ -583,6 +603,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "好"
+          }
+        }
+      }
+    },
+    "Pool" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接池"
           }
         }
       }

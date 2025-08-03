@@ -16,6 +16,8 @@ struct Instance: Identifiable, Codable, Equatable {
     let tcpTransmit: Int
     let udpReceive: Int
     let udpTransmit: Int
+    let ping: Int?
+    let poolConnectionCount: Int?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -26,5 +28,7 @@ struct Instance: Identifiable, Codable, Equatable {
         case tcpTransmit = "tcptx"
         case udpReceive = "udprx"
         case udpTransmit = "udptx"
+        case ping = "ping"
+        case poolConnectionCount = "pool"
     }
 }

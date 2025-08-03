@@ -16,6 +16,10 @@ struct InstanceListView: View {
     @State private var isShowAddInstanceAlert: Bool = false
     @State private var commandOfNewInstance: String = ""
     
+    @State private var isShowEditInstanceAlert: Bool = false
+    @State private var commandOfEditedInstance: String = ""
+    @State private var instanceToEdit: Instance?
+    
     @State private var isShowDeleteInstanceAlert: Bool = false
     @State private var instanceToDelete: Instance?
     
@@ -58,6 +62,15 @@ struct InstanceListView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Enter URL for the new instance.")
+        }
+        .alert("Edit Instance", isPresented: $isShowEditInstanceAlert) {
+            TextField("URL", text: $commandOfEditedInstance)
+            Button("OK") {
+                updateInstance(instance: instanceToEdit!)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Enter a new URL for this instance.")
         }
         .alert("Delete Instance", isPresented: $isShowDeleteInstanceAlert) {
             Button("Delete", role: .destructive) {
@@ -125,6 +138,13 @@ struct InstanceListView: View {
                 } label: {
                     Label("Copy URL", systemImage: "document.on.document")
                 }
+                Button {
+                    instanceToEdit = instance
+                    commandOfEditedInstance = instance.url
+                    isShowEditInstanceAlert = true
+                } label: {
+                    Label("Edit", systemImage: "pencil")
+                }
                 Divider()
                 Button(role: .destructive) {
                     instanceToDelete = instance
@@ -179,6 +199,20 @@ struct InstanceListView: View {
             }
             catch {
                 errorMessage = "Error Deleting Instances: \(error.localizedDescription)"
+                isShowErrorAlert = true
+            }
+        }
+    }
+    
+    private func updateInstance(instance: Instance) {
+        Task {
+            let instanceService = InstanceService()
+            do {
+                try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: instance.id, url: commandOfEditedInstance)
+                listInstances()
+            }
+            catch {
+                errorMessage = "Error Updating Instances: \(error.localizedDescription)"
                 isShowErrorAlert = true
             }
         }

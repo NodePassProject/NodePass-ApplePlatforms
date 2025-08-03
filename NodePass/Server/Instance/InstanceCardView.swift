@@ -14,7 +14,7 @@ struct InstanceCardView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
+            HStack(spacing: 4) {
                 switch(instance.status) {
                 case .running:
                     Badge("Running", backgroundColor: .green, textColor: .white)
@@ -24,6 +24,9 @@ struct InstanceCardView: View {
                     Badge("Stopped", backgroundColor: .red, textColor: .white)
                 default:
                     Badge("Unknown")
+                }
+                if let ping = instance.ping {
+                    Badge("\(ping) ms", backgroundColor: .blue, textColor: .white)
                 }
                 Spacer()
             }
@@ -47,6 +50,16 @@ struct InstanceCardView: View {
                     .foregroundStyle(.secondary)
             }
             .font(.caption)
+            
+            if let poolConnectionCount = instance.poolConnectionCount {
+                HStack {
+                    Text("Pool")
+                        .modifier(EqualWidthModifier(width: $widthForTCPAndUDPText))
+                    Text(String(poolConnectionCount))
+                        .foregroundStyle(.secondary)
+                }
+                .font(.caption)
+            }
         }
 #if os(macOS)
         .background(.white.opacity(0.01))
