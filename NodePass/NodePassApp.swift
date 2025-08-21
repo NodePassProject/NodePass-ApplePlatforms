@@ -12,6 +12,10 @@ import SwiftData
 struct NodePassApp: App {
     let state: NPState = .init()
     
+    init() {
+        NPCore.registerUserDefaults()
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

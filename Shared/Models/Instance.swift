@@ -12,10 +12,12 @@ struct Instance: Identifiable, Codable, Equatable {
     let type: InstanceType
     let status: InstanceStatus
     let url: String
-    let tcpReceive: Int
-    let tcpTransmit: Int
-    let udpReceive: Int
-    let udpTransmit: Int
+    let tcp: Int?
+    let udp: Int?
+    let tcpReceive: Int64
+    let tcpTransmit: Int64
+    let udpReceive: Int64
+    let udpTransmit: Int64
     let ping: Int?
     let poolConnectionCount: Int?
     
@@ -24,6 +26,8 @@ struct Instance: Identifiable, Codable, Equatable {
         case type
         case status
         case url
+        case tcp = "tcps"
+        case udp = "udps"
         case tcpReceive = "tcprx"
         case tcpTransmit = "tcptx"
         case udpReceive = "udprx"

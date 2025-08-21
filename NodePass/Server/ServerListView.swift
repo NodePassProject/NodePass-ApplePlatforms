@@ -9,21 +9,91 @@ import SwiftUI
 import SwiftData
 import Cache
 
+fileprivate enum SortIndicator: String, CaseIterable {
+    case name = "name"
+    case date = "date"
+    
+    var title: String {
+        switch(self) {
+        case .name:
+            return String(localized: "Name")
+        case .date:
+            return String(localized: "Date")
+        }
+    }
+}
+
+fileprivate enum SortOrder: String, CaseIterable {
+    case ascending = "ascending"
+    case descending = "descending"
+    
+    var title: String {
+        switch(self) {
+        case .ascending:
+            return String(localized: "Ascending")
+        case .descending:
+            return String(localized: "Descending")
+        }
+    }
+    
+    func getDescription(sortIndicator: SortIndicator) -> String {
+        switch(sortIndicator) {
+        case .name:
+            switch(self) {
+            case .ascending:
+                return String(localized: "Ascending")
+            case .descending:
+                return String(localized: "Descending")
+            }
+        case .date:
+            switch(self) {
+            case .ascending:
+                return String(localized: "Oldest to Newest")
+            case .descending:
+                return String(localized: "Newest to Oldest")
+            }
+        }
+    }
+}
+
 struct ServerListView: View {
     @Environment(NPState.self) var state
     
     @Environment(\.modelContext) private var context
-    @Query(sort: \Server.timestamp) private var servers: [Server]
+    @Query private var servers: [Server]
     
     @State private var serverMetadatas: [String: ServerMetadata] = .init()
+    
+    @State private var sortIndicator: SortIndicator = SortIndicator(rawValue: NPCore.userDefaults.string(forKey: NPCore.Strings.NPServerSortIndicator) ?? "date")! {
+        didSet {
+            NPCore.userDefaults.set(sortIndicator.rawValue, forKey: NPCore.Strings.NPServerSortIndicator)
+        }
+    }
+    @State private var sortOrder: SortOrder = SortOrder(rawValue: NPCore.userDefaults.string(forKey: NPCore.Strings.NPServerSortOrder) ?? "ascending")! {
+        didSet {
+            NPCore.userDefaults.set(sortOrder.rawValue, forKey: NPCore.Strings.NPServerSortOrder)
+        }
+    }
+    
+    private var sortedServers: [Server] {
+        servers
+            .sorted {
+                switch sortIndicator {
+                case .name:
+                    return sortOrder == .ascending ? $0.name! < $1.name! : $0.name! > $1.name!
+                case .date:
+                    return sortOrder == .ascending ? $0.timestamp! < $1.timestamp! : $0.timestamp! > $1.timestamp!
+                }
+            }
+    }
     
     @State private var searchText: String = ""
     private var filteredServers: [Server] {
         if searchText == "" {
-            return servers
+            return sortedServers
         }
         else {
-            return servers.filter { $0.name!.localizedCaseInsensitiveContains(searchText) }
+            return sortedServers.filter { $0.name!.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
@@ -51,6 +121,12 @@ struct ServerListView: View {
                     Label("Add", systemImage: "plus")
                 }
             }
+            if #available(iOS 26.0, macOS 26.0, *) {
+                ToolbarSpacer(.fixed)
+            }
+            ToolbarItem {
+                moreMenu
+            }
         }
         .sheet(isPresented: $state.isShowEditServerSheet) {
             if let server = state.editServerSheetServer {
@@ -63,6 +139,38 @@ struct ServerListView: View {
             state.editServerSheetMode = .adding
         } content: {
             EditServerView(server: $state.editServerSheetServer)
+        }
+    }
+    
+    private var moreMenu: some View {
+        Menu("More", systemImage: "ellipsis") {
+            Picker("Sort", selection: Binding(get: {
+                sortIndicator
+            }, set: { newValue in
+                if sortIndicator == newValue {
+                    switch(sortOrder) {
+                    case .ascending:
+                        sortOrder = .descending
+                    case .descending:
+                        sortOrder = .ascending
+                    }
+                }
+                else {
+                    sortIndicator = newValue
+                }
+            })) {
+                ForEach(SortIndicator.allCases, id: \.self) { sortIndicator in
+                    Button {
+                        
+                    } label: {
+                        Text(sortIndicator.title)
+                        if self.sortIndicator == sortIndicator {
+                            Text(sortOrder.getDescription(sortIndicator: sortIndicator))
+                        }
+                    }
+                    .tag(sortIndicator)
+                }
+            }
         }
     }
     
@@ -106,6 +214,53 @@ struct ServerListView: View {
                     HStack(spacing: 4) {
                         Badge("\(metadata.os)/\(metadata.architecture)", backgroundColor: .purple, textColor: .white)
                         Badge(metadata.version, backgroundColor: .black, textColor: .white)
+                    }
+                    if let cpu = metadata.cpu, let memory = metadata.memory, let networkReceive = metadata.networkReceive, let networkTransmit = metadata.networkTransmit, let diskRead = metadata.diskRead, let diskWrite = metadata.diskWrite {
+                        HStack {
+                            HStack {
+                                Text("CPU")
+                                    .bold()
+                                Text("\(String(cpu))%")
+                                    .foregroundStyle(.secondary)
+                            }
+                            HStack {
+                                Text("Memory")
+                                    .bold()
+                                Text("\(String(memory))%")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .font(.caption)
+                        HStack {
+                            Text("Network")
+                                .bold()
+                            HStack(spacing: 3) {
+                                Text("RX")
+                                Text("\(NPCore.formatBytes(networkReceive))")
+                                    .foregroundStyle(.secondary)
+                            }
+                            HStack(spacing: 3) {
+                                Text("TX")
+                                Text("\(NPCore.formatBytes(networkTransmit))")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .font(.caption)
+                        HStack {
+                            Text("Disk")
+                                .bold()
+                            HStack(spacing: 3) {
+                                Text("Read")
+                                Text("\(NPCore.formatBytes(diskRead))")
+                                    .foregroundStyle(.secondary)
+                            }
+                            HStack(spacing: 3) {
+                                Text("Write")
+                                Text("\(NPCore.formatBytes(diskWrite))")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .font(.caption)
                     }
                 }
             }

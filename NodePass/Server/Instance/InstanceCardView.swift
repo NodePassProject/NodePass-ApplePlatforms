@@ -37,24 +37,54 @@ struct InstanceCardView: View {
             
             HStack {
                 Text("TCP")
-                    .modifier(EqualWidthModifier(width: $widthForTCPAndUDPText))
-                Text("↓ \(NPCore.formatBytes(instance.tcpReceive)) ↑ \(NPCore.formatBytes(instance.tcpTransmit))")
-                    .foregroundStyle(.secondary)
+                    .bold()
+                if let tcp = instance.tcp {
+                    HStack(spacing: 3) {
+                        Text(String(localized: "Count", comment: "Connection Count"))
+                        Text("\(String(tcp))")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                HStack(spacing: 3) {
+                    Text("RX")
+                    Text("\(NPCore.formatBytes(instance.tcpReceive))")
+                        .foregroundStyle(.secondary)
+                }
+                HStack(spacing: 3) {
+                    Text("TX")
+                    Text("\(NPCore.formatBytes(instance.tcpTransmit))")
+                        .foregroundStyle(.secondary)
+                }
             }
             .font(.caption)
             
             HStack {
                 Text("UDP")
-                    .modifier(EqualWidthModifier(width: $widthForTCPAndUDPText))
-                Text("↓ \(NPCore.formatBytes(instance.udpReceive)) ↑ \(NPCore.formatBytes(instance.udpTransmit))")
-                    .foregroundStyle(.secondary)
+                    .bold()
+                if let udp = instance.udp {
+                    HStack(spacing: 3) {
+                        Text(String(localized: "Count", comment: "Connection Count"))
+                        Text("\(String(udp))")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                HStack(spacing: 3) {
+                    Text("RX")
+                    Text("\(NPCore.formatBytes(instance.udpReceive))")
+                        .foregroundStyle(.secondary)
+                }
+                HStack(spacing: 3) {
+                    Text("TX")
+                    Text("\(NPCore.formatBytes(instance.udpTransmit))")
+                        .foregroundStyle(.secondary)
+                }
             }
             .font(.caption)
             
             if let poolConnectionCount = instance.poolConnectionCount {
                 HStack {
                     Text("Pool")
-                        .modifier(EqualWidthModifier(width: $widthForTCPAndUDPText))
+                        .bold()
                     Text(String(poolConnectionCount))
                         .foregroundStyle(.secondary)
                 }

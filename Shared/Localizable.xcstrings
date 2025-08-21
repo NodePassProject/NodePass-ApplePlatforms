@@ -77,6 +77,16 @@
         }
       }
     },
+    "%@%%" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@%%"
+          }
+        }
+      }
+    },
     "%lld" : {
       "localizations" : {
         "zh-Hans" : {
@@ -117,22 +127,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld%2$@%3$lld%4$@"
-          }
-        }
-      }
-    },
-    "↓ %@ ↑ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "↓ %1$@ ↑ %2$@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "↓ %1$@ ↑ %2$@"
           }
         }
       }
@@ -277,6 +271,16 @@
         }
       }
     },
+    "Ascending" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "升序"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "localizations" : {
         "zh-Hans" : {
@@ -317,6 +321,37 @@
         }
       }
     },
+    "Count" : {
+      "comment" : "Connection Count",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接数"
+          }
+        }
+      }
+    },
+    "CPU" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CPU"
+          }
+        }
+      }
+    },
+    "Date" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日期"
+          }
+        }
+      }
+    },
     "Delete" : {
       "localizations" : {
         "zh-Hans" : {
@@ -347,6 +382,16 @@
         }
       }
     },
+    "Descending" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "降序"
+          }
+        }
+      }
+    },
     "Destination Server" : {
       "localizations" : {
         "zh-Hans" : {
@@ -373,6 +418,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "单端转发"
+          }
+        }
+      }
+    },
+    "Disk" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "磁盘"
           }
         }
       }
@@ -547,6 +602,26 @@
         }
       }
     },
+    "Memory" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内存"
+          }
+        }
+      }
+    },
+    "More" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多"
+          }
+        }
+      }
+    },
     "Name" : {
       "localizations" : {
         "zh-Hans" : {
@@ -563,6 +638,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "NAT穿透"
+          }
+        }
+      }
+    },
+    "Network" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络"
+          }
+        }
+      }
+    },
+    "Newest to Oldest" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新到最旧"
           }
         }
       }
@@ -607,6 +702,16 @@
         }
       }
     },
+    "Oldest to Newest" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最旧到最新"
+          }
+        }
+      }
+    },
     "Pool" : {
       "localizations" : {
         "zh-Hans" : {
@@ -643,6 +748,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "预览"
+          }
+        }
+      }
+    },
+    "Read" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "读取"
           }
         }
       }
@@ -733,6 +848,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在运行"
+          }
+        }
+      }
+    },
+    "RX" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接收"
           }
         }
       }
@@ -833,6 +958,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "共享"
+          }
+        }
+      }
+    },
+    "Sort" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "排序"
           }
         }
       }
@@ -1071,6 +1206,16 @@
         }
       }
     },
+    "TX" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发送"
+          }
+        }
+      }
+    },
     "UDP" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1137,6 +1282,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使用TLS加密隧道连接。"
+          }
+        }
+      }
+    },
+    "Write" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "写入"
           }
         }
       }

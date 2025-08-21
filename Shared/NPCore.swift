@@ -9,6 +9,27 @@ import Foundation
 import Cache
 
 class NPCore {
+    // MARK: - Strings
+    class Strings {
+        static let NPServiceSortIndicator = "NPServiceSortIndicator"
+        static let NPServiceSortOrder = "NPServiceSortOrder"
+        static let NPServerSortIndicator = "NPServerSortIndicator"
+        static let NPServerSortOrder = "NPServerSortOrder"
+    }
+    
+    // MARK: - User Defaults
+    static let userDefaults: UserDefaults = UserDefaults(suiteName: "group.com.argsment.NodePass")!
+    
+    static func registerUserDefaults() {
+        let defaultValues: [String: Any] = [
+            Strings.NPServiceSortIndicator: "date",
+            Strings.NPServiceSortOrder: "ascending",
+            Strings.NPServerSortIndicator: "date",
+            Strings.NPServerSortOrder: "ascending"
+        ]
+        userDefaults.register(defaults: defaultValues)
+    }
+    
     // MARK: - Cache
     static let serverMetadataCacheStorage = try! Storage<String, ServerMetadata>(
         diskConfig: DiskConfig(
@@ -25,7 +46,7 @@ class NPCore {
         return name == "" ? String(localized: "Untitled") : name
     }
     
-    static func formatBytes(_ bytes: Int, decimals: Int = 2) -> String {
+    static func formatBytes(_ bytes: Int64, decimals: Int = 2) -> String {
         let units = ["B", "KB", "MB", "GB", "TB", "PB"]
         var value = Double(bytes)
         var unitIndex = 0

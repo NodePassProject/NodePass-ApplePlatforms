@@ -8,20 +8,90 @@
 import SwiftUI
 import SwiftData
 
+fileprivate enum SortIndicator: String, CaseIterable {
+    case name = "name"
+    case date = "date"
+    
+    var title: String {
+        switch(self) {
+        case .name:
+            return String(localized: "Name")
+        case .date:
+            return String(localized: "Date")
+        }
+    }
+}
+
+fileprivate enum SortOrder: String, CaseIterable {
+    case ascending = "ascending"
+    case descending = "descending"
+    
+    var title: String {
+        switch(self) {
+        case .ascending:
+            return String(localized: "Ascending")
+        case .descending:
+            return String(localized: "Descending")
+        }
+    }
+    
+    func getDescription(sortIndicator: SortIndicator) -> String {
+        switch(sortIndicator) {
+        case .name:
+            switch(self) {
+            case .ascending:
+                return String(localized: "Ascending")
+            case .descending:
+                return String(localized: "Descending")
+            }
+        case .date:
+            switch(self) {
+            case .ascending:
+                return String(localized: "Oldest to Newest")
+            case .descending:
+                return String(localized: "Newest to Oldest")
+            }
+        }
+    }
+}
+
 struct ServiceListView: View {
     @Environment(NPState.self) var state
     @Environment(\.colorScheme) private var scheme
     @Environment(\.modelContext) private var context
-    @Query(sort: \Service.timestamp) private var services: [Service]
+    @Query private var services: [Service]
     @Query private var servers: [Server]
+    
+    @State private var sortIndicator: SortIndicator = SortIndicator(rawValue: NPCore.userDefaults.string(forKey: NPCore.Strings.NPServiceSortIndicator) ?? "date")! {
+        didSet {
+            NPCore.userDefaults.set(sortIndicator.rawValue, forKey: NPCore.Strings.NPServiceSortIndicator)
+        }
+    }
+    @State private var sortOrder: SortOrder = SortOrder(rawValue: NPCore.userDefaults.string(forKey: NPCore.Strings.NPServiceSortOrder) ?? "ascending")! {
+        didSet {
+            NPCore.userDefaults.set(sortOrder.rawValue, forKey: NPCore.Strings.NPServiceSortOrder)
+        }
+    }
+    
+    private var sortedServices: [Service] {
+        services
+            .sorted {
+                switch sortIndicator {
+                case .name:
+                    return sortOrder == .ascending ? $0.name! < $1.name! : $0.name! > $1.name!
+                case .date:
+                    return sortOrder == .ascending ? $0.timestamp! < $1.timestamp! : $0.timestamp! > $1.timestamp!
+                }
+            }
+    }
     
     @State private var searchText: String = ""
     private var filteredServices: [Service] {
         if searchText == "" {
-            return services
+            return sortedServices
         }
         else {
-            return services.filter { $0.name!.localizedCaseInsensitiveContains(searchText) }
+            return sortedServices.filter { $0.name!.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
@@ -110,6 +180,12 @@ struct ServiceListView: View {
             ToolbarItem {
                 addServiceMenu
             }
+            if #available(iOS 26.0, macOS 26.0, *) {
+                ToolbarSpacer(.fixed)
+            }
+            ToolbarItem {
+                moreMenu
+            }
         }
         .sheet(isPresented: $isShowAddNATPassthroughSheet) {
             AddNATPassthroughServiceView()
@@ -163,6 +239,38 @@ struct ServiceListView: View {
                 isShowAddTunnelForwardSheet = true
             } label: {
                 Label("Tunnel Forward", systemImage: "arrow.left.arrow.right.circle")
+            }
+        }
+    }
+    
+    private var moreMenu: some View {
+        Menu("More", systemImage: "ellipsis") {
+            Picker("Sort", selection: Binding(get: {
+                sortIndicator
+            }, set: { newValue in
+                if sortIndicator == newValue {
+                    switch(sortOrder) {
+                    case .ascending:
+                        sortOrder = .descending
+                    case .descending:
+                        sortOrder = .ascending
+                    }
+                }
+                else {
+                    sortIndicator = newValue
+                }
+            })) {
+                ForEach(SortIndicator.allCases, id: \.self) { sortIndicator in
+                    Button {
+                        
+                    } label: {
+                        Text(sortIndicator.title)
+                        if self.sortIndicator == sortIndicator {
+                            Text(sortOrder.getDescription(sortIndicator: sortIndicator))
+                        }
+                    }
+                    .tag(sortIndicator)
+                }
             }
         }
     }
