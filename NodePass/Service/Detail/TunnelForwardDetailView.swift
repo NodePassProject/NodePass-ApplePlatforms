@@ -64,8 +64,10 @@ struct TunnelForwardDetailView: View {
                     LabeledContent("Tunnel Port") {
                         Text(addressesAndPorts.tunnel.port)
                     }
-                    LabeledContent("TLS Level") {
-                        Text(queryParameters["tls"]!)
+                    if let tlsLevel = queryParameters["tls"] {
+                        LabeledContent("TLS Level") {
+                            Text(tlsLevel)
+                        }
                     }
                     LabeledContent("Command URL") {
                         Text(implementation.command!)
