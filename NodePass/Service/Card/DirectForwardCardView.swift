@@ -54,7 +54,7 @@ struct DirectForwardCardView: View {
             HStack {
                 let implementation = service.implementations!.first(where: { $0.position == 0 })!
                 let serverName = servers.first(where: { $0.id == implementation.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
-                let addressesAndPorts = implementation.extractAddressesAndPorts()
+                let addressesAndPorts = implementation.parseAddressesAndPorts()
                 Image(systemName: "laptopcomputer.and.iphone")
                     .font(.title)
                 Spacer()

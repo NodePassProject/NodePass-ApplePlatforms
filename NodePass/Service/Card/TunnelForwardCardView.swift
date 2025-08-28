@@ -64,7 +64,7 @@ struct TunnelForwardCardView: View {
                 Spacer()
                 VStack(spacing: 3) {
                     let serverName = servers.first(where: { $0.id == implementation0.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
-                    let addressesAndPorts = implementation0.extractAddressesAndPorts()
+                    let addressesAndPorts = implementation0.parseAddressesAndPorts()
                     Text(serverName)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
@@ -78,7 +78,7 @@ struct TunnelForwardCardView: View {
                 }
                 Spacer()
                 VStack(spacing: 3) {
-                    let queryParameters = implementation0.extractQueryParameters()
+                    let queryParameters = implementation0.parseQueryParameters()
                     if ["1", "2"].contains(queryParameters["tls"]) {
                         Image(systemName: "lock")
                             .font(.caption)
@@ -91,7 +91,7 @@ struct TunnelForwardCardView: View {
                 Spacer()
                 VStack(spacing: 3) {
                     let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
-                    let addressesAndPorts = implementation1.extractAddressesAndPorts()
+                    let addressesAndPorts = implementation1.parseAddressesAndPorts()
                     Text(serverName)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)

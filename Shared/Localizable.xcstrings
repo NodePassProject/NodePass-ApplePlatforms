@@ -462,6 +462,16 @@
         }
       }
     },
+    "Edit Listen Port" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑监听端口"
+          }
+        }
+      }
+    },
     "Edit Server" : {
       "localizations" : {
         "zh-Hans" : {
@@ -472,12 +482,42 @@
         }
       }
     },
+    "Edit Service Port" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑服务端口"
+          }
+        }
+      }
+    },
+    "Edit Tunnel Port" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑隧道端口"
+          }
+        }
+      }
+    },
     "Enter a new name for the service." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "为此服务输入新名称。"
+          }
+        }
+      }
+    },
+    "Enter a new port." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入新端口。"
           }
         }
       }

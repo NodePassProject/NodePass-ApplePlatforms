@@ -30,29 +30,49 @@ class Implementation {
         self.command = command
     }
     
-    func extractAddressesAndPorts() -> (tunnel: (address: String, port: String), destination: (address: String, port: String)) {
+    func extractSchemePrefix() -> String {
         let urlString = command!
         let schemePrefixes = ["server://", "client://"]
-        var cleanedString = urlString
         for prefix in schemePrefixes {
             if urlString.hasPrefix(prefix) {
-                cleanedString = String(urlString.dropFirst(prefix.count))
+                return prefix
+            }
+        }
+        return ""
+    }
+    
+    func extractQueryParameterString() -> String {
+        let urlString = command!
+        guard let questionMarkIndex = urlString.firstIndex(of: "?") else {
+            return ""
+        }
+        return String(urlString[urlString.index(after: questionMarkIndex)...])
+    }
+    
+    func parseAddressesAndPorts() -> (tunnel: (address: String, port: String), destination: (address: String, port: String)) {
+        let urlString = command!
+        let schemePrefixes = ["server://", "client://"]
+        var stringWithoutPrefix = ""
+        for prefix in schemePrefixes {
+            if urlString.hasPrefix(prefix) {
+                stringWithoutPrefix = String(urlString.dropFirst(prefix.count))
                 break
             }
         }
         
-        if let queryStartIndex = cleanedString.firstIndex(of: "?") {
-            cleanedString = String(cleanedString[..<queryStartIndex])
+        var stringWithoutPrefixAndParameters = ""
+        if let queryStartIndex = stringWithoutPrefix.firstIndex(of: "?") {
+            stringWithoutPrefixAndParameters = String(stringWithoutPrefix[..<queryStartIndex])
         }
         
         
-        let parts: (String, String)
-        let slashIndex = cleanedString.firstIndex(of: "/")!
-        let firstPart = String(cleanedString[..<slashIndex])
-        let secondPart = String(cleanedString[cleanedString.index(after: slashIndex)...])
-        parts = (firstPart, secondPart)
+        let stringParts: (String, String)
+        let slashIndex = stringWithoutPrefixAndParameters.firstIndex(of: "/")!
+        let tunnalStringPart = String(stringWithoutPrefixAndParameters[..<slashIndex])
+        let destinationStringPart = String(stringWithoutPrefixAndParameters[stringWithoutPrefixAndParameters.index(after: slashIndex)...])
+        stringParts = (tunnalStringPart, destinationStringPart)
         
-        func parsePart(_ part: String) -> (address: String, port: String) {
+        func parseStringPart(_ part: String) -> (address: String, port: String) {
             let lastColonIndex = part.lastIndex(of: ":")!
             
             let address = String(part[..<lastColonIndex])
@@ -62,12 +82,12 @@ class Implementation {
         }
         
         return (
-            tunnel: parsePart(parts.0),
-            destination: parsePart(parts.1)
+            tunnel: parseStringPart(stringParts.0),
+            destination: parseStringPart(stringParts.1)
         )
     }
     
-    func extractQueryParameters() -> [String: String] {
+    func parseQueryParameters() -> [String: String] {
         let urlString = command!
         guard let questionMarkIndex = urlString.firstIndex(of: "?") else {
             return [:]
@@ -89,5 +109,15 @@ class Implementation {
         }
         
         return parameters
+    }
+    
+    func dryModifyTunnelPort(port: String) -> String {
+        let addressesAndPorts = parseAddressesAndPorts()
+        return extractSchemePrefix() + addressesAndPorts.tunnel.address + ":" + port + "/" + addressesAndPorts.destination.address + ":" + addressesAndPorts.destination.port + "?" + extractQueryParameterString()
+    }
+    
+    func dryModifyDestinationPort(port: String) -> String {
+        let addressesAndPorts = parseAddressesAndPorts()
+        return extractSchemePrefix() + addressesAndPorts.tunnel.address + ":" + addressesAndPorts.tunnel.port + "/" + addressesAndPorts.destination.address + ":" + port + "?" + extractQueryParameterString()
     }
 }
