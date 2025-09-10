@@ -452,6 +452,16 @@
         }
       }
     },
+    "Edit Address" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑地址"
+          }
+        }
+      }
+    },
     "Edit Instance" : {
       "localizations" : {
         "zh-Hans" : {
@@ -468,6 +478,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "编辑监听端口"
+          }
+        }
+      }
+    },
+    "Edit Port" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑端口"
           }
         }
       }
@@ -498,6 +518,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "编辑隧道端口"
+          }
+        }
+      }
+    },
+    "Enter a new address." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入新地址。"
           }
         }
       }

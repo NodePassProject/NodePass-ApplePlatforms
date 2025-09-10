@@ -26,4 +26,8 @@ extension View {
     func copiable(_ string: String) -> some View {
         modifier(CopiableModifier(string: string))
     }
+    
+    func copiable(_ int: Int) -> some View {
+        modifier(CopiableModifier(string: String(int)))
+    }
 }

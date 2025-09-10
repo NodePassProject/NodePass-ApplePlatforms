@@ -111,9 +111,19 @@ class Implementation {
         return parameters
     }
     
+    func dryModifyTunnelAddress(address: String) -> String {
+        let addressesAndPorts = parseAddressesAndPorts()
+        return extractSchemePrefix() + address + ":" + addressesAndPorts.tunnel.port + "/" + addressesAndPorts.destination.address + ":" + addressesAndPorts.destination.port + "?" + extractQueryParameterString()
+    }
+    
     func dryModifyTunnelPort(port: String) -> String {
         let addressesAndPorts = parseAddressesAndPorts()
         return extractSchemePrefix() + addressesAndPorts.tunnel.address + ":" + port + "/" + addressesAndPorts.destination.address + ":" + addressesAndPorts.destination.port + "?" + extractQueryParameterString()
+    }
+    
+    func dryModifyDestinationAddress(address: String) -> String {
+        let addressesAndPorts = parseAddressesAndPorts()
+        return extractSchemePrefix() + addressesAndPorts.tunnel.address + ":" + addressesAndPorts.tunnel.port + "/" + address + ":" + addressesAndPorts.destination.port + "?" + extractQueryParameterString()
     }
     
     func dryModifyDestinationPort(port: String) -> String {

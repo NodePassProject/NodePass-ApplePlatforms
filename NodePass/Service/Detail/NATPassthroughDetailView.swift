@@ -112,6 +112,7 @@ struct NATPassthroughDetailView: View {
                             }
                         }
                     }
+                    .copiable(addressesAndPorts.destination.port)
                     HStack {
                         LabeledContent("Tunnel Port") {
                             Text(addressesAndPorts.tunnel.port)
@@ -126,6 +127,7 @@ struct NATPassthroughDetailView: View {
                             }
                         }
                     }
+                    .copiable(addressesAndPorts.tunnel.port)
                     LabeledContent("TLS Level") {
                         Text(queryParameters["tls"]!)
                     }
@@ -172,6 +174,7 @@ struct NATPassthroughDetailView: View {
                             }
                         }
                     }
+                    .copiable(addressesAndPorts.destination.port)
                     HStack {
                         LabeledContent("Tunnel Port") {
                             Text(addressesAndPorts.tunnel.port)
@@ -186,6 +189,7 @@ struct NATPassthroughDetailView: View {
                             }
                         }
                     }
+                    .copiable(addressesAndPorts.tunnel.port)
                     LabeledContent("Command URL") {
                         Text(implementation.command!)
                             .lineLimit(1)
