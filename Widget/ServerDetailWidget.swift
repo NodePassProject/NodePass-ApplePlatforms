@@ -101,30 +101,33 @@ struct ServerDetailWidgetEntryView: View {
     var entry: ServerDetailProvider.Entry
     
     var body: some View {
-        if let data = entry.data {
-            Group {
-                switch(family) {
-                case .systemSmall:
-                    systemSmallView(data: data)
-                case .systemMedium:
-                    systemMediumView(date: entry.date, data: data)
-                case .systemLarge:
-                    systemLargeView(date: entry.date, data: data)
-                default:
-                    Text("Unsupported family")
+        ZStack {
+            if let data = entry.data {
+                Group {
+                    switch(family) {
+                    case .systemSmall:
+                        systemSmallView(data: data)
+                    case .systemMedium:
+                        systemMediumView(date: entry.date, data: data)
+                    case .systemLarge:
+                        systemLargeView(date: entry.date, data: data)
+                    default:
+                        Text("Unsupported family")
+                    }
+                }
+                .widgetURL(URL(string: "np://server?id=\(data.id)"))
+            }
+            else {
+                VStack(spacing: 10) {
+                    Text(entry.message)
+                    Button(intent: RefreshWidgetIntent()) {
+                        Text("Retry")
+                        Image(systemName: "arrow.clockwise")
+                    }
                 }
             }
-            .widgetURL(URL(string: "np://server?id=\(data.id)"))
         }
-        else {
-            VStack(spacing: 10) {
-                Text(entry.message)
-                Button(intent: RefreshWidgetIntent()) {
-                    Text("Retry")
-                    Image(systemName: "arrow.clockwise")
-                }
-            }
-        }
+        .containerBackground(.white, for: .widget)
     }
     
     @ViewBuilder
@@ -149,7 +152,8 @@ struct ServerDetailWidgetEntryView: View {
                 }
                 Spacer()
                 HStack(spacing: 10) {
-                    Gauge(value: Double(swapUsed) / Double(swapTotal), in: 0...1) {
+                    let swapPercentage = swapTotal == 0 ? 0 : Double(swapUsed) / Double(swapTotal)
+                    Gauge(value: swapPercentage, in: 0...1) {
                         Text("Swap")
                             .font(.system(.caption, design: .rounded))
                             .bold()
@@ -226,7 +230,8 @@ struct ServerDetailWidgetEntryView: View {
                     }
                     .gaugeStyle(SingleMatrixGaugeStyle(color: .blue, size: 50))
                     Spacer()
-                    Gauge(value: Double(swapUsed) / Double(swapTotal), in: 0...1) {
+                    let swapPercentage = swapTotal == 0 ? 0 : Double(swapUsed) / Double(swapTotal)
+                    Gauge(value: swapPercentage, in: 0...1) {
                         Text("Swap")
                             .font(.system(.caption, design: .rounded))
                             .bold()

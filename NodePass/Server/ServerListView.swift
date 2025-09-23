@@ -95,15 +95,28 @@ struct ServerListView: View {
         }
     }
     
+    private let columns: [GridItem] = [GridItem(.adaptive(minimum: 320, maximum: 450))]
+    
     var body: some View {
         @Bindable var state = state
-        VStack {
+        ZStack {
+            BackgroundColorfulView()
+            
+#if os(macOS)
+            ScrollView {
+                serverList
+            }
+#else
             if servers.isEmpty {
                 ContentUnavailableView("No Server", systemImage: "square.stack.3d.up.fill", description: Text("To add a server, tap the add server icon in the toolbar.").font(.caption))
             }
             else {
-                serverList
+                ScrollView {
+                    serverList
+                }
             }
+#endif
+            
         }
         .navigationTitle("Servers")
         .navigationDestination(for: Server.self) { server in
@@ -127,12 +140,10 @@ struct ServerListView: View {
             }
         }
         .sheet(isPresented: $state.isShowEditServerSheet) {
-            if let _ = state.editServerSheetServer {
-                state.updateServerMetadatas()
-                state.editServerSheetServer = nil
-            }
-            
+            state.editServerSheetServer = nil
             state.editServerSheetMode = .adding
+            
+            state.updateServerMetadatas()
         } content: {
             EditServerView(server: $state.editServerSheetServer)
         }
@@ -171,129 +182,156 @@ struct ServerListView: View {
     }
     
     private var serverList: some View {
-        Form {
+        LazyVGrid(columns: columns, spacing: 10) {
             ForEach(filteredServers) { server in
-                serverCard(server: server)
+                serverCardView(server: server)
+                    .onTapGesture {
+                        state.pathServers.append(server)
+                    }
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            context.delete(server)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                        
+                        Button {
+                            state.editServerSheetMode = .editing
+                            state.editServerSheetServer = server
+                            state.isShowEditServerSheet = true
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                    }
+                    .contextMenu {
+                        Button {
+                            state.editServerSheetMode = .editing
+                            state.editServerSheetServer = server
+                            state.isShowEditServerSheet = true
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                        
+                        let base64EncodedURL = server.url!.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
+                        let base64EncodedKey = server.key!.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
+                        ShareLink(item: "np://master?url=\(base64EncodedURL)&key=\(base64EncodedKey)") {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                        }
+                        
+                        Button(role: .destructive) {
+                            context.delete(server)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
             }
         }
-        .formStyle(.grouped)
-#if os(iOS)
-        .listRowSpacing(5)
-#endif
+        .padding(.horizontal, 15)
     }
     
-    private func serverCard(server: Server) -> some View {
-        NavigationLink(value: server) {
-            let metadata = state.serverMetadatas[server.id!]
-            VStack(alignment: .leading, spacing: 10) {
-                VStack(alignment: .leading) {
-                    HStack(spacing: 10) {
-                        Text(server.name!)
-                        if let uptime = metadata?.uptime {
-                            HStack(spacing: 5) {
-                                Image(systemName: "power")
-                                Text(NPCore.formatTimeInterval(seconds: uptime))
-                            }
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+    @ViewBuilder
+    private func serverCardView(server: Server) -> some View {
+        let metadata = state.serverMetadatas[server.id!]
+        VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading) {
+                HStack(spacing: 10) {
+                    Text(server.name!)
+                    if let uptime = metadata?.uptime {
+                        HStack(spacing: 5) {
+                            Image(systemName: "power")
+                            Text(NPCore.formatTimeInterval(seconds: uptime))
                         }
-                    }
-                    Text(server.url!)
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    }
+                    Spacer()
                 }
-                if let metadata {
-                    if let cpu = metadata.cpu, let memoryUsed = metadata.memoryUsed, let memoryTotal = metadata.memoryTotal, let swapUsed = metadata.swapUsed, let swapTotal = metadata.swapTotal, let networkReceive = metadata.networkReceive, let networkTransmit = metadata.networkTransmit {
-                        HStack(alignment: .top) {
-                            Gauge(value: Double(cpu), in: 0...100) {
-                                Text("CPU")
-                                    .font(.system(.caption, design: .rounded))
-                                    .bold()
-                            }
-                            .gaugeStyle(SingleMatrixGaugeStyle(color: .blue, size: 50))
-                            Spacer()
-                            Gauge(value: Double(memoryUsed) / Double(memoryTotal), in: 0...1) {
-                                Text("Memory")
-                                    .font(.system(.caption, design: .rounded))
-                                    .bold()
-                            }
-                            .gaugeStyle(SingleMatrixGaugeStyle(color: .blue, size: 50))
-                            Spacer()
-                            Gauge(value: Double(swapUsed) / Double(swapTotal), in: 0...1) {
-                                Text("Swap")
-                                    .font(.system(.caption, design: .rounded))
-                                    .bold()
-                            }
-                            .gaugeStyle(SingleMatrixGaugeStyle(color: .blue, size: 50))
-                            Spacer()
-                            VStack {
-                                let networkReceiveDouble: Double = Double(networkReceive)
-                                let networkTransmitDouble: Double = Double(networkTransmit)
-                                let networkTotalDouble: Double = networkReceiveDouble + networkTransmitDouble
-                                Gauge(value: networkReceiveDouble / networkTotalDouble, in: 0...1) {
-                                    Text("Network")
-                                        .font(.system(.caption, design: .rounded))
-                                        .bold()
-                                }
-                                .gaugeStyle(
-                                    DoubleMatrixGaugeStyle(
-                                        text1: "↑ \(NPCore.formatBytes(networkTransmit, decimals: 0))",
-                                        text2: "↓ \(NPCore.formatBytes(networkReceive, decimals: 0))",
-                                        color1: .cyan,
-                                        color2: .orange,
-                                        size: 50
-                                    )
-                                )
-                            }
-                        }
-                    }
-                    
-                    HStack {
-                        Text(metadata.os)
-                        Text(metadata.architecture)
-                        Text(metadata.version)
-                    }
+                Text(server.url!)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+            }
+            
+            Spacer()
+            
+            if let metadata {
+                if let cpu = metadata.cpu, let memoryUsed = metadata.memoryUsed, let memoryTotal = metadata.memoryTotal, let swapUsed = metadata.swapUsed, let swapTotal = metadata.swapTotal, let networkReceive = metadata.networkReceive, let networkTransmit = metadata.networkTransmit {
+                    HStack(alignment: .top) {
+                        Gauge(value: Double(cpu), in: 0...100) {
+                            Text("CPU")
+                                .font(.system(.caption, design: .rounded))
+                                .bold()
+                        }
+                        .gaugeStyle(SingleMatrixGaugeStyle(color: .blue, size: 50))
+                        Spacer()
+                        Gauge(value: Double(memoryUsed) / Double(memoryTotal), in: 0...1) {
+                            Text("Memory")
+                                .font(.system(.caption, design: .rounded))
+                                .bold()
+                        }
+                        .gaugeStyle(SingleMatrixGaugeStyle(color: .blue, size: 50))
+                        Spacer()
+                        let swapPercentage = swapTotal == 0 ? 0 : Double(swapUsed) / Double(swapTotal)
+                        Gauge(value: swapPercentage, in: 0...1) {
+                            Text("Swap")
+                                .font(.system(.caption, design: .rounded))
+                                .bold()
+                        }
+                        .gaugeStyle(SingleMatrixGaugeStyle(color: .blue, size: 50))
+                        Spacer()
+                        VStack {
+                            let networkReceiveDouble: Double = Double(networkReceive)
+                            let networkTransmitDouble: Double = Double(networkTransmit)
+                            let networkTotalDouble: Double = networkReceiveDouble + networkTransmitDouble
+                            Gauge(value: networkReceiveDouble / networkTotalDouble, in: 0...1) {
+                                Text("Network")
+                                    .font(.system(.caption, design: .rounded))
+                                    .bold()
+                            }
+                            .gaugeStyle(
+                                DoubleMatrixGaugeStyle(
+                                    text1: "↑ \(NPCore.formatBytes(networkTransmit, decimals: 0))",
+                                    text2: "↓ \(NPCore.formatBytes(networkReceive, decimals: 0))",
+                                    color1: .cyan,
+                                    color2: .orange,
+                                    size: 50
+                                )
+                            )
+                        }
+                    }
                 }
+                else {
+                    Text("Matrix Unavailable")
+                        .bold()
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                }
+                
+                Spacer()
+                
+                HStack {
+                    Text(metadata.os)
+                    Text(metadata.architecture)
+                    Text(metadata.version)
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+            else {
+                Text("Metadata Unavailable")
+                    .bold()
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+                Spacer()
             }
         }
-        .navigationLinkIndicatorVisibility(.hidden)
-        .swipeActions(edge: .trailing) {
-            Button(role: .destructive) {
-                context.delete(server)
-            } label: {
-                Label("Delete", systemImage: "trash")
-            }
-            
-            Button {
-                state.editServerSheetMode = .editing
-                state.editServerSheetServer = server
-                state.isShowEditServerSheet = true
-            } label: {
-                Label("Edit", systemImage: "pencil")
-            }
-        }
-        .contextMenu {
-            Button {
-                state.editServerSheetMode = .editing
-                state.editServerSheetServer = server
-                state.isShowEditServerSheet = true
-            } label: {
-                Label("Edit", systemImage: "pencil")
-            }
-            
-            let base64EncodedURL = server.url!.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
-            let base64EncodedKey = server.key!.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
-            ShareLink(item: "np://master?url=\(base64EncodedURL)&key=\(base64EncodedKey)") {
-                Label("Share", systemImage: "square.and.arrow.up")
-            }
-            
-            Button(role: .destructive) {
-                context.delete(server)
-            } label: {
-                Label("Delete", systemImage: "trash")
-            }
-        }
+        .frame(height: 180)
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .foregroundStyle(.ultraThinMaterial)
+                .shadow(color: .black.opacity(0.08), radius: 5, x: 5, y: 5)
+                .shadow(color: .black.opacity(0.06), radius: 5, x: -5, y: -5)
+        )
     }
 }

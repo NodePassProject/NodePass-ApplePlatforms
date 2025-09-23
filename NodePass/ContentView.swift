@@ -30,7 +30,7 @@ struct ContentView: View {
     @Environment(NPState.self) var state
     
     var body: some View {
-        if #available(iOS 18.0, macOS 14.0, *) {
+        if #available(iOS 18.0, macOS 15.0, *) {
             TabView(selection: Bindable(state).tab) {
                 Tab(value: MainTab.services) {
                     NavigationStack(path: Bindable(state).pathServices) {
@@ -41,12 +41,8 @@ struct ContentView: View {
                 }
                 
                 Tab(value: MainTab.servers) {
-                    NavigationSplitView {
+                    NavigationStack(path: Bindable(state).pathServers) {
                         ServerListView()
-                            .navigationSplitViewColumnWidth(min: 350, ideal: 400)
-                    } detail: {
-                        Text("Select a server to start")
-                            .foregroundStyle(.secondary)
                     }
                 } label: {
                     Label(MainTab.servers.title, systemImage: MainTab.servers.systemName)
@@ -64,12 +60,8 @@ struct ContentView: View {
                     Label(MainTab.services.title, systemImage: MainTab.services.systemName)
                 }
                 
-                NavigationSplitView {
+                NavigationStack(path: Bindable(state).pathServers) {
                     ServerListView()
-                        .navigationSplitViewColumnWidth(min: 350, ideal: 400)
-                } detail: {
-                    Text("Select a server to start")
-                        .foregroundStyle(.secondary)
                 }
                 .tag(MainTab.servers)
                 .tabItem {

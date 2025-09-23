@@ -54,6 +54,8 @@
 		CB5E138B2E8120EE00870962 /* Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682C02E17F91A00A27696 /* Badge.swift */; };
 		CB5E138C2E81240A00870962 /* InstanceCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682C42E17FAA200A27696 /* InstanceCardView.swift */; };
 		CB5E13912E81243500870962 /* EqualWidthModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682BE2E17F54300A27696 /* EqualWidthModifier.swift */; };
+		CB5E13972E825F1500870962 /* ColorfulX in Frameworks */ = {isa = PBXBuildFile; productRef = CB5E13962E825F1500870962 /* ColorfulX */; };
+		CB5E139A2E8262E900870962 /* BackgroundColorfulView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5E13982E8262DD00870962 /* BackgroundColorfulView.swift */; };
 		CB62C0812E2B90BA00919507 /* NPUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB62C0802E2B90B800919507 /* NPUI.swift */; };
 		CB62C0832E2BDB5500919507 /* ServerMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB62C0822E2BDB5000919507 /* ServerMetadata.swift */; };
 		CB62C0852E2CA09800919507 /* ServerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB62C0842E2CA08F00919507 /* ServerService.swift */; };
@@ -150,6 +152,7 @@
 		CB5E13682E80E15600870962 /* ServerDetailWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailWidget.swift; sourceTree = "<group>"; };
 		CB5E13732E80E70500870962 /* RefreshWidgetIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshWidgetIntent.swift; sourceTree = "<group>"; };
 		CB5E137E2E80ED9500870962 /* Widget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Widget.entitlements; sourceTree = "<group>"; };
+		CB5E13982E8262DD00870962 /* BackgroundColorfulView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundColorfulView.swift; sourceTree = "<group>"; };
 		CB62C0802E2B90B800919507 /* NPUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPUI.swift; sourceTree = "<group>"; };
 		CB62C0822E2BDB5000919507 /* ServerMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerMetadata.swift; sourceTree = "<group>"; };
 		CB62C0842E2CA08F00919507 /* ServerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerService.swift; sourceTree = "<group>"; };
@@ -221,6 +224,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB6682D52E1E90EA00A27696 /* CodeScanner in Frameworks */,
+				CB5E13972E825F1500870962 /* ColorfulX in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,6 +290,7 @@
 			children = (
 				CB6682C02E17F91A00A27696 /* Badge.swift */,
 				CB6682C22E17F9E100A27696 /* OutlinedBadge.swift */,
+				CB5E13982E8262DD00870962 /* BackgroundColorfulView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -513,6 +518,7 @@
 			name = NodePass;
 			packageProductDependencies = (
 				CB6682D42E1E90EA00A27696 /* CodeScanner */,
+				CB5E13962E825F1500870962 /* ColorfulX */,
 			);
 			productName = NodePass;
 			productReference = CBD4335B2E10FA4C002B153F /* NodePass.app */;
@@ -548,6 +554,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CB6682D32E1E90EA00A27696 /* XCRemoteSwiftPackageReference "CodeScanner" */,
+				CB5E13952E825F1500870962 /* XCRemoteSwiftPackageReference "ColorfulX" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CBD4335C2E10FA4C002B153F /* Products */;
@@ -668,6 +675,7 @@
 				CB6682872E12B60700A27696 /* InstanceListView.swift in Sources */,
 				CB6682C72E17FD0400A27696 /* EmptyResponse.swift in Sources */,
 				CB1E98052E2273E500A175FD /* CopiableModifier.swift in Sources */,
+				CB5E139A2E8262E900870962 /* BackgroundColorfulView.swift in Sources */,
 				CB62C0812E2B90BA00919507 /* NPUI.swift in Sources */,
 				CB6682792E1181CE00A27696 /* Instance.swift in Sources */,
 				CB6682892E12B74100A27696 /* ServerListView.swift in Sources */,
@@ -703,8 +711,11 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Widget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Widget;
@@ -715,12 +726,18 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
@@ -736,8 +753,11 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Widget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Widget;
@@ -748,12 +768,18 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
@@ -889,7 +915,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -941,7 +967,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1018,6 +1044,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CB5E13952E825F1500870962 /* XCRemoteSwiftPackageReference "ColorfulX" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lakr233/ColorfulX.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.0;
+			};
+		};
 		CB6682D32E1E90EA00A27696 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/twostraws/CodeScanner.git";
@@ -1029,6 +1063,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CB5E13962E825F1500870962 /* ColorfulX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CB5E13952E825F1500870962 /* XCRemoteSwiftPackageReference "ColorfulX" */;
+			productName = ColorfulX;
+		};
 		CB6682D42E1E90EA00A27696 /* CodeScanner */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CB6682D32E1E90EA00A27696 /* XCRemoteSwiftPackageReference "CodeScanner" */;

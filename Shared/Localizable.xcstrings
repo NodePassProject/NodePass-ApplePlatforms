@@ -731,6 +731,9 @@
         }
       }
     },
+    "Matrix Unavailable" : {
+
+    },
     "Memory" : {
       "localizations" : {
         "zh-Hans" : {
@@ -740,6 +743,9 @@
           }
         }
       }
+    },
+    "Metadata Unavailable" : {
+
     },
     "More" : {
       "localizations" : {
@@ -1017,16 +1023,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "选择"
-          }
-        }
-      }
-    },
-    "Select a server to start" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选择一台服务器以开始"
           }
         }
       }

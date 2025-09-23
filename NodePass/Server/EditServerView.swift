@@ -82,7 +82,6 @@ struct EditServerView: View {
                                 server.name = NPCore.noEmptyName(name)
                                 server.url = url
                                 server.key = key
-                                print(server)
                                 context.insert(server)
                             }
                             else {

@@ -16,21 +16,13 @@ struct TunnelForwardCardView: View {
     
     var body: some View {
         if service.type == .tunnelForward {
-            if #available(iOS 26.0, macOS 26.0, *) {
-                cardContent
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .foregroundStyle(.white.opacity(0.01))
-                    )
-                    .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
-            }
-            else {
-                cardContent
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .foregroundStyle(.regularMaterial)
-                    )
-            }
+            cardContent
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .foregroundStyle(.ultraThinMaterial)
+                        .shadow(color: .black.opacity(0.08), radius: 5, x: 5, y: 5)
+                        .shadow(color: .black.opacity(0.06), radius: 5, x: -5, y: -5)
+                )
         }
         else {
             Image(systemName: "exclamationmark.circle")
