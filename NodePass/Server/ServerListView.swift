@@ -7,7 +7,7 @@
 
 import SwiftUI
 import SwiftData
-import Cache
+import Combine
 
 fileprivate enum SortIndicator: String, CaseIterable {
     case name = "name"
@@ -61,8 +61,6 @@ struct ServerListView: View {
     
     @Environment(\.modelContext) private var context
     @Query private var servers: [Server]
-    
-    @State private var serverMetadatas: [String: ServerMetadata] = .init()
     
     @State private var sortIndicator: SortIndicator = SortIndicator(rawValue: NPCore.userDefaults.string(forKey: NPCore.Strings.NPServerSortIndicator) ?? "date")! {
         didSet {
@@ -129,11 +127,9 @@ struct ServerListView: View {
             }
         }
         .sheet(isPresented: $state.isShowEditServerSheet) {
-            if let server = state.editServerSheetServer {
-                Task {
-                    await getServerMetadata(server: server)
-                    state.editServerSheetServer = nil
-                }
+            if let _ = state.editServerSheetServer {
+                state.updateServerMetadatas()
+                state.editServerSheetServer = nil
             }
             
             state.editServerSheetMode = .adding
@@ -178,12 +174,6 @@ struct ServerListView: View {
         Form {
             ForEach(filteredServers) { server in
                 serverCard(server: server)
-                    .onAppear {
-                        serverMetadatas[server.id!] = try? NPCore.serverMetadataCacheStorage.object(forKey: server.id!)
-                        Task {
-                            await getServerMetadata(server: server)
-                        }
-                    }
             }
         }
         .formStyle(.grouped)
@@ -194,77 +184,81 @@ struct ServerListView: View {
     
     private func serverCard(server: Server) -> some View {
         NavigationLink(value: server) {
-            let metadata = serverMetadatas[server.id!]
-            VStack(alignment: .leading) {
-                HStack(spacing: 10) {
-                    Text(server.name!)
-                    if let uptime = metadata?.uptime {
-                        HStack(spacing: 3) {
-                            Image(systemName: "power")
-                            Text(NPCore.formatTimeInterval(seconds: uptime))
+            let metadata = state.serverMetadatas[server.id!]
+            VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading) {
+                    HStack(spacing: 10) {
+                        Text(server.name!)
+                        if let uptime = metadata?.uptime {
+                            HStack(spacing: 5) {
+                                Image(systemName: "power")
+                                Text(NPCore.formatTimeInterval(seconds: uptime))
+                            }
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                         }
+                    }
+                    Text(server.url!)
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    }
                 }
-                Text(server.url!)
+                if let metadata {
+                    if let cpu = metadata.cpu, let memoryUsed = metadata.memoryUsed, let memoryTotal = metadata.memoryTotal, let swapUsed = metadata.swapUsed, let swapTotal = metadata.swapTotal, let networkReceive = metadata.networkReceive, let networkTransmit = metadata.networkTransmit {
+                        HStack(alignment: .top) {
+                            Gauge(value: Double(cpu), in: 0...100) {
+                                Text("CPU")
+                                    .font(.system(.caption, design: .rounded))
+                                    .bold()
+                            }
+                            .gaugeStyle(SingleMatrixGaugeStyle(color: .blue, size: 50))
+                            Spacer()
+                            Gauge(value: Double(memoryUsed) / Double(memoryTotal), in: 0...1) {
+                                Text("Memory")
+                                    .font(.system(.caption, design: .rounded))
+                                    .bold()
+                            }
+                            .gaugeStyle(SingleMatrixGaugeStyle(color: .blue, size: 50))
+                            Spacer()
+                            Gauge(value: Double(swapUsed) / Double(swapTotal), in: 0...1) {
+                                Text("Swap")
+                                    .font(.system(.caption, design: .rounded))
+                                    .bold()
+                            }
+                            .gaugeStyle(SingleMatrixGaugeStyle(color: .blue, size: 50))
+                            Spacer()
+                            VStack {
+                                let networkReceiveDouble: Double = Double(networkReceive)
+                                let networkTransmitDouble: Double = Double(networkTransmit)
+                                let networkTotalDouble: Double = networkReceiveDouble + networkTransmitDouble
+                                Gauge(value: networkReceiveDouble / networkTotalDouble, in: 0...1) {
+                                    Text("Network")
+                                        .font(.system(.caption, design: .rounded))
+                                        .bold()
+                                }
+                                .gaugeStyle(
+                                    DoubleMatrixGaugeStyle(
+                                        text1: "↑ \(NPCore.formatBytes(networkTransmit, decimals: 0))",
+                                        text2: "↓ \(NPCore.formatBytes(networkReceive, decimals: 0))",
+                                        color1: .cyan,
+                                        color2: .orange,
+                                        size: 50
+                                    )
+                                )
+                            }
+                        }
+                    }
+                    
+                    HStack {
+                        Text(metadata.os)
+                        Text(metadata.architecture)
+                        Text(metadata.version)
+                    }
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                if let metadata {
-                    HStack(spacing: 4) {
-                        Badge("\(metadata.os)/\(metadata.architecture)", backgroundColor: .purple, textColor: .white)
-                        Badge(metadata.version, backgroundColor: .black, textColor: .white)
-                    }
-                    if let cpu = metadata.cpu, let memory = metadata.memory, let networkReceive = metadata.networkReceive, let networkTransmit = metadata.networkTransmit, let diskRead = metadata.diskRead, let diskWrite = metadata.diskWrite {
-                        HStack {
-                            HStack {
-                                Text("CPU")
-                                    .bold()
-                                Text("\(String(cpu))%")
-                                    .foregroundStyle(.secondary)
-                            }
-                            HStack {
-                                Text("Memory")
-                                    .bold()
-                                Text("\(String(memory))%")
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .font(.caption)
-                        HStack {
-                            Text("Network")
-                                .bold()
-                            HStack(spacing: 3) {
-                                Text("RX")
-                                Text("\(NPCore.formatBytes(networkReceive))")
-                                    .foregroundStyle(.secondary)
-                            }
-                            HStack(spacing: 3) {
-                                Text("TX")
-                                Text("\(NPCore.formatBytes(networkTransmit))")
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .font(.caption)
-                        HStack {
-                            Text("Disk")
-                                .bold()
-                            HStack(spacing: 3) {
-                                Text("Read")
-                                Text("\(NPCore.formatBytes(diskRead))")
-                                    .foregroundStyle(.secondary)
-                            }
-                            HStack(spacing: 3) {
-                                Text("Write")
-                                Text("\(NPCore.formatBytes(diskWrite))")
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .font(.caption)
-                    }
                 }
             }
         }
+        .navigationLinkIndicatorVisibility(.hidden)
         .swipeActions(edge: .trailing) {
             Button(role: .destructive) {
                 context.delete(server)
@@ -300,23 +294,6 @@ struct ServerListView: View {
             } label: {
                 Label("Delete", systemImage: "trash")
             }
-        }
-    }
-    
-    private func getServerMetadata(server: Server) async {
-        do {
-            let serverService = ServerService()
-            var serverMetadata = try await serverService.getServerInfo(baseURLString: server.url!, apiKey: server.key!)
-            
-            serverMetadata.serverID = server.id!
-            serverMetadatas[server.id!] = serverMetadata
-            
-            try? NPCore.serverMetadataCacheStorage.setObject(serverMetadata, forKey: server.id!)
-        }
-        catch {
-#if DEBUG
-            print("Error Getting Server Metadata: \(error.localizedDescription)")
-#endif
         }
     }
 }

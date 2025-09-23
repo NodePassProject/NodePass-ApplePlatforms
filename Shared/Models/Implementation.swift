@@ -60,11 +60,10 @@ class Implementation {
             }
         }
         
-        var stringWithoutPrefixAndParameters = ""
+        var stringWithoutPrefixAndParameters = stringWithoutPrefix
         if let queryStartIndex = stringWithoutPrefix.firstIndex(of: "?") {
             stringWithoutPrefixAndParameters = String(stringWithoutPrefix[..<queryStartIndex])
         }
-        
         
         let stringParts: (String, String)
         let slashIndex = stringWithoutPrefixAndParameters.firstIndex(of: "/")!

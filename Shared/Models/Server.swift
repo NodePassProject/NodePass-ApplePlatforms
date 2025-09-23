@@ -17,7 +17,7 @@ class Server {
     var key: String?
     
     init(name: String, url: String, key: String) {
-        self.id = url
+        self.id = url + key
         self.timestamp = Date()
         self.name = name
         self.url = url

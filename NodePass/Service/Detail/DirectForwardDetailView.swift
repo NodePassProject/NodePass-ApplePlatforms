@@ -124,8 +124,11 @@ struct DirectForwardDetailView: View {
                 TextField("Port", text: $newRelayPort)
                 Button("OK") {
                     updateImplementation(newRelayPort: newRelayPort)
+                    newRelayPort = ""
                 }
-                Button("Cancel", role: .cancel) {}
+                Button("Cancel", role: .cancel) {
+                    newRelayPort = ""
+                }
             } message: {
                 Text("Enter a new port.")
             }
@@ -133,8 +136,11 @@ struct DirectForwardDetailView: View {
                 TextField("Address", text: $newDestinationAddress)
                 Button("OK") {
                     updateImplementation(newDestinationAddress: newDestinationAddress)
+                    newDestinationAddress = ""
                 }
-                Button("Cancel", role: .cancel) {}
+                Button("Cancel", role: .cancel) {
+                    newDestinationAddress = ""
+                }
             } message: {
                 Text("Enter a new address.")
             }
@@ -142,8 +148,11 @@ struct DirectForwardDetailView: View {
                 TextField("Port", text: $newDestinationPort)
                 Button("OK") {
                     updateImplementation(newDestinationPort: newDestinationPort)
+                    newDestinationPort = ""
                 }
-                Button("Cancel", role: .cancel) {}
+                Button("Cancel", role: .cancel) {
+                    newDestinationPort = ""
+                }
             } message: {
                 Text("Enter a new port.")
             }

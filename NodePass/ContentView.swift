@@ -30,60 +30,52 @@ struct ContentView: View {
     @Environment(NPState.self) var state
     
     var body: some View {
-        TabView(selection: Bindable(state).tab) {
-            Tab(value: MainTab.services) {
+        if #available(iOS 18.0, macOS 14.0, *) {
+            TabView(selection: Bindable(state).tab) {
+                Tab(value: MainTab.services) {
+                    NavigationStack(path: Bindable(state).pathServices) {
+                        ServiceListView()
+                    }
+                } label: {
+                    Label(MainTab.services.title, systemImage: MainTab.services.systemName)
+                }
+                
+                Tab(value: MainTab.servers) {
+                    NavigationSplitView {
+                        ServerListView()
+                            .navigationSplitViewColumnWidth(min: 350, ideal: 400)
+                    } detail: {
+                        Text("Select a server to start")
+                            .foregroundStyle(.secondary)
+                    }
+                } label: {
+                    Label(MainTab.servers.title, systemImage: MainTab.servers.systemName)
+                }
+            }
+            .tabViewStyle(.sidebarAdaptable)
+        }
+        else {
+            TabView(selection: Bindable(state).tab) {
                 NavigationStack(path: Bindable(state).pathServices) {
                     ServiceListView()
                 }
-            } label: {
-                Label(MainTab.services.title, systemImage: MainTab.services.systemName)
-            }
-            
-            Tab(value: MainTab.servers) {
-                NavigationStack(path: Bindable(state).pathServers) {
+                .tag(MainTab.services)
+                .tabItem {
+                    Label(MainTab.services.title, systemImage: MainTab.services.systemName)
+                }
+                
+                NavigationSplitView {
                     ServerListView()
+                        .navigationSplitViewColumnWidth(min: 350, ideal: 400)
+                } detail: {
+                    Text("Select a server to start")
+                        .foregroundStyle(.secondary)
                 }
-            } label: {
-                Label(MainTab.servers.title, systemImage: MainTab.servers.systemName)
-            }
-        }
-        .tabViewStyle(.sidebarAdaptable)
-        .onOpenURL { url in
-            handleDeepLink(url: url)
-        }
-    }
-    
-    private func handleDeepLink(url: URL) {
-        if url.host == "master" {
-            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-                  let queryItems = components.queryItems else {
-#if DEBUG
-                print("Failed to parse URL components")
-#endif
-                return
-            }
-            
-            var result = [String: String]()
-            
-            for item in queryItems {
-                if let value = item.value,
-                   let decodedData = Data(base64Encoded: value),
-                   let decodedString = String(data: decodedData, encoding: .utf8) {
-                    result[item.name] = decodedString
+                .tag(MainTab.servers)
+                .tabItem {
+                    Label(MainTab.servers.title, systemImage: MainTab.servers.systemName)
                 }
             }
-            
-            state.tab = .servers
-            state.editServerSheetMode = .adding
-            state.editServerSheetServer = Server(name: "", url: result["url"] ?? "", key: result["key"] ?? "")
-            state.isShowEditServerSheet = true
-            
-            return
         }
-        
-#if DEBUG
-        print("Invalid host")
-#endif
-        return
     }
 }

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Cache
 
 class NPCore {
     // MARK: - Strings
@@ -29,17 +28,6 @@ class NPCore {
         ]
         userDefaults.register(defaults: defaultValues)
     }
-    
-    // MARK: - Cache
-    static let serverMetadataCacheStorage = try! Storage<String, ServerMetadata>(
-        diskConfig: DiskConfig(
-            name: "NPServerMetadataCache",
-            expiry: .never
-        ),
-        memoryConfig: MemoryConfig(),
-        fileManager: FileManager(),
-        transformer: TransformerFactory.forCodable(ofType: ServerMetadata.self)
-    )
     
     // MARK: - Utilities
     static func noEmptyName(_ name: String) -> String {
@@ -91,6 +79,19 @@ class NPCore {
             return shortened ? formatShort(String(localized: "timeUnitShortened.m"), minutes) : formatLong(String(localized: "timeUnitShortened.m"), minutes, String(localized: "timeUnitShortened.s"), seconds % 60)
         } else {
             return formatShort(String(localized: "timeUnitShortened.s"), seconds)
+        }
+    }
+    
+    static func localizedTLSLevel(tlsLevel: String) -> String {
+        switch(tlsLevel) {
+        case "0":
+            return String(localized: "Unencrypted", comment: "TLS Level: Unencrypted")
+        case "1":
+            return String(localized: "Self-signed Certificates", comment: "TLS Level: Self-signed Certificates")
+        case "2":
+            return String(localized: "Trusted Certificates", comment: "TLS Level: Trusted Certificates")
+        default:
+            return String(localized: "Unknown")
         }
     }
 }

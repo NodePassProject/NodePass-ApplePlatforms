@@ -28,7 +28,8 @@ struct InstanceListView: View {
     
     var body: some View {
         Form {
-            ForEach(instances.filter({ [.running, .stopped, .error].contains($0.status) })) { instance in
+            let validInstances = instances.filter({ [.running, .stopped, .error].contains($0.status) })
+            ForEach(validInstances) { instance in
                 instanceCard(instance: instance)
             }
         }

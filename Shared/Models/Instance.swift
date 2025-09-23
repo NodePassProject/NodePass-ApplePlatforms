@@ -8,6 +8,11 @@
 import Foundation
 
 struct Instance: Identifiable, Codable, Equatable {
+    struct Tag: Codable, Hashable {
+        let key: String
+        let value: String
+    }
+    
     let id: String
     let type: InstanceType
     let status: InstanceStatus
@@ -20,6 +25,7 @@ struct Instance: Identifiable, Codable, Equatable {
     let udpTransmit: Int64
     let ping: Int?
     let poolConnectionCount: Int?
+    let tags: [Tag]?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -34,5 +40,6 @@ struct Instance: Identifiable, Codable, Equatable {
         case udpTransmit = "udptx"
         case ping = "ping"
         case poolConnectionCount = "pool"
+        case tags
     }
 }

@@ -52,7 +52,7 @@ struct QRCodeScannerView: View {
                         return
                     }
 #if DEBUG
-                    print("Invalid host")
+                    print("No Action Completed")
 #endif
                     return
                 }

@@ -113,37 +113,39 @@ struct ServiceListView: View {
     
     var body: some View {
         ZStack {
-            switch(scheme) {
-            case .light:
-                MeshGradient(width: 3, height: 3, points: [
-                    .init(0, 0), .init(0.5, 0), .init(1, 0),
-                    .init(0, 0.5), .init(0.5, 0.5), .init(1, 0.5),
-                    .init(0, 1), .init(0.5, 1), .init(1, 1)
-                ], colors: [
-                    .red, .purple, .indigo,
-                    .orange, .white, .blue,
-                    .yellow, .green, .mint
-                ])
-                .ignoresSafeArea()
-            default:
-                MeshGradient(width: 3, height: 3, points: [
-                    .init(0, 0), .init(0.5, 0), .init(1, 0),
-                    .init(0, 0.5), .init(0.5, 0.5), .init(1, 0.5),
-                    .init(0, 1), .init(0.5, 1), .init(1, 1)
-                ], colors: [
-                    .init(red: 0.2, green: 0, blue: 0.3),
-                    .init(red: 0.1, green: 0, blue: 0.2),
-                    .init(red: 0, green: 0, blue: 0.15),
-                    
-                    .init(red: 0.3, green: 0.1, blue: 0),
-                    .init(red: 0.05, green: 0.05, blue: 0.1),
-                    .init(red: 0, green: 0.1, blue: 0.2),
-                    
-                    .init(red: 0.3, green: 0.2, blue: 0),
-                    .init(red: 0, green: 0.15, blue: 0.1),
-                    .init(red: 0, green: 0.2, blue: 0.15)
-                ])
-                .ignoresSafeArea()
+            if #available(iOS 18.0, macOS 14.0, *) {
+                switch(scheme) {
+                case .light:
+                    MeshGradient(width: 3, height: 3, points: [
+                        .init(0, 0), .init(0.5, 0), .init(1, 0),
+                        .init(0, 0.5), .init(0.5, 0.5), .init(1, 0.5),
+                        .init(0, 1), .init(0.5, 1), .init(1, 1)
+                    ], colors: [
+                        .red, .purple, .indigo,
+                        .orange, .white, .blue,
+                        .yellow, .green, .mint
+                    ])
+                    .ignoresSafeArea()
+                default:
+                    MeshGradient(width: 3, height: 3, points: [
+                        .init(0, 0), .init(0.5, 0), .init(1, 0),
+                        .init(0, 0.5), .init(0.5, 0.5), .init(1, 0.5),
+                        .init(0, 1), .init(0.5, 1), .init(1, 1)
+                    ], colors: [
+                        .init(red: 0.2, green: 0, blue: 0.3),
+                        .init(red: 0.1, green: 0, blue: 0.2),
+                        .init(red: 0, green: 0, blue: 0.15),
+                        
+                            .init(red: 0.3, green: 0.1, blue: 0),
+                        .init(red: 0.05, green: 0.05, blue: 0.1),
+                        .init(red: 0, green: 0.1, blue: 0.2),
+                        
+                            .init(red: 0.3, green: 0.2, blue: 0),
+                        .init(red: 0, green: 0.15, blue: 0.1),
+                        .init(red: 0, green: 0.2, blue: 0.15)
+                    ])
+                    .ignoresSafeArea()
+                }
             }
             
 #if os(macOS)

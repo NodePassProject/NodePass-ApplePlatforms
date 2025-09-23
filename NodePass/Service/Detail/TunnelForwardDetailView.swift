@@ -38,6 +38,9 @@ struct TunnelForwardDetailView: View {
     var addressesAndPorts1: (tunnel: (address: String, port: String), destination: (address: String, port: String)) {
         implementation1.parseAddressesAndPorts()
     }
+    var queryParameters1: [String: String] {
+        implementation1.parseQueryParameters()
+    }
     
     @Query private var servers: [Server]
     
@@ -130,7 +133,7 @@ struct TunnelForwardDetailView: View {
                     .copiable(addressesAndPorts.tunnel.port)
                     if let tlsLevel = queryParameters["tls"] {
                         LabeledContent("TLS Level") {
-                            Text(tlsLevel)
+                            Text(NPCore.localizedTLSLevel(tlsLevel: tlsLevel))
                         }
                     }
                     LabeledContent("Command URL") {
@@ -145,6 +148,7 @@ struct TunnelForwardDetailView: View {
                     let implementation = implementation1
                     let server = server1
                     let addressesAndPorts = addressesAndPorts1
+                    let queryParameters = queryParameters1
                     
                     HStack {
                         if let server {
@@ -194,6 +198,11 @@ struct TunnelForwardDetailView: View {
                         }
                     }
                     .copiable(addressesAndPorts.tunnel.port)
+                    if let tlsLevel = queryParameters["tls"] {
+                        LabeledContent("TLS Level") {
+                            Text(NPCore.localizedTLSLevel(tlsLevel: tlsLevel))
+                        }
+                    }
                     LabeledContent("Command URL") {
                         Text(implementation.command!)
                             .lineLimit(1)
@@ -208,8 +217,11 @@ struct TunnelForwardDetailView: View {
                 TextField("Port", text: $newPort)
                 Button("OK") {
                     updateImplementation(implementation: implementationToEdit, editPortOption: editPortOption, newPort: newPort)
+                    newPort = ""
                 }
-                Button("Cancel", role: .cancel) {}
+                Button("Cancel", role: .cancel) {
+                    newPort = ""
+                }
             } message: {
                 Text("Enter a new port.")
             }
@@ -233,11 +245,15 @@ struct TunnelForwardDetailView: View {
                 case .tunnel:
                     let server0 = servers.first(where: { $0.id == implementation0.serverID })!
                     let command0 = implementation0.dryModifyTunnelPort(port: newPort)
-                    try await instanceService.updateInstance(baseURLString: server0.url!, apiKey: server0.key!, id: implementation0.instanceID!, url: command0)
-                    implementation0.command = command0
+                    async let updateInstance0: () = instanceService.updateInstance(baseURLString: server0.url!, apiKey: server0.key!, id: implementation0.instanceID!, url: command0)
+                    
                     let server1 = servers.first(where: { $0.id == implementation1.serverID })!
                     let command1 = implementation1.dryModifyTunnelPort(port: newPort)
-                    try await instanceService.updateInstance(baseURLString: server1.url!, apiKey: server1.key!, id: implementation1.instanceID!, url: command1)
+                    async let updateInstance1: () = instanceService.updateInstance(baseURLString: server1.url!, apiKey: server1.key!, id: implementation1.instanceID!, url: command1)
+                    
+                    _ = try await (updateInstance0, updateInstance1)
+                    
+                    implementation0.command = command0
                     implementation1.command = command1
                 case .destination:
                     let implementation = implementation!

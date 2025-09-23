@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%.0f%%" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f%%"
+          }
+        }
+      }
+    },
     "%@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -127,6 +137,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld%2$@%3$lld%4$@"
+          }
+        }
+      }
+    },
+    "↑" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "↑"
+          }
+        }
+      }
+    },
+    "↑ %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "↑ %@"
+          }
+        }
+      }
+    },
+    "↓" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "↓"
+          }
+        }
+      }
+    },
+    "↓ %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "↓ %@"
           }
         }
       }
@@ -301,6 +351,26 @@
         }
       }
     },
+    "Configure Server Detail Widget" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置服务器详细信息小组件"
+          }
+        }
+      }
+    },
+    "Configure Widget" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置小组件"
+          }
+        }
+      }
+    },
     "Copy" : {
       "localizations" : {
         "zh-Hans" : {
@@ -317,17 +387,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "复制URL"
-          }
-        }
-      }
-    },
-    "Count" : {
-      "comment" : "Connection Count",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "连接数"
           }
         }
       }
@@ -418,16 +477,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "单端转发"
-          }
-        }
-      }
-    },
-    "Disk" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "磁盘"
           }
         }
       }
@@ -578,6 +627,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "错误"
+          }
+        }
+      }
+    },
+    "Get up-to-date information in your Widget." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在小组件中获取服务器的最新信息。"
           }
         }
       }
@@ -822,12 +881,12 @@
         }
       }
     },
-    "Read" : {
+    "Refresh Widget" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "读取"
+            "value" : "刷新小组件"
           }
         }
       }
@@ -912,22 +971,22 @@
         }
       }
     },
+    "Retry" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重试"
+          }
+        }
+      }
+    },
     "Running" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在运行"
-          }
-        }
-      }
-    },
-    "RX" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "接收"
           }
         }
       }
@@ -962,12 +1021,43 @@
         }
       }
     },
+    "Select a server to start" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择一台服务器以开始"
+          }
+        }
+      }
+    },
+    "Self-signed Certificates" : {
+      "comment" : "TLS Level: Self-signed Certificates",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自签名证书"
+          }
+        }
+      }
+    },
     "Server" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "服务器"
+          }
+        }
+      }
+    },
+    "Server Details" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器信息"
           }
         }
       }
@@ -1068,6 +1158,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已停止"
+          }
+        }
+      }
+    },
+    "Swap" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交换"
           }
         }
       }
@@ -1246,6 +1346,17 @@
         }
       }
     },
+    "Trusted Certificates" : {
+      "comment" : "TLS Level: Trusted Certificates",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受信任证书"
+          }
+        }
+      }
+    },
     "Tunnel Forward" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1276,16 +1387,6 @@
         }
       }
     },
-    "TX" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "发送"
-          }
-        }
-      }
-    },
     "UDP" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1296,12 +1397,33 @@
         }
       }
     },
+    "Unencrypted" : {
+      "comment" : "TLS Level: Unencrypted",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未加密"
+          }
+        }
+      }
+    },
     "Unknown" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "未知"
+          }
+        }
+      }
+    },
+    "Unsupported family" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不支持的模式"
           }
         }
       }
@@ -1356,12 +1478,12 @@
         }
       }
     },
-    "Write" : {
+    "View details of your servers at a glance." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "写入"
+            "value" : "快速查看你的服务器信息。"
           }
         }
       }
