@@ -267,6 +267,7 @@ struct ServiceListView: View {
                         }
                     }
             }
+            .animation(.default, value: filteredServices)
         }
         .padding(.horizontal, 15)
     }

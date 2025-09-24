@@ -431,6 +431,16 @@
         }
       }
     },
+    "Delete Server" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除服务器"
+          }
+        }
+      }
+    },
     "Delete Service" : {
       "localizations" : {
         "zh-Hans" : {
@@ -732,7 +742,14 @@
       }
     },
     "Matrix Unavailable" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指标不可用"
+          }
+        }
+      }
     },
     "Memory" : {
       "localizations" : {
@@ -745,7 +762,14 @@
       }
     },
     "Metadata Unavailable" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "元数据不可用"
+          }
+        }
+      }
     },
     "More" : {
       "localizations" : {
@@ -1480,6 +1504,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "快速查看你的服务器信息。"
+          }
+        }
+      }
+    },
+    "You are about to delete this server. Are you sure?" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你将要删除这台服务器。你确定吗？"
           }
         }
       }

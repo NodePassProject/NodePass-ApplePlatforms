@@ -45,15 +45,24 @@ class NPState {
     private func getServerMetadatas(servers: [Server]) async {
         do {
             let serverService = ServerService()
-            for server in servers {
-                let serverMetadata = try await serverService.getServerInfo(baseURLString: server.url!, apiKey: server.key!)
-                serverMetadatas[server.id!] = serverMetadata
+            
+            try await withThrowingTaskGroup(of: (String, ServerMetadata).self) { group in
+                for server in servers {
+                    group.addTask {
+                        let metadata = try await serverService.getServerInfo(baseURLString: server.url!, apiKey: server.key!)
+                        return (server.id!, metadata)
+                    }
+                }
+                
+                for try await (serverId, metadata) in group {
+                    serverMetadatas[serverId] = metadata
+                }
             }
         }
         catch {
-#if DEBUG
+    #if DEBUG
             print("Error Getting Server Metadata: \(error.localizedDescription)")
-#endif
+    #endif
         }
     }
 }

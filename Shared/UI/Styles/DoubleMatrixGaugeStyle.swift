@@ -31,7 +31,7 @@ struct DoubleMatrixGaugeStyle: GaugeStyle {
                             Text(text1)
                             Text(text2)
                         }
-                        .font(.system(size: size * 0.2))
+                        .font(.system(size: size * 0.2 - 1))
                     }
                 }
         }

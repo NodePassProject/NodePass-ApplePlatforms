@@ -39,10 +39,10 @@ struct ServerDetailProvider: AppIntentTimelineProvider {
                 ),
                 instances: [
                     Instance(
-                        id: "demo-instance",
+                        id: "demo-instance-1",
                         type: .server,
                         status: .running,
-                        url: "server://:10001/:10002?tls=1",
+                        url: "server://:10001/:20001?tls=1",
                         tcp: 20,
                         udp: 5,
                         tcpReceive: 10737418240,
@@ -52,7 +52,24 @@ struct ServerDetailProvider: AppIntentTimelineProvider {
                         ping: 50,
                         poolConnectionCount: 80,
                         tags: [
-                            Instance.Tag(key: "config", value: "server://:10001/:10002?tls=1")
+                            Instance.Tag(key: "config", value: "server://:10001/:20001?log=info&tls=1")
+                        ]
+                    ),
+                    Instance(
+                        id: "demo-instance-2",
+                        type: .server,
+                        status: .running,
+                        url: "server://:10002/:20002?tls=1",
+                        tcp: 20,
+                        udp: 5,
+                        tcpReceive: 10737418240,
+                        tcpTransmit: 10737418240,
+                        udpReceive: 524288000,
+                        udpTransmit: 524288000,
+                        ping: 50,
+                        poolConnectionCount: 80,
+                        tags: [
+                            Instance.Tag(key: "config", value: "server://:10001/:20001?log=info&tls=1")
                         ]
                     )
                 ]
@@ -101,7 +118,7 @@ struct ServerDetailWidgetEntryView: View {
     var entry: ServerDetailProvider.Entry
     
     var body: some View {
-        ZStack {
+        Group {
             if let data = entry.data {
                 Group {
                     switch(family) {
@@ -127,7 +144,7 @@ struct ServerDetailWidgetEntryView: View {
                 }
             }
         }
-        .containerBackground(.white, for: .widget)
+        .containerBackground(.background, for: .widget)
     }
     
     @ViewBuilder
@@ -202,6 +219,9 @@ struct ServerDetailWidgetEntryView: View {
                 }
                 Spacer()
                 Button(intent: RefreshWidgetIntent()) {
+                    Text(date, style: .timer)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     Text(date, style: .time)
                         .font(.caption)
                         .foregroundStyle(.secondary)

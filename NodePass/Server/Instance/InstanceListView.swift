@@ -32,6 +32,7 @@ struct InstanceListView: View {
             ForEach(validInstances) { instance in
                 instanceCard(instance: instance)
             }
+            .animation(.default, value: validInstances)
         }
         .formStyle(.grouped)
 #if os(iOS)

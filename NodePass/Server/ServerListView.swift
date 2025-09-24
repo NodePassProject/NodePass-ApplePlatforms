@@ -97,6 +97,9 @@ struct ServerListView: View {
     
     private let columns: [GridItem] = [GridItem(.adaptive(minimum: 320, maximum: 450))]
     
+    @State private var isShowDeleteServerAlert: Bool = false
+    @State private var serverToDelete: Server?
+    
     var body: some View {
         @Bindable var state = state
         ZStack {
@@ -140,12 +143,23 @@ struct ServerListView: View {
             }
         }
         .sheet(isPresented: $state.isShowEditServerSheet) {
+            try? context.save()
+            
             state.editServerSheetServer = nil
             state.editServerSheetMode = .adding
             
             state.updateServerMetadatas()
         } content: {
             EditServerView(server: $state.editServerSheetServer)
+        }
+        .alert("Delete Server", isPresented: $isShowDeleteServerAlert) {
+            Button("Delete", role: .destructive) {
+                context.delete(serverToDelete!)
+                serverToDelete = nil
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You are about to delete this server. Are you sure?")
         }
     }
     
@@ -188,21 +202,6 @@ struct ServerListView: View {
                     .onTapGesture {
                         state.pathServers.append(server)
                     }
-                    .swipeActions(edge: .trailing) {
-                        Button(role: .destructive) {
-                            context.delete(server)
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                        
-                        Button {
-                            state.editServerSheetMode = .editing
-                            state.editServerSheetServer = server
-                            state.isShowEditServerSheet = true
-                        } label: {
-                            Label("Edit", systemImage: "pencil")
-                        }
-                    }
                     .contextMenu {
                         Button {
                             state.editServerSheetMode = .editing
@@ -219,12 +218,14 @@ struct ServerListView: View {
                         }
                         
                         Button(role: .destructive) {
-                            context.delete(server)
+                            serverToDelete = server
+                            isShowDeleteServerAlert = true
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
                     }
             }
+            .animation(.default, value: filteredServers)
         }
         .padding(.horizontal, 15)
     }

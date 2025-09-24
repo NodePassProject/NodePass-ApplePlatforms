@@ -177,6 +177,7 @@ struct AddDirectForwardServiceView: View {
                     ]
                 )
                 context.insert(service)
+                try? context.save()
                 
                 dismiss()
             } catch {
