@@ -9,6 +9,8 @@ import SwiftUI
 import ColorfulX
 
 struct BackgroundColorfulView: View {
+    static let shared = BackgroundColorfulView()
+    
     @Environment(\.colorScheme) private var scheme
     
     var body: some View {

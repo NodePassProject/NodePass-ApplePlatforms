@@ -93,7 +93,8 @@ struct AddDirectForwardServiceView: View {
                                 position: 0,
                                 serverID: client?.id ?? "",
                                 instanceID: "",
-                                command: command
+                                command: command,
+                                fullCommand: command
                             )
                         ]
                     )
@@ -117,7 +118,7 @@ struct AddDirectForwardServiceView: View {
             .navigationTitle("Add Direct Forward")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button {
+                    Button(role: .cancel) {
                         dismiss()
                     } label: {
                         Label("Cancel", systemImage: "xmark")
@@ -125,12 +126,20 @@ struct AddDirectForwardServiceView: View {
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        execute()
-                    } label: {
-                        Label("Done", systemImage: "checkmark")
+                    if #available(iOS 26.0, macOS 26.0, *) {
+                        Button(role: .confirm) {
+                            execute()
+                        } label: {
+                            Label("Done", systemImage: "checkmark")
+                        }
+                        .disabled(client == nil || clientDestinationAddress == "")
                     }
-                    .disabled(client == nil || clientDestinationAddress == "")
+                    else {
+                        Button("Done") {
+                            execute()
+                        }
+                        .disabled(client == nil || clientDestinationAddress == "")
+                    }
                 }
             }
             .alert("Error", isPresented: $isShowErrorAlert) {
@@ -147,19 +156,23 @@ struct AddDirectForwardServiceView: View {
     }
     
     private func execute() {
+        let client = client!
+        
         let clientConnectPort = Int(clientConnectPort) ?? 1080
         let clientDestinationPort = Int(clientDestinationPort) ?? 1080
         
-        let command = "client://:\(clientConnectPort)/\(clientDestinationAddress):\(clientDestinationPort)?log=warn"
-
+        let command = "client://:\(clientConnectPort)/\(clientDestinationAddress):\(clientDestinationPort)"
+        
         Task {
+            let instanceService = InstanceService()
             do {
-                let clientInstanceService = InstanceService()
-                let clientInstance = try await clientInstanceService.createInstance(
-                    baseURLString: client!.url!,
-                    apiKey: client!.key!,
+                let clientInstance = try await instanceService.createInstance(
+                    baseURLString: client.url!,
+                    apiKey: client.key!,
                     url: command
                 )
+                
+                let fullCommand = clientInstance.config ?? command
                 
                 let name = NPCore.noEmptyName(name)
                 let service = Service(
@@ -170,9 +183,10 @@ struct AddDirectForwardServiceView: View {
                             name: String(localized: "\(name) Relay"),
                             type: .directForwardClient,
                             position: 0,
-                            serverID: client!.id!,
+                            serverID: client.id!,
                             instanceID: clientInstance.id,
-                            command: command
+                            command: command,
+                            fullCommand: fullCommand
                         )
                     ]
                 )

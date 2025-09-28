@@ -42,7 +42,8 @@ struct ServerDetailProvider: AppIntentTimelineProvider {
                         id: "demo-instance-1",
                         type: .server,
                         status: .running,
-                        url: "server://:10001/:20001?tls=1",
+                        url: "server://:10001/:20001",
+                        config: "server://:10001/:20001?min=64&mode=0&proxy=0&rate=0&read=1h0m0s&slot=65536",
                         tcp: 20,
                         udp: 5,
                         tcpReceive: 10737418240,
@@ -51,15 +52,14 @@ struct ServerDetailProvider: AppIntentTimelineProvider {
                         udpTransmit: 524288000,
                         ping: 50,
                         poolConnectionCount: 80,
-                        tags: [
-                            Instance.Tag(key: "config", value: "server://:10001/:20001?log=info&tls=1")
-                        ]
+                        tags: []
                     ),
                     Instance(
                         id: "demo-instance-2",
                         type: .server,
                         status: .running,
                         url: "server://:10002/:20002?tls=1",
+                        config: "server://:10002/:20002?min=64&mode=0&proxy=0&rate=0&read=1h0m0s&slot=65536",
                         tcp: 20,
                         udp: 5,
                         tcpReceive: 10737418240,
@@ -219,9 +219,6 @@ struct ServerDetailWidgetEntryView: View {
                 }
                 Spacer()
                 Button(intent: RefreshWidgetIntent()) {
-                    Text(date, style: .timer)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                     Text(date, style: .time)
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -286,12 +283,20 @@ struct ServerDetailWidgetEntryView: View {
     
     @ViewBuilder
     func systemLargeView(date: Date, data: ServerEntry.ServerData) -> some View {
+        let validInstances = data.instances.filter({ [.running, .stopped, .error].contains($0.status) })
         VStack(alignment: .leading) {
             systemMediumView(date: date, data: data)
-            let instances = data.instances.filter({ [.running, .stopped, .error].contains($0.status) }).prefix(2)
-            ForEach(instances) { instance in
-                Divider()
-                InstanceCardView(instance: instance)
+            ViewThatFits {
+                VStack(alignment: .leading) {
+                    Divider()
+                    InstanceCardView(instance: validInstances[0])
+                    Divider()
+                    InstanceCardView(instance: validInstances[1])
+                }
+                VStack(alignment: .leading) {
+                    Divider()
+                    InstanceCardView(instance: validInstances[0])
+                }
             }
         }
     }

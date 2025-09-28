@@ -112,12 +112,12 @@ class InstanceService {
         }
     }
     
-    func updateInstance(baseURLString: String, apiKey: String, id: String, url: String) async throws {
+    func updateInstance(baseURLString: String, apiKey: String, id: String, url: String) async throws -> Instance {
         let endpoint = InstanceAPI.updateInstance(baseURLString: baseURLString, apiKey: apiKey, id: id, url: url)
         
         return try await withCheckedThrowingContinuation { continuation in
-            networkService.request(endpoint) { result in
-                continuation.resume(with: result)
+            networkService.request(endpoint, expecting: Instance.self) { result in
+                continuation.resume(with: result.map { $0.value })
             }
         }
     }

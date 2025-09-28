@@ -67,7 +67,7 @@ struct EditServerView: View {
             .navigationTitle(state.editServerSheetMode == .adding ? "Add Server" : "Edit Server")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button {
+                    Button(role: .cancel) {
                         dismiss()
                     } label: {
                         Label("Cancel", systemImage: "xmark")
@@ -75,30 +75,20 @@ struct EditServerView: View {
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        switch(state.editServerSheetMode) {
-                        case .adding:
-                            if let server {
-                                server.name = NPCore.noEmptyName(name)
-                                server.url = url
-                                server.key = key
-                                context.insert(server)
-                            }
-                            else {
-                                let server = Server(name: NPCore.noEmptyName(name), url: url, key: key)
-                                context.insert(server)
-                            }
-                        case .editing:
-                            let server = server!
-                            server.name = NPCore.noEmptyName(name)
-                            server.url = url
-                            server.key = key
+                    if #available(iOS 26.0, macOS 26.0, *) {
+                        Button(role: .confirm) {
+                            confirm()
+                        } label: {
+                            Label("Done", systemImage: "checkmark")
                         }
-                        dismiss()
-                    } label: {
-                        Label("Done", systemImage: "checkmark")
+                        .disabled(!isValidAPIURL(url) || key == "")
                     }
-                    .disabled(!isValidAPIURL(url) || key == "")
+                    else {
+                        Button("Done") {
+                            confirm()
+                        }
+                        .disabled(!isValidAPIURL(url) || key == "")
+                    }
                 }
             }
 #if os(iOS)
@@ -134,5 +124,27 @@ struct EditServerView: View {
         }
         
         return true
+    }
+    
+    private func confirm() {
+        switch(state.editServerSheetMode) {
+        case .adding:
+            if let server {
+                server.name = NPCore.noEmptyName(name)
+                server.url = url
+                server.key = key
+                context.insert(server)
+            }
+            else {
+                let server = Server(name: NPCore.noEmptyName(name), url: url, key: key)
+                context.insert(server)
+            }
+        case .editing:
+            let server = server!
+            server.name = NPCore.noEmptyName(name)
+            server.url = url
+            server.key = key
+        }
+        dismiss()
     }
 }

@@ -17,17 +17,19 @@ class Implementation {
     var serverID: String?
     var instanceID: String?
     var command: String?
+    var fullCommand: String?
     
     var service: Service?
     
-    init(name: String, type: ImplementationType, position: Int, serverID: String, instanceID: String, command: String) {
-        self.id = "\(serverID)\(instanceID)\(command)"
+    init(name: String, type: ImplementationType, position: Int, serverID: String, instanceID: String, command: String, fullCommand: String) {
+        self.id = UUID().uuidString
         self.name = name
         self.type = type
         self.position = position
         self.serverID = serverID
         self.instanceID = instanceID
         self.command = command
+        self.fullCommand = fullCommand
     }
     
     func extractSchemePrefix() -> String {
@@ -41,8 +43,8 @@ class Implementation {
         return ""
     }
     
-    func extractQueryParameterString() -> String {
-        let urlString = command!
+    func extractQueryParameterString(isFull: Bool = false) -> String {
+        let urlString = isFull ? (fullCommand ?? command!) : command!
         guard let questionMarkIndex = urlString.firstIndex(of: "?") else {
             return ""
         }
@@ -86,14 +88,8 @@ class Implementation {
         )
     }
     
-    func parseQueryParameters() -> [String: String] {
-        let urlString = command!
-        guard let questionMarkIndex = urlString.firstIndex(of: "?") else {
-            return [:]
-        }
-        
-        let queryStartIndex = urlString.index(after: questionMarkIndex)
-        let queryString = String(urlString[queryStartIndex...])
+    func parseQueryParameters(isFull: Bool = false) -> [String: String] {
+        let queryString = extractQueryParameterString(isFull: isFull)
         let keyValuePairs = queryString.components(separatedBy: "&")
         var parameters = [String: String]()
         for pair in keyValuePairs {
@@ -110,23 +106,23 @@ class Implementation {
         return parameters
     }
     
-    func dryModifyTunnelAddress(address: String) -> String {
+    func dryModifyTunnelAddress(address: String, isReturnFullCommand: Bool = false) -> String {
         let addressesAndPorts = parseAddressesAndPorts()
-        return extractSchemePrefix() + address + ":" + addressesAndPorts.tunnel.port + "/" + addressesAndPorts.destination.address + ":" + addressesAndPorts.destination.port + "?" + extractQueryParameterString()
+        return extractSchemePrefix() + address + ":" + addressesAndPorts.tunnel.port + "/" + addressesAndPorts.destination.address + ":" + addressesAndPorts.destination.port + "?" + extractQueryParameterString(isFull: isReturnFullCommand)
     }
     
-    func dryModifyTunnelPort(port: String) -> String {
+    func dryModifyTunnelPort(port: String, isReturnFullCommand: Bool = false) -> String {
         let addressesAndPorts = parseAddressesAndPorts()
-        return extractSchemePrefix() + addressesAndPorts.tunnel.address + ":" + port + "/" + addressesAndPorts.destination.address + ":" + addressesAndPorts.destination.port + "?" + extractQueryParameterString()
+        return extractSchemePrefix() + addressesAndPorts.tunnel.address + ":" + port + "/" + addressesAndPorts.destination.address + ":" + addressesAndPorts.destination.port + "?" + extractQueryParameterString(isFull: isReturnFullCommand)
     }
     
-    func dryModifyDestinationAddress(address: String) -> String {
+    func dryModifyDestinationAddress(address: String, isReturnFullCommand: Bool = false) -> String {
         let addressesAndPorts = parseAddressesAndPorts()
-        return extractSchemePrefix() + addressesAndPorts.tunnel.address + ":" + addressesAndPorts.tunnel.port + "/" + address + ":" + addressesAndPorts.destination.port + "?" + extractQueryParameterString()
+        return extractSchemePrefix() + addressesAndPorts.tunnel.address + ":" + addressesAndPorts.tunnel.port + "/" + address + ":" + addressesAndPorts.destination.port + "?" + extractQueryParameterString(isFull: isReturnFullCommand)
     }
     
-    func dryModifyDestinationPort(port: String) -> String {
+    func dryModifyDestinationPort(port: String, isReturnFullCommand: Bool = false) -> String {
         let addressesAndPorts = parseAddressesAndPorts()
-        return extractSchemePrefix() + addressesAndPorts.tunnel.address + ":" + addressesAndPorts.tunnel.port + "/" + addressesAndPorts.destination.address + ":" + port + "?" + extractQueryParameterString()
+        return extractSchemePrefix() + addressesAndPorts.tunnel.address + ":" + addressesAndPorts.tunnel.port + "/" + addressesAndPorts.destination.address + ":" + port + "?" + extractQueryParameterString(isFull: isReturnFullCommand)
     }
 }

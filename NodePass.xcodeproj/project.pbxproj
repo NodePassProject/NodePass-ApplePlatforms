@@ -103,6 +103,7 @@
 		CB6682D52E1E90EA00A27696 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = CB6682D42E1E90EA00A27696 /* CodeScanner */; };
 		CB6682D72E1E990D00A27696 /* QRCodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682D62E1E990300A27696 /* QRCodeScannerView.swift */; };
 		CB6682D92E1E9DA300A27696 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CB6682D82E1E9DA300A27696 /* InfoPlist.xcstrings */; };
+		CBAE7F622E88D12700864A74 /* Drops in Frameworks */ = {isa = PBXBuildFile; productRef = CBAE7F612E88D12700864A74 /* Drops */; };
 		CBD4335F2E10FA4C002B153F /* NodePassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD4335E2E10FA4C002B153F /* NodePassApp.swift */; };
 		CBD433612E10FA4C002B153F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433602E10FA4C002B153F /* ContentView.swift */; };
 		CBD433632E10FA4D002B153F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CBD433622E10FA4D002B153F /* Assets.xcassets */; };
@@ -223,6 +224,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CBAE7F622E88D12700864A74 /* Drops in Frameworks */,
 				CB6682D52E1E90EA00A27696 /* CodeScanner in Frameworks */,
 				CB5E13972E825F1500870962 /* ColorfulX in Frameworks */,
 			);
@@ -519,6 +521,7 @@
 			packageProductDependencies = (
 				CB6682D42E1E90EA00A27696 /* CodeScanner */,
 				CB5E13962E825F1500870962 /* ColorfulX */,
+				CBAE7F612E88D12700864A74 /* Drops */,
 			);
 			productName = NodePass;
 			productReference = CBD4335B2E10FA4C002B153F /* NodePass.app */;
@@ -555,6 +558,7 @@
 			packageReferences = (
 				CB6682D32E1E90EA00A27696 /* XCRemoteSwiftPackageReference "CodeScanner" */,
 				CB5E13952E825F1500870962 /* XCRemoteSwiftPackageReference "ColorfulX" */,
+				CBAE7F602E88D12700864A74 /* XCRemoteSwiftPackageReference "Drops" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CBD4335C2E10FA4C002B153F /* Products */;
@@ -711,7 +715,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -753,7 +757,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -915,7 +919,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -967,7 +971,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 22;
+				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1060,6 +1064,14 @@
 				minimumVersion = 2.5.2;
 			};
 		};
+		CBAE7F602E88D12700864A74 /* XCRemoteSwiftPackageReference "Drops" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/omaralbeik/Drops.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.7.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1072,6 +1084,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CB6682D32E1E90EA00A27696 /* XCRemoteSwiftPackageReference "CodeScanner" */;
 			productName = CodeScanner;
+		};
+		CBAE7F612E88D12700864A74 /* Drops */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CBAE7F602E88D12700864A74 /* XCRemoteSwiftPackageReference "Drops" */;
+			productName = Drops;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -139,7 +139,8 @@ struct AddTunnelForwardServiceView: View {
                                 position: 0,
                                 serverID: relayServer?.id ?? "",
                                 instanceID: "",
-                                command: relayServerCommand
+                                command: relayServerCommand,
+                                fullCommand: relayServerCommand
                             ),
                             Implementation(
                                 name: String(localized: "\(name) Destination"),
@@ -147,7 +148,8 @@ struct AddTunnelForwardServiceView: View {
                                 position: 1,
                                 serverID: destinationServer?.id ?? "",
                                 instanceID: "",
-                                command: destinationServerCommand
+                                command: destinationServerCommand,
+                                fullCommand: destinationServerCommand
                             )
                         ]
                     )
@@ -172,7 +174,7 @@ struct AddTunnelForwardServiceView: View {
             .navigationTitle("Add Tunnel Forward")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button {
+                    Button(role: .cancel) {
                         dismiss()
                     } label: {
                         Label("Cancel", systemImage: "xmark")
@@ -180,12 +182,20 @@ struct AddTunnelForwardServiceView: View {
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        execute()
-                    } label: {
-                        Label("Done", systemImage: "checkmark")
+                    if #available(iOS 26.0, macOS 26.0, *) {
+                        Button(role: .confirm) {
+                            execute()
+                        } label: {
+                            Label("Done", systemImage: "checkmark")
+                        }
+                        .disabled(relayServer == nil || destinationServer == nil)
                     }
-                    .disabled(relayServer == nil || destinationServer == nil)
+                    else {
+                        Button("Done") {
+                            execute()
+                        }
+                        .disabled(relayServer == nil || destinationServer == nil)
+                    }
                 }
             }
             .alert("Error", isPresented: $isShowErrorAlert) {
@@ -218,11 +228,8 @@ struct AddTunnelForwardServiceView: View {
         else {
             relayServerCommand = "client://\(destinationServer?.getHost() ?? ""):\(tunnelPort)/:\(relayServerConnectPort)"
         }
-        relayServerCommand += "?"
-        relayServerCommand += "log=warn"
-        if isRelayServerAsNPServer {
-            relayServerCommand += "&"
-            relayServerCommand += isTLS ? "tls=1" : "tls=0"
+        if isRelayServerAsNPServer && isTLS {
+            relayServerCommand += "?tls=1"
         }
         
         var destinationServerCommand: String
@@ -232,36 +239,39 @@ struct AddTunnelForwardServiceView: View {
         else {
             destinationServerCommand = "client://\(relayServer?.getHost() ?? ""):\(tunnelPort)/127.0.0.1:\(destinationServerServicePort)"
         }
-        destinationServerCommand += "?"
-        destinationServerCommand += "log=warn"
-        if isDestinationServerAsNPServer {
-            destinationServerCommand += "&"
-            destinationServerCommand += isTLS ? "tls=1" : "tls=0"
+        if isDestinationServerAsNPServer && isTLS {
+            destinationServerCommand += "?tls=1"
         }
         
         return (relayServerCommand: relayServerCommand, destinationServerCommand: destinationServerCommand)
     }
     
     private func execute() {
+        let relayServer = relayServer!
+        let destinationServer = destinationServer!
+        
         let commands = generateCommands()
         let relayServerCommand = commands.relayServerCommand
         let destinationServerCommand = commands.destinationServerCommand
 
         Task {
+            let instanceService = InstanceService()
             do {
-                let relayServerInstanceService = InstanceService()
-                let relayServerInstance = try await relayServerInstanceService.createInstance(
-                    baseURLString: relayServer!.url!,
-                    apiKey: relayServer!.key!,
+                async let createRelayServerInstance = instanceService.createInstance(
+                    baseURLString: relayServer.url!,
+                    apiKey: relayServer.key!,
                     url: relayServerCommand
                 )
-                
-                let destinationServerInstanceService = InstanceService()
-                let destinationServerInstance = try await destinationServerInstanceService.createInstance(
-                    baseURLString: destinationServer!.url!,
-                    apiKey: destinationServer!.key!,
+                async let createDestinationServerInstance = instanceService.createInstance(
+                    baseURLString: destinationServer.url!,
+                    apiKey: destinationServer.key!,
                     url: destinationServerCommand
                 )
+                
+                let (relayServerInstance, destinationServerInstance) = try await (createRelayServerInstance, createDestinationServerInstance)
+                
+                let relayServerFullCommand = relayServerInstance.config ?? relayServerCommand
+                let destinationServerFullCommand = destinationServerInstance.config ?? destinationServerCommand
                 
                 let name = NPCore.noEmptyName(name)
                 let service = Service(
@@ -272,17 +282,19 @@ struct AddTunnelForwardServiceView: View {
                             name: String(localized: "\(name) Relay"),
                             type: .tunnelForwardServer,
                             position: 0,
-                            serverID: relayServer!.id!,
+                            serverID: relayServer.id!,
                             instanceID: relayServerInstance.id,
-                            command: relayServerCommand
+                            command: relayServerCommand,
+                            fullCommand: relayServerFullCommand
                         ),
                         Implementation(
                             name: String(localized: "\(name) Destination"),
                             type: .tunnelForwardClient,
                             position: 1,
-                            serverID: destinationServer!.id!,
+                            serverID: destinationServer.id!,
                             instanceID: destinationServerInstance.id,
-                            command: destinationServerCommand
+                            command: destinationServerCommand,
+                            fullCommand: destinationServerFullCommand
                         )
                     ]
                 )

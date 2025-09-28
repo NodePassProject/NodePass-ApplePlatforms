@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Drops
 
 struct DirectForwardDetailView: View {
     @Environment(NPState.self) var state
@@ -35,6 +36,8 @@ struct DirectForwardDetailView: View {
     
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
+    
+    @State private var isSensoryFeedbackTriggered: Bool = false
     
     var body: some View {
         if service.type == .directForward {
@@ -161,6 +164,7 @@ struct DirectForwardDetailView: View {
             } message: {
                 Text(errorMessage)
             }
+            .sensoryFeedback(.success, trigger: isSensoryFeedbackTriggered)
         }
         else {
             Image(systemName: "exclamationmark.circle")
@@ -172,10 +176,13 @@ struct DirectForwardDetailView: View {
         Task {
             let instanceService = InstanceService()
             do {
+                let implementation = implementation
                 let server = servers.first(where: { $0.id == implementation.serverID })!
                 let command = implementation.dryModifyTunnelPort(port: newRelayPort)
-                try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: implementation.instanceID!, url: command)
+                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: implementation.instanceID!, url: command)
+                
                 implementation.command = command
+                implementation.fullCommand = updatedInstance.config ?? command
             }
             catch {
                 errorMessage = "Error Updating Instances: \(error.localizedDescription)"
@@ -188,10 +195,13 @@ struct DirectForwardDetailView: View {
         Task {
             let instanceService = InstanceService()
             do {
+                let implementation = implementation
                 let server = servers.first(where: { $0.id == implementation.serverID })!
                 let command = implementation.dryModifyDestinationAddress(address: newDestinationAddress)
-                try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: implementation.instanceID!, url: command)
+                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: implementation.instanceID!, url: command)
+                
                 implementation.command = command
+                implementation.fullCommand = updatedInstance.config ?? command
             }
             catch {
                 errorMessage = "Error Updating Instances: \(error.localizedDescription)"
@@ -204,10 +214,19 @@ struct DirectForwardDetailView: View {
         Task {
             let instanceService = InstanceService()
             do {
+                let implementation = implementation
                 let server = servers.first(where: { $0.id == implementation.serverID })!
                 let command = implementation.dryModifyDestinationPort(port: newDestinationPort)
-                try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: implementation.instanceID!, url: command)
+                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: implementation.instanceID!, url: command)
+                
                 implementation.command = command
+                implementation.fullCommand = updatedInstance.config ?? command
+                
+#if os(iOS)
+                let drop = Drop(title: String(localized: "Success"), subtitle: String(localized: "Changes are now effective"), icon: UIImage(systemName: "checkmark.circle"))
+                Drops.show(drop)
+#endif
+                isSensoryFeedbackTriggered.toggle()
             }
             catch {
                 errorMessage = "Error Updating Instances: \(error.localizedDescription)"

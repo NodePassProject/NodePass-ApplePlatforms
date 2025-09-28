@@ -30,7 +30,7 @@ struct ServerQuery: EntityQuery {
         let data = NPData.shared
         let dataHandler = await data.createDataHandler()()
         let servers = await dataHandler.getAllServers()
-        return sortServers(servers: servers).prefix(3).map { ServerEntity(id: $0.id!, name: $0.name!, url: $0.url!, key: $0.key!) }
+        return sortServers(servers: servers).map { ServerEntity(id: $0.id!, name: $0.name!, url: $0.url!, key: $0.key!) }
     }
     
     func defaultResult() async -> ServerEntity? {

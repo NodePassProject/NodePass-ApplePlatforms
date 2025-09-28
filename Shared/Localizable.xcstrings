@@ -341,6 +341,16 @@
         }
       }
     },
+    "Changes are now effective" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更改已生效"
+          }
+        }
+      }
+    },
     "Command URL" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1178,6 +1188,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已停止"
+          }
+        }
+      }
+    },
+    "Success" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功"
           }
         }
       }

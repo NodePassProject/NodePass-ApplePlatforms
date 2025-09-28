@@ -112,7 +112,7 @@ struct ServiceListView: View {
     
     var body: some View {
         ZStack {
-            BackgroundColorfulView()
+            BackgroundColorfulView.shared
             
 #if os(macOS)
             ScrollView {

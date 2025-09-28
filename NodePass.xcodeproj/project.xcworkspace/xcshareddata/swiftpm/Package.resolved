@@ -1,5 +1,5 @@
 {
-  "originHash" : "c6990183448f8ac31d17406ce16be3b4fafea217a7fd4c924e8cc88ab9371a6a",
+  "originHash" : "8782344591602c5d03882cb6fc3a8da4f6fb3c305491f1ade642739b69493cd5",
   "pins" : [
     {
       "identity" : "codescanner",
@@ -26,6 +26,15 @@
       "state" : {
         "revision" : "6da8726bf38d68eb943d0f2139ac2a1fac70e65b",
         "version" : "1.0.4"
+      }
+    },
+    {
+      "identity" : "drops",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/omaralbeik/Drops.git",
+      "state" : {
+        "revision" : "a183ee6f79f21c940092a19c2cba756555422371",
+        "version" : "1.7.0"
       }
     },
     {

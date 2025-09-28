@@ -103,7 +103,7 @@ struct ServerListView: View {
     var body: some View {
         @Bindable var state = state
         ZStack {
-            BackgroundColorfulView()
+            BackgroundColorfulView.shared
             
 #if os(macOS)
             ScrollView {
@@ -247,9 +247,15 @@ struct ServerListView: View {
                     }
                     Spacer()
                 }
+#if DEBUG
+                Text(verbatim: "https://node.nodepass.eu/api/v1")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+#else
                 Text(server.url!)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+#endif
             }
             
             Spacer()

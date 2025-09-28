@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Drops
 
 fileprivate enum EditPortOption {
     case tunnel
@@ -27,7 +28,7 @@ struct NATPassthroughDetailView: View {
         implementation0.parseAddressesAndPorts()
     }
     var queryParameters0: [String: String] {
-        implementation0.parseQueryParameters()
+        implementation0.parseQueryParameters(isFull: true)
     }
     var implementation1: Implementation {
         service.implementations!.first(where: { $0.position == 1 })!
@@ -62,6 +63,8 @@ struct NATPassthroughDetailView: View {
     
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
+    
+    @State private var isSensoryFeedbackTriggered: Bool = false
     
     var body: some View {
         if service.type == .natPassthrough {
@@ -219,6 +222,7 @@ struct NATPassthroughDetailView: View {
             } message: {
                 Text(errorMessage)
             }
+            .sensoryFeedback(.success, trigger: isSensoryFeedbackTriggered)
         }
         else {
             Image(systemName: "exclamationmark.circle")
@@ -232,25 +236,37 @@ struct NATPassthroughDetailView: View {
             do {
                 switch(editPortOption) {
                 case .tunnel:
+                    let implementation0 = implementation0
                     let server0 = servers.first(where: { $0.id == implementation0.serverID })!
                     let command0 = implementation0.dryModifyTunnelPort(port: newPort)
-                    async let updateInstance0: () = instanceService.updateInstance(baseURLString: server0.url!, apiKey: server0.key!, id: implementation0.instanceID!, url: command0)
+                    async let updateInstance0: (Instance) = instanceService.updateInstance(baseURLString: server0.url!, apiKey: server0.key!, id: implementation0.instanceID!, url: command0)
                     
+                    let implementation1 = implementation1
                     let server1 = servers.first(where: { $0.id == implementation1.serverID })!
                     let command1 = implementation1.dryModifyTunnelPort(port: newPort)
-                    async let updateInstance1: () = instanceService.updateInstance(baseURLString: server1.url!, apiKey: server1.key!, id: implementation1.instanceID!, url: command1)
+                    async let updateInstance1: (Instance) = instanceService.updateInstance(baseURLString: server1.url!, apiKey: server1.key!, id: implementation1.instanceID!, url: command1)
                     
-                    _ = try await (updateInstance0, updateInstance1)
+                    let (updatedInstance0, updatedInstance1) = try await (updateInstance0, updateInstance1)
                     
                     implementation0.command = command0
+                    implementation0.fullCommand = updatedInstance0.config ?? command0
                     implementation1.command = command1
+                    implementation1.fullCommand = updatedInstance1.config ?? command1
                 case .destination:
                     let implementation = implementation!
                     let server = servers.first(where: { $0.id == implementation.serverID })!
                     let command = implementation.dryModifyDestinationPort(port: newPort)
-                    try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: implementation.instanceID!, url: command)
+                    let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: implementation.instanceID!, url: command)
+                    
                     implementation.command = command
+                    implementation.fullCommand = updatedInstance.config ?? command
                 }
+                
+#if os(iOS)
+                let drop = Drop(title: String(localized: "Success"), subtitle: String(localized: "Changes are now effective"), icon: UIImage(systemName: "checkmark.circle"))
+                Drops.show(drop)
+#endif
+                isSensoryFeedbackTriggered.toggle()
             }
             catch {
                 errorMessage = "Error Updating Instances: \(error.localizedDescription)"

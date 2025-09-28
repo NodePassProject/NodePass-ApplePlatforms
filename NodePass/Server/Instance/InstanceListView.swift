@@ -210,7 +210,7 @@ struct InstanceListView: View {
         Task {
             let instanceService = InstanceService()
             do {
-                try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: instance.id, url: commandOfEditedInstance)
+                _ = try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: instance.id, url: commandOfEditedInstance)
                 listInstances()
             }
             catch {
