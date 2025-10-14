@@ -176,8 +176,10 @@ struct AddDirectForwardServiceView: View {
                 
                 let fullCommand = clientInstance.config ?? command
                 
+                let serviceId = UUID()
                 let name = NPCore.noEmptyName(name)
                 let service = Service(
+                    id: serviceId,
                     name: name,
                     type: .directForward,
                     implementations: [
@@ -201,9 +203,8 @@ struct AddDirectForwardServiceView: View {
                         apiKey: client.key,
                         id: clientInstance.id,
                         serviceAlias: String(localized: "\(name)"),
-                        serviceId: "<Apple><ServiceID>\(service.id)</ServiceID><ServiceType>directForward</ServiceType></Apple>",
-                        peerInstanceId: "",
-                        peerMasterId: ""
+                        serviceId: serviceId.uuidString,
+                        serviceType: "0"
                     )
                 } catch {
 #if DEBUG

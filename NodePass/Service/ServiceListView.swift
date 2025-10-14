@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Drops
 
 fileprivate enum SortIndicator: String, CaseIterable {
     case name = "name"
@@ -61,6 +62,8 @@ struct ServiceListView: View {
     @Query private var services: [Service]
     @Query private var servers: [Server]
     
+    private let columns: [GridItem] = [GridItem(.adaptive(minimum: 320, maximum: 450))]
+    
     @State private var sortIndicator: SortIndicator = SortIndicator(rawValue: NPCore.userDefaults.string(forKey: NPCore.Strings.NPServiceSortIndicator) ?? "date")! {
         didSet {
             NPCore.userDefaults.set(sortIndicator.rawValue, forKey: NPCore.Strings.NPServiceSortIndicator)
@@ -108,7 +111,7 @@ struct ServiceListView: View {
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
     
-    private let columns: [GridItem] = [GridItem(.adaptive(minimum: 320, maximum: 450))]
+    @State private var isSensoryFeedbackTriggered: Bool = false
     
     var body: some View {
         ZStack {
@@ -184,6 +187,7 @@ struct ServiceListView: View {
         } message: {
             Text(errorMessage)
         }
+        .sensoryFeedback(.success, trigger: isSensoryFeedbackTriggered)
     }
     
     private var addServiceMenu: some View {
@@ -210,6 +214,11 @@ struct ServiceListView: View {
     
     private var moreMenu: some View {
         Menu("More", systemImage: "ellipsis") {
+            Button {
+                sync()
+            } label: {
+                Label("Sync", systemImage: "arrow.trianglehead.2.clockwise.rotate.90")
+            }
             Picker("Sort", selection: Binding(get: {
                 sortIndicator
             }, set: { newValue in
@@ -346,6 +355,193 @@ struct ServiceListView: View {
                     showGeneralizedErrorMessage(error: error, instanceID: clientInstanceID)
                 }
             }
+        }
+    }
+    
+    private func sync() {
+        Task {
+            let instanceService = InstanceService()
+            var store: [String: [Instance]] = .init()
+            var examinedServiceIds: [String] = .init()
+            try await withThrowingTaskGroup(of: (serverId: Server.ID, instances: [Instance]).self) { group in
+                for server in servers {
+                    group.addTask {
+                        let instances = try await instanceService.listInstances(
+                            baseURLString: server.url,
+                            apiKey: server.key
+                        )
+                        return (server.id, instances)
+                    }
+                }
+                for try await result in group {
+                    store[result.serverId] = result.instances
+                }
+            }
+            for serverId in store.keys {
+                for instance in store[serverId]! {
+                    if let serviceId = instance.metadata?.peer.serviceId, serviceId != "", !examinedServiceIds.contains(serviceId) {
+                        let serverId0 = serverId
+                        let instance0 = instance
+                        if instance0.metadata!.peer.serviceType == "0" && !services.map({ $0.id.uuidString }).contains(serviceId) {
+                            // Direct Forward
+                            let clientId = serverId0
+                            let clientInstance = instance0
+                            let service = Service(
+                                id: UUID(uuidString: serviceId) ?? UUID(),
+                                name: instance.metadata?.peer.alias ?? String(localized: "Untitled"),
+                                type: .directForward,
+                                implementations: [
+                                    Implementation(
+                                        name: clientInstance.metadata!.peer.alias,
+                                        type: .directForwardClient,
+                                        position: 0,
+                                        serverID: clientId,
+                                        instanceID: clientInstance.id,
+                                        command: clientInstance.url,
+                                        fullCommand: clientInstance.config ?? clientInstance.url
+                                    )
+                                ]
+                            )
+                            context.insert(service)
+                            try? context.save()
+                            
+                            examinedServiceIds.append(serverId)
+                            continue
+                        }
+                        for serverId in store.keys {
+                            for instance in store[serverId]! {
+                                if instance.metadata?.peer.serviceId == serviceId {
+                                    if !services.map({ $0.id.uuidString }).contains(serviceId) {
+                                        let serverId1 = serverId
+                                        let instance1 = instance
+                                        
+                                        switch(instance.metadata!.peer.serviceType) {
+                                        case "1":
+                                            // NAT Passthrough
+                                            let schemeOfInstance0 = NPCore.parseScheme(urlString: instance0.url)
+                                            let schemeOfInstance1 = NPCore.parseScheme(urlString: instance1.url)
+                                            let serverId: String
+                                            let clientId: String
+                                            let serverInstance: Instance
+                                            let clientInstance: Instance
+                                            if schemeOfInstance0 == .server && schemeOfInstance1 == .client {
+                                                serverId = serverId0
+                                                serverInstance = instance0
+                                                clientId = serverId1
+                                                clientInstance = instance1
+                                            }
+                                            else if schemeOfInstance1 == .server && schemeOfInstance0 == .client {
+                                                serverId = serverId1
+                                                serverInstance = instance1
+                                                clientId = serverId0
+                                                clientInstance = instance0
+                                            }
+                                            else {
+                                                continue
+                                            }
+                                            let service = Service(
+                                                id: UUID(uuidString: serviceId) ?? UUID(),
+                                                name: instance.metadata?.peer.alias ?? String(localized: "Untitled"),
+                                                type: .natPassthrough,
+                                                implementations: [
+                                                    Implementation(
+                                                        name: serverInstance.metadata!.peer.alias,
+                                                        type: .natPassthroughServer,
+                                                        position: 0,
+                                                        serverID: serverId,
+                                                        instanceID: serverInstance.id,
+                                                        command: serverInstance.url,
+                                                        fullCommand: serverInstance.config ?? serverInstance.url
+                                                    ),
+                                                    Implementation(
+                                                        name: clientInstance.metadata!.peer.alias,
+                                                        type: .natPassthroughClient,
+                                                        position: 1,
+                                                        serverID: clientId,
+                                                        instanceID: clientInstance.id,
+                                                        command: clientInstance.url,
+                                                        fullCommand: clientInstance.config ?? clientInstance.url
+                                                    )
+                                                ]
+                                            )
+                                            context.insert(service)
+                                            try? context.save()
+                                            
+                                            examinedServiceIds.append(serverId)
+                                            continue
+                                        case "2":
+                                            // Tunnel Forward
+                                            let schemeOfInstance0 = NPCore.parseScheme(urlString: instance0.url)
+                                            let modeOfInstance0 = NPCore.parseQueryParameters(urlString: instance0.url)["mode"]
+                                            let schemeOfInstance1 = NPCore.parseScheme(urlString: instance1.url)
+                                            let modeOfInstance1 = NPCore.parseQueryParameters(urlString: instance1.url)["mode"]
+                                            guard let modeOfInstance0, let modeOfInstance1 else {
+                                                continue
+                                            }
+                                            let relayServerId: String
+                                            let destinationServerId: String
+                                            let relayServerInstance: Instance
+                                            let destinationServerInstance: Instance
+                                            if (schemeOfInstance0 == .server && modeOfInstance0 == "1") || (schemeOfInstance1 == .server && modeOfInstance1 == "2") {
+                                                relayServerId = serverId0
+                                                relayServerInstance = instance0
+                                                destinationServerId = serverId1
+                                                destinationServerInstance = instance1
+                                            }
+                                            else if (schemeOfInstance1 == .server && modeOfInstance1 == "1") || (schemeOfInstance0 == .server && modeOfInstance0 == "2") {
+                                                relayServerId = serverId1
+                                                relayServerInstance = instance1
+                                                destinationServerId = serverId0
+                                                destinationServerInstance = instance0
+                                            }
+                                            else {
+                                                continue
+                                            }
+                                            let service = Service(
+                                                id: UUID(uuidString: serviceId) ?? UUID(),
+                                                name: instance.metadata?.peer.alias ?? String(localized: "Untitled"),
+                                                type: .tunnelForward,
+                                                implementations: [
+                                                    Implementation(
+                                                        name: relayServerInstance.metadata!.peer.alias,
+                                                        type: .tunnelForwardRelay,
+                                                        position: 0,
+                                                        serverID: relayServerId,
+                                                        instanceID: relayServerInstance.id,
+                                                        command: relayServerInstance.url,
+                                                        fullCommand: relayServerInstance.config ?? relayServerInstance.url
+                                                    ),
+                                                    Implementation(
+                                                        name: destinationServerInstance.metadata!.peer.alias,
+                                                        type: .tunnelForwardDestination,
+                                                        position: 1,
+                                                        serverID: destinationServerId,
+                                                        instanceID: destinationServerInstance.id,
+                                                        command: destinationServerInstance.url,
+                                                        fullCommand: destinationServerInstance.config ?? destinationServerInstance.url
+                                                    )
+                                                ]
+                                            )
+                                            context.insert(service)
+                                            try? context.save()
+                                            
+                                            examinedServiceIds.append(serverId)
+                                            continue
+                                        default:
+                                            continue
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+#if os(iOS)
+                let drop = Drop(title: String(localized: "Success"), subtitle: String(localized: "Sync completed"), icon: UIImage(systemName: "checkmark.circle"))
+                Drops.show(drop)
+#endif
+            isSensoryFeedbackTriggered.toggle()
         }
     }
 }

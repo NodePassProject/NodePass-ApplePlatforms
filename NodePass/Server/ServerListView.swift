@@ -62,6 +62,8 @@ struct ServerListView: View {
     @Environment(\.modelContext) private var context
     @Query private var servers: [Server]
     
+    private let columns: [GridItem] = [GridItem(.adaptive(minimum: 320, maximum: 450))]
+    
     @State private var sortIndicator: SortIndicator = SortIndicator(rawValue: NPCore.userDefaults.string(forKey: NPCore.Strings.NPServerSortIndicator) ?? "date")! {
         didSet {
             NPCore.userDefaults.set(sortIndicator.rawValue, forKey: NPCore.Strings.NPServerSortIndicator)
@@ -94,8 +96,6 @@ struct ServerListView: View {
             return sortedServers.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
     }
-    
-    private let columns: [GridItem] = [GridItem(.adaptive(minimum: 320, maximum: 450))]
     
     @State private var isShowDeleteServerAlert: Bool = false
     @State private var serverToDelete: Server?

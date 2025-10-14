@@ -237,8 +237,10 @@ struct AddNATPassthroughServiceView: View {
                 let serverFullCommand = serverInstance.config ?? serverCommand
                 let clientFullCommand = clientInstance.config ?? clientCommand
                 
+                let serviceId = UUID()
                 let name = NPCore.noEmptyName(name)
                 let service = Service(
+                    id: serviceId,
                     name: name,
                     type: .natPassthrough,
                     implementations: [
@@ -266,40 +268,22 @@ struct AddNATPassthroughServiceView: View {
                 try? context.save()
                 
                 do {
-                    // Get Peer Master ID
-                    async let getServerMasterInstance: (Instance) = instanceService.getMasterInstance(
-                        baseURLString: server.url,
-                        apiKey: server.key
-                    )
-                    async let getClientMasterInstance: (Instance) = instanceService.getMasterInstance(
-                        baseURLString: client.url,
-                        apiKey: client.key
-                    )
-                    
-                    let (serverMasterInstance, clientMasterInstance) = try await (getServerMasterInstance, getClientMasterInstance)
-                    
-                    guard let serverMasterID = serverMasterInstance.config, let clientMasterID = serverMasterInstance.config else {
-                        return
-                    }
-                    
                     // Update Instance Peer
                     async let updateServerInstancePeer: () = instanceService.updateInstancePeer(
                         baseURLString: server.url,
                         apiKey: server.key,
                         id: serverInstance.id,
                         serviceAlias: String(localized: "\(name)"),
-                        serviceId: "<Apple><ServiceID>\(service.id)</ServiceID><ServiceType>natPassthrough</ServiceType></Apple>",
-                        peerInstanceId: clientInstance.id,
-                        peerMasterId: clientMasterID
+                        serviceId: serviceId.uuidString,
+                        serviceType: "1"
                     )
                     async let updateClientInstancePeer: () = instanceService.updateInstancePeer(
                         baseURLString: client.url,
                         apiKey: client.key,
                         id: clientInstance.id,
                         serviceAlias: String(localized: "\(name)"),
-                        serviceId: "<Apple><ServiceID>\(service.id)</ServiceID><ServiceType>natPassthrough</ServiceType></Apple>",
-                        peerInstanceId: serverInstance.id,
-                        peerMasterId: serverMasterID
+                        serviceId: serviceId.uuidString,
+                        serviceType: "1"
                     )
                     
                     _ = try await (updateServerInstancePeer, updateClientInstancePeer)

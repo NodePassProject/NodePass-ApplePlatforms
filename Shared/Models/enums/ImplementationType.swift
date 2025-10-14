@@ -9,6 +9,6 @@ enum ImplementationType: String, Codable {
     case natPassthroughServer = "natPassthroughServer"
     case natPassthroughClient = "natPassthroughClient"
     case directForwardClient = "directForwardClient"
-    case tunnelForwardServer = "tunnelForwardServer"
-    case tunnelForwardClient = "tunnelForwardClient"
+    case tunnelForwardRelay = "tunnelForwardRelay"
+    case tunnelForwardDestination = "tunnelForwardDestination"
 }

@@ -29,6 +29,94 @@ class NPCore {
         userDefaults.register(defaults: defaultValues)
     }
     
+    // MARK: Command URL Process
+    enum Scheme {
+        case server
+        case client
+    }
+    
+    static func parseScheme(urlString: String) -> Scheme {
+        if urlString.hasPrefix("server") {
+            return .server
+        }
+        if urlString.hasPrefix("client") {
+            return .client
+        }
+        fatalError()
+    }
+    
+    static func parseAddressesAndPorts(urlString: String) -> (tunnel: (address: String, port: String), destination: (address: String, port: String)) {
+        let urlString = urlString
+        let schemePrefixes = ["server://", "client://"]
+        var stringWithoutPrefix = ""
+        for prefix in schemePrefixes {
+            if urlString.hasPrefix(prefix) {
+                stringWithoutPrefix = String(urlString.dropFirst(prefix.count))
+                break
+            }
+        }
+        
+        var stringWithoutPrefixAndParameters = stringWithoutPrefix
+        if let queryStartIndex = stringWithoutPrefix.firstIndex(of: "?") {
+            stringWithoutPrefixAndParameters = String(stringWithoutPrefix[..<queryStartIndex])
+        }
+        
+        let stringParts: (String, String)
+        let slashIndex = stringWithoutPrefixAndParameters.firstIndex(of: "/")!
+        let tunnalStringPart = String(stringWithoutPrefixAndParameters[..<slashIndex])
+        let destinationStringPart = String(stringWithoutPrefixAndParameters[stringWithoutPrefixAndParameters.index(after: slashIndex)...])
+        stringParts = (tunnalStringPart, destinationStringPart)
+        
+        func parseStringPart(_ part: String) -> (address: String, port: String) {
+            let lastColonIndex = part.lastIndex(of: ":")!
+            
+            let address = String(part[..<lastColonIndex])
+            let portStartIndex = part.index(after: lastColonIndex)
+            let port = String(part[portStartIndex...])
+            return (address, port)
+        }
+        
+        return (
+            tunnel: parseStringPart(stringParts.0),
+            destination: parseStringPart(stringParts.1)
+        )
+    }
+    
+    static func parseQueryParameters(urlString: String, isFull: Bool = false) -> [String: String] {
+        let queryString = extractQueryParameterString(urlString: urlString, isFull: isFull)
+        let keyValuePairs = queryString.components(separatedBy: "&")
+        var parameters = [String: String]()
+        for pair in keyValuePairs {
+            let components = pair.components(separatedBy: "=")
+            
+            guard components.count >= 1 else { continue }
+            
+            let key = components[0]
+            let value = components.count >= 2 ? components[1] : ""
+            
+            parameters[key] = value
+        }
+        
+        return parameters
+    }
+    
+    static func extractSchemePrefix(urlString: String) -> String {
+        let schemePrefixes = ["server://", "client://"]
+        for prefix in schemePrefixes {
+            if urlString.hasPrefix(prefix) {
+                return prefix
+            }
+        }
+        fatalError()
+    }
+    
+    static func extractQueryParameterString(urlString: String, isFull: Bool = false) -> String {
+        guard let questionMarkIndex = urlString.firstIndex(of: "?") else {
+            return ""
+        }
+        return String(urlString[urlString.index(after: questionMarkIndex)...])
+    }
+    
     // MARK: - Utilities
     static func noEmptyName(_ name: String) -> String {
         return name == "" ? String(localized: "Untitled") : name

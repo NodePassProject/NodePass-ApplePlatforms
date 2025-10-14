@@ -9,21 +9,19 @@ import Foundation
 
 struct Instance: Identifiable, Codable, Equatable {
     struct Metadata: Codable, Hashable {
-        let peer: [Peer]
-        let tags: Dictionary<String, String>
+        let peer: Peer
+        let tags: Dictionary<String, String>?
     }
     
     struct Peer: Codable, Hashable {
         let alias: String
         let serviceId: String
-        let instanceId: String
-        let masterId: String
+        let serviceType: String
         
         enum CodingKeys: String, CodingKey {
             case alias
             case serviceId = "sid"
-            case instanceId = "iid"
-            case masterId = "mid"
+            case serviceType = "type"
         }
     }
     
@@ -56,6 +54,6 @@ struct Instance: Identifiable, Codable, Equatable {
         case udpTransmit = "udptx"
         case ping = "ping"
         case poolConnectionCount = "pool"
-        case metadata
+        case metadata = "meta"
     }
 }

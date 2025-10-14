@@ -20,7 +20,7 @@ struct DirectForwardDetailView: View {
         servers.first(where: { $0.id == implementation.serverID })
     }
     var addressesAndPorts: (tunnel: (address: String, port: String), destination: (address: String, port: String)) {
-        implementation.parseAddressesAndPorts()
+        NPCore.parseAddressesAndPorts(urlString: implementation.command)
     }
     
     @Query private var servers: [Server]

@@ -16,6 +16,14 @@ class Service {
     var type: ServiceType = ServiceType.directForward
     var implementations: [Implementation]?
     
+    init(id: UUID, name: String, type: ServiceType, implementations: [Implementation]) {
+        self.id = id
+        self.timestamp = Date()
+        self.name = name
+        self.type = type
+        self.implementations = implementations
+    }
+    
     init(name: String, type: ServiceType, implementations: [Implementation]) {
         self.id = UUID()
         self.timestamp = Date()

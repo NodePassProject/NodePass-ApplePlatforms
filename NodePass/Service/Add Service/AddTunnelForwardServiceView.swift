@@ -138,7 +138,7 @@ struct AddTunnelForwardServiceView: View {
                             implementations: [
                                 Implementation(
                                     name: String(localized: "\(name) Relay"),
-                                    type: .tunnelForwardServer,
+                                    type: .tunnelForwardRelay,
                                     position: 0,
                                     serverID: relayServer?.id ?? "",
                                     instanceID: "",
@@ -147,7 +147,7 @@ struct AddTunnelForwardServiceView: View {
                                 ),
                                 Implementation(
                                     name: String(localized: "\(name) Destination"),
-                                    type: .tunnelForwardClient,
+                                    type: .tunnelForwardDestination,
                                     position: 1,
                                     serverID: destinationServer?.id ?? "",
                                     instanceID: "",
@@ -229,8 +229,14 @@ struct AddTunnelForwardServiceView: View {
         else {
             relayServerCommand = "client://\(destinationServer?.getHost() ?? ""):\(tunnelPort)/:\(relayServerConnectPort)"
         }
-        if isRelayServerAsNPServer && isTLS {
-            relayServerCommand += "?tls=1"
+        if isRelayServerAsNPServer {
+            relayServerCommand += "?mode=1"
+            if isTLS {
+                relayServerCommand += "&tls=1"
+            }
+        }
+        else {
+            relayServerCommand += "?mode=2"
         }
         
         var destinationServerCommand: String
@@ -241,7 +247,13 @@ struct AddTunnelForwardServiceView: View {
             destinationServerCommand = "client://\(relayServer?.getHost() ?? ""):\(tunnelPort)/127.0.0.1:\(destinationServerServicePort)"
         }
         if isDestinationServerAsNPServer && isTLS {
-            destinationServerCommand += "?tls=1"
+            destinationServerCommand += "?mode=2"
+            if isTLS {
+                destinationServerCommand += "&tls=1"
+            }
+        }
+        else {
+            destinationServerCommand += "?mode=2"
         }
         
         return (relayServerCommand, destinationServerCommand)
@@ -274,14 +286,16 @@ struct AddTunnelForwardServiceView: View {
                 let relayServerFullCommand = relayServerInstance.config ?? relayServerCommand
                 let destinationServerFullCommand = destinationServerInstance.config ?? destinationServerCommand
                 
+                let serviceId = UUID()
                 let name = NPCore.noEmptyName(name)
                 let service = Service(
+                    id: serviceId,
                     name: name,
                     type: .tunnelForward,
                     implementations: [
                         Implementation(
                             name: String(localized: "\(name) Relay"),
-                            type: .tunnelForwardServer,
+                            type: .tunnelForwardRelay,
                             position: 0,
                             serverID: relayServer.id,
                             instanceID: relayServerInstance.id,
@@ -290,7 +304,7 @@ struct AddTunnelForwardServiceView: View {
                         ),
                         Implementation(
                             name: String(localized: "\(name) Destination"),
-                            type: .tunnelForwardClient,
+                            type: .tunnelForwardDestination,
                             position: 1,
                             serverID: destinationServer.id,
                             instanceID: destinationServerInstance.id,
@@ -303,40 +317,22 @@ struct AddTunnelForwardServiceView: View {
                 try? context.save()
                 
                 do {
-                    // Get Peer Master ID
-                    async let getRelayMasterInstance: (Instance) = instanceService.getMasterInstance(
-                        baseURLString: relayServer.url,
-                        apiKey: relayServer.key
-                    )
-                    async let getDestinationMasterInstance: (Instance) = instanceService.getMasterInstance(
-                        baseURLString: destinationServer.url,
-                        apiKey: destinationServer.key
-                    )
-                    
-                    let (relayServerMasterInstance, destinationServerMasterInstance) = try await (getRelayMasterInstance, getDestinationMasterInstance)
-                    
-                    guard let relayServerMasterID = relayServerMasterInstance.config, let destinationServerMasterID = destinationServerMasterInstance.config else {
-                        return
-                    }
-                    
                     // Update Instance Peer
                     async let updateRelayServerInstancePeer: () = instanceService.updateInstancePeer(
                         baseURLString: relayServer.url,
                         apiKey: relayServer.key,
                         id: relayServerInstance.id,
                         serviceAlias: String(localized: "\(name)"),
-                        serviceId: "<Apple><ServiceID>\(service.id)</ServiceID><ServiceType>tunnelForward</ServiceType></Apple>",
-                        peerInstanceId: destinationServerInstance.id,
-                        peerMasterId: destinationServerMasterID
+                        serviceId: serviceId.uuidString,
+                        serviceType: "2"
                     )
                     async let updateDestinationServerInstancePeer: () = instanceService.updateInstancePeer(
                         baseURLString: destinationServer.url,
                         apiKey: destinationServer.key,
                         id: destinationServerInstance.id,
                         serviceAlias: String(localized: "\(name)"),
-                        serviceId: "<Apple><ServiceID>\(service.id)</ServiceID><ServiceType>tunnelForward</ServiceType></Apple>",
-                        peerInstanceId: relayServerInstance.id,
-                        peerMasterId: relayServerMasterID
+                        serviceId: serviceId.uuidString,
+                        serviceType: "2"
                     )
                     
                     _ = try await (updateRelayServerInstancePeer, updateDestinationServerInstancePeer)

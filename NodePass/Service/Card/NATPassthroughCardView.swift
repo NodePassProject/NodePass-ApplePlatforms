@@ -56,7 +56,7 @@ struct NATPassthroughCardView: View {
                 Spacer()
                 VStack(spacing: 3) {
                     let serverName = servers.first(where: { $0.id == implementation0.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
-                    let addressesAndPorts = implementation0.parseAddressesAndPorts()
+                    let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: implementation0.command)
                     Text(serverName)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
@@ -70,7 +70,7 @@ struct NATPassthroughCardView: View {
                 }
                 Spacer()
                 VStack(spacing: 3) {
-                    let queryParameters = implementation0.parseQueryParameters()
+                    let queryParameters = NPCore.parseQueryParameters(urlString: implementation0.command)
                     if ["1", "2"].contains(queryParameters["tls"]) {
                         Image(systemName: "lock")
                             .font(.caption)
@@ -83,7 +83,7 @@ struct NATPassthroughCardView: View {
                 Spacer()
                 VStack(spacing: 3) {
                     let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
-                    let addressesAndPorts = implementation1.parseAddressesAndPorts()
+                    let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: implementation1.command)
                     Text(serverName)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)

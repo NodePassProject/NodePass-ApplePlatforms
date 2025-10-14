@@ -25,10 +25,10 @@ struct NATPassthroughDetailView: View {
         servers.first(where: { $0.id == implementation0.serverID })
     }
     var addressesAndPorts0: (tunnel: (address: String, port: String), destination: (address: String, port: String)) {
-        implementation0.parseAddressesAndPorts()
+        NPCore.parseAddressesAndPorts(urlString: implementation0.command)
     }
     var queryParameters0: [String: String] {
-        implementation0.parseQueryParameters(isFull: true)
+        NPCore.parseQueryParameters(urlString: implementation0.fullCommand, isFull: true)
     }
     var implementation1: Implementation {
         service.implementations!.first(where: { $0.position == 1 })!
@@ -37,7 +37,7 @@ struct NATPassthroughDetailView: View {
         servers.first(where: { $0.id == implementation1.serverID })
     }
     var addressesAndPorts1: (tunnel: (address: String, port: String), destination: (address: String, port: String)) {
-        implementation1.parseAddressesAndPorts()
+        NPCore.parseAddressesAndPorts(urlString: implementation1.command)
     }
     
     @Query private var servers: [Server]
