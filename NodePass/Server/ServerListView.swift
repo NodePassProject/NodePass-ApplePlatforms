@@ -252,7 +252,7 @@ struct ServerListView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 #else
-                Text(server.url!)
+                Text(server.url)
                     .font(.caption)
                     .foregroundStyle(.secondary)
 #endif
