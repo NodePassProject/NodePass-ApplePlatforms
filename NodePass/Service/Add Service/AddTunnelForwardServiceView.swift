@@ -30,6 +30,8 @@ struct AddTunnelForwardServiceView: View {
     @State private var isAddingDestinationServer: Bool = false
     @State private var newServer: Server?
     
+    @State private var isSensoryFeedbackTriggered: Bool = false
+    
     var body: some View {
         NavigationStack {
             Form {
@@ -42,7 +44,7 @@ struct AddTunnelForwardServiceView: View {
                         Text("Select")
                             .tag(nil as Server?)
                         ForEach(servers) { server in
-                            Text(server.name!)
+                            Text(server.name)
                                 .tag(server)
                         }
                     }
@@ -82,7 +84,7 @@ struct AddTunnelForwardServiceView: View {
                         Text("Select")
                             .tag(nil as Server?)
                         ForEach(servers) { server in
-                            Text(server.name!)
+                            Text(server.name)
                                 .tag(server)
                         }
                     }
@@ -123,67 +125,64 @@ struct AddTunnelForwardServiceView: View {
                     Text("Use TLS encryption for tunnel communication.")
                 }
                 
-                Section("Preview") {
-                    let commands = generateCommands()
-                    let relayServerCommand = commands.relayServerCommand
-                    let destinationServerCommand = commands.destinationServerCommand
-                    
-                    let name = NPCore.noEmptyName(name)
-                    let previewService = Service(
-                        name: name,
-                        type: .tunnelForward,
-                        implementations: [
-                            Implementation(
-                                name: String(localized: "\(name) Relay"),
-                                type: .tunnelForwardServer,
-                                position: 0,
-                                serverID: relayServer?.id ?? "",
-                                instanceID: "",
-                                command: relayServerCommand,
-                                fullCommand: relayServerCommand
-                            ),
-                            Implementation(
-                                name: String(localized: "\(name) Destination"),
-                                type: .tunnelForwardClient,
-                                position: 1,
-                                serverID: destinationServer?.id ?? "",
-                                instanceID: "",
-                                command: destinationServerCommand,
-                                fullCommand: destinationServerCommand
-                            )
-                        ]
-                    )
-                    
-                    TunnelForwardCardView(service: previewService, isPreview: true)
-                }
-                
-#if DEBUG
-                Section {
-                    Button("Sample") {
-                        name = "Sample Tunnel Forward"
-                        relayServer = servers.first
-                        relayServerConnectPort = "60001"
-                        destinationServer = servers.first
-                        destinationServerServicePort = "60003"
-                        tunnelPort = "60002"
+                if #available(iOS 18.0, *) {
+                    Section("Preview") {
+                        let commands = generateCommands()
+                        let relayServerCommand = commands.relayServerCommand
+                        let destinationServerCommand = commands.destinationServerCommand
+                        
+                        let name = NPCore.noEmptyName(name)
+                        let previewService = Service(
+                            name: name,
+                            type: .tunnelForward,
+                            implementations: [
+                                Implementation(
+                                    name: String(localized: "\(name) Relay"),
+                                    type: .tunnelForwardServer,
+                                    position: 0,
+                                    serverID: relayServer?.id ?? "",
+                                    instanceID: "",
+                                    command: relayServerCommand,
+                                    fullCommand: relayServerCommand
+                                ),
+                                Implementation(
+                                    name: String(localized: "\(name) Destination"),
+                                    type: .tunnelForwardClient,
+                                    position: 1,
+                                    serverID: destinationServer?.id ?? "",
+                                    instanceID: "",
+                                    command: destinationServerCommand,
+                                    fullCommand: destinationServerCommand
+                                )
+                            ]
+                        )
+                        
+                        TunnelForwardCardView(service: previewService, isPreview: true)
                     }
                 }
-#endif
             }
             .formStyle(.grouped)
             .navigationTitle("Add Tunnel Forward")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel) {
-                        dismiss()
-                    } label: {
-                        Label("Cancel", systemImage: "xmark")
+                    if #available(iOS 26.0, macOS 26.0, *) {
+                        Button(role: .cancel) {
+                            dismiss()
+                        } label: {
+                            Label("Cancel", systemImage: "xmark")
+                        }
+                    }
+                    else {
+                        Button("Cancel", role: .cancel) {
+                            dismiss()
+                        }
                     }
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
                     if #available(iOS 26.0, macOS 26.0, *) {
                         Button(role: .confirm) {
+                            dismiss()
                             execute()
                         } label: {
                             Label("Done", systemImage: "checkmark")
@@ -192,6 +191,7 @@ struct AddTunnelForwardServiceView: View {
                     }
                     else {
                         Button("Done") {
+                            dismiss()
                             execute()
                         }
                         .disabled(relayServer == nil || destinationServer == nil)
@@ -213,6 +213,7 @@ struct AddTunnelForwardServiceView: View {
             } content: {
                 EditServerView(server: $newServer)
             }
+            .sensoryFeedback(.success, trigger: isSensoryFeedbackTriggered)
         }
     }
     
@@ -243,7 +244,7 @@ struct AddTunnelForwardServiceView: View {
             destinationServerCommand += "?tls=1"
         }
         
-        return (relayServerCommand: relayServerCommand, destinationServerCommand: destinationServerCommand)
+        return (relayServerCommand, destinationServerCommand)
     }
     
     private func execute() {
@@ -258,13 +259,13 @@ struct AddTunnelForwardServiceView: View {
             let instanceService = InstanceService()
             do {
                 async let createRelayServerInstance = instanceService.createInstance(
-                    baseURLString: relayServer.url!,
-                    apiKey: relayServer.key!,
+                    baseURLString: relayServer.url,
+                    apiKey: relayServer.key,
                     url: relayServerCommand
                 )
                 async let createDestinationServerInstance = instanceService.createInstance(
-                    baseURLString: destinationServer.url!,
-                    apiKey: destinationServer.key!,
+                    baseURLString: destinationServer.url,
+                    apiKey: destinationServer.key,
                     url: destinationServerCommand
                 )
                 
@@ -282,7 +283,7 @@ struct AddTunnelForwardServiceView: View {
                             name: String(localized: "\(name) Relay"),
                             type: .tunnelForwardServer,
                             position: 0,
-                            serverID: relayServer.id!,
+                            serverID: relayServer.id,
                             instanceID: relayServerInstance.id,
                             command: relayServerCommand,
                             fullCommand: relayServerFullCommand
@@ -291,7 +292,7 @@ struct AddTunnelForwardServiceView: View {
                             name: String(localized: "\(name) Destination"),
                             type: .tunnelForwardClient,
                             position: 1,
-                            serverID: destinationServer.id!,
+                            serverID: destinationServer.id,
                             instanceID: destinationServerInstance.id,
                             command: destinationServerCommand,
                             fullCommand: destinationServerFullCommand
@@ -301,7 +302,52 @@ struct AddTunnelForwardServiceView: View {
                 context.insert(service)
                 try? context.save()
                 
-                dismiss()
+                do {
+                    // Get Peer Master ID
+                    async let getRelayMasterInstance: (Instance) = instanceService.getMasterInstance(
+                        baseURLString: relayServer.url,
+                        apiKey: relayServer.key
+                    )
+                    async let getDestinationMasterInstance: (Instance) = instanceService.getMasterInstance(
+                        baseURLString: destinationServer.url,
+                        apiKey: destinationServer.key
+                    )
+                    
+                    let (relayServerMasterInstance, destinationServerMasterInstance) = try await (getRelayMasterInstance, getDestinationMasterInstance)
+                    
+                    guard let relayServerMasterID = relayServerMasterInstance.config, let destinationServerMasterID = destinationServerMasterInstance.config else {
+                        return
+                    }
+                    
+                    // Update Instance Peer
+                    async let updateRelayServerInstancePeer: () = instanceService.updateInstancePeer(
+                        baseURLString: relayServer.url,
+                        apiKey: relayServer.key,
+                        id: relayServerInstance.id,
+                        serviceAlias: String(localized: "\(name)"),
+                        serviceId: "<Apple><ServiceID>\(service.id)</ServiceID><ServiceType>tunnelForward</ServiceType></Apple>",
+                        peerInstanceId: destinationServerInstance.id,
+                        peerMasterId: destinationServerMasterID
+                    )
+                    async let updateDestinationServerInstancePeer: () = instanceService.updateInstancePeer(
+                        baseURLString: destinationServer.url,
+                        apiKey: destinationServer.key,
+                        id: destinationServerInstance.id,
+                        serviceAlias: String(localized: "\(name)"),
+                        serviceId: "<Apple><ServiceID>\(service.id)</ServiceID><ServiceType>tunnelForward</ServiceType></Apple>",
+                        peerInstanceId: relayServerInstance.id,
+                        peerMasterId: relayServerMasterID
+                    )
+                    
+                    _ = try await (updateRelayServerInstancePeer, updateDestinationServerInstancePeer)
+                }
+                catch {
+#if DEBUG
+                    print("Error Updating Instance Peer Metadata: \(error.localizedDescription)")
+#endif
+                }
+                
+                isSensoryFeedbackTriggered.toggle()
             } catch {
 #if DEBUG
                 print("Error Creating Instances: \(error.localizedDescription)")

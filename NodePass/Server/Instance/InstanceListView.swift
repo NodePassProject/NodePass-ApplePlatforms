@@ -38,7 +38,7 @@ struct InstanceListView: View {
 #if os(iOS)
         .listRowSpacing(5)
 #endif
-        .navigationTitle(server.name!)
+        .navigationTitle(server.name)
         .toolbar {
             ToolbarItem {
                 Button {
@@ -161,7 +161,7 @@ struct InstanceListView: View {
         Task {
             let instanceService = InstanceService()
             do {
-                let instances = try await instanceService.listInstances(baseURLString: server.url!, apiKey: server.key!)
+                let instances = try await instanceService.listInstances(baseURLString: server.url, apiKey: server.key)
                 self.instances = instances
                 loadingState = .loaded
             }
@@ -176,8 +176,8 @@ struct InstanceListView: View {
             let instanceService = InstanceService()
             do {
                 _ = try await instanceService.createInstance(
-                    baseURLString: server.url!,
-                    apiKey: server.key!,
+                    baseURLString: server.url,
+                    apiKey: server.key,
                     url: commandOfNewInstance
                 )
                 listInstances()
@@ -196,7 +196,7 @@ struct InstanceListView: View {
         Task {
             let instanceService = InstanceService()
             do {
-                try await instanceService.deleteInstance(baseURLString: server.url!, apiKey: server.key!, id: instance.id)
+                try await instanceService.deleteInstance(baseURLString: server.url, apiKey: server.key, id: instance.id)
                 listInstances()
             }
             catch {
@@ -210,7 +210,7 @@ struct InstanceListView: View {
         Task {
             let instanceService = InstanceService()
             do {
-                _ = try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: instance.id, url: commandOfEditedInstance)
+                _ = try await instanceService.updateInstance(baseURLString: server.url, apiKey: server.key, id: instance.id, url: commandOfEditedInstance)
                 listInstances()
             }
             catch {
@@ -224,7 +224,7 @@ struct InstanceListView: View {
         Task {
             let instanceService = InstanceService()
             do {
-                try await instanceService.updateInstanceStatus(baseURLString: server.url!, apiKey: server.key!, id: instance.id, action: action.rawValue)
+                try await instanceService.updateInstanceStatus(baseURLString: server.url, apiKey: server.key, id: instance.id, action: action.rawValue)
                 listInstances()
             }
             catch {

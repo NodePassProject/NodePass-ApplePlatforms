@@ -10,10 +10,10 @@ import SwiftData
 
 @Model
 class Service {
-    var id: UUID?
-    var timestamp: Date?
-    var name: String?
-    var type: ServiceType?
+    var id: UUID = UUID()
+    var timestamp: Date = Date()
+    var name: String = ""
+    var type: ServiceType = ServiceType.directForward
     var implementations: [Implementation]?
     
     init(name: String, type: ServiceType, implementations: [Implementation]) {

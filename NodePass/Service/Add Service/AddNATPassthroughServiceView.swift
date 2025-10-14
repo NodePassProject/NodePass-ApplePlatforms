@@ -42,7 +42,7 @@ struct AddNATPassthroughServiceView: View {
                         Text("Select")
                             .tag(nil as Server?)
                         ForEach(servers) { server in
-                            Text(server.name!)
+                            Text(server.name)
                                 .tag(server)
                         }
                     }
@@ -73,7 +73,7 @@ struct AddNATPassthroughServiceView: View {
                         Text("Select")
                             .tag(nil as Server?)
                         ForEach(servers) { server in
-                            Text(server.name!)
+                            Text(server.name)
                                 .tag(server)
                         }
                     }
@@ -103,70 +103,62 @@ struct AddNATPassthroughServiceView: View {
                     Text("Use TLS encryption for tunnel communication.")
                 }
                 
-                Section("Preview") {
-                    let serverConnectPort = Int(serverConnectPort) ?? 10022
-                    let serverTunnelPort = Int(serverTunnelPort) ?? 10101
-                    let clientServicePort = Int(clientServicePort) ?? 22
-                    
-                    let serverCommand = "server://:\(serverTunnelPort)/:\(serverConnectPort)?log=warn&tls=\(isTLS ? "1" : "0")"
-                    let clientCommand = "client://\(server?.getHost() ?? ""):\(serverTunnelPort)/127.0.0.1:\(clientServicePort)?log=warn"
-                    
-                    let name = NPCore.noEmptyName(name)
-                    let previewService = Service(
-                        name: name,
-                        type: .natPassthrough,
-                        implementations: [
-                            Implementation(
-                                name: String(localized: "\(name) Remote"),
-                                type: .natPassthroughServer,
-                                position: 0,
-                                serverID: server?.id ?? "",
-                                instanceID: "",
-                                command: serverCommand,
-                                fullCommand: serverCommand
-                            ),
-                            Implementation(
-                                name: String(localized: "\(name) Local"),
-                                type: .natPassthroughClient,
-                                position: 1,
-                                serverID: client?.id ?? "",
-                                instanceID: "",
-                                command: clientCommand,
-                                fullCommand: clientCommand
-                            )
-                        ]
-                    )
-                    
-                    NATPassthroughCardView(service: previewService, isPreview: true)
-                }
-                
-#if DEBUG
-                Section {
-                    Button("Sample") {
-                        name = "Sample NAT Passthrough"
-                        server = servers.first
-                        serverConnectPort = "60001"
-                        serverTunnelPort = "60002"
-                        client = servers.first
-                        clientServicePort = "60003"
+                if #available(iOS 18.0, *) {
+                    Section("Preview") {
+                        let (serverCommand, clientCommand) = generateCommands()
+                        
+                        let name = NPCore.noEmptyName(name)
+                        let previewService = Service(
+                            name: name,
+                            type: .natPassthrough,
+                            implementations: [
+                                Implementation(
+                                    name: String(localized: "\(name) Remote"),
+                                    type: .natPassthroughServer,
+                                    position: 0,
+                                    serverID: server?.id ?? "",
+                                    instanceID: "",
+                                    command: serverCommand,
+                                    fullCommand: serverCommand
+                                ),
+                                Implementation(
+                                    name: String(localized: "\(name) Local"),
+                                    type: .natPassthroughClient,
+                                    position: 1,
+                                    serverID: client?.id ?? "",
+                                    instanceID: "",
+                                    command: clientCommand,
+                                    fullCommand: clientCommand
+                                )
+                            ]
+                        )
+                        
+                        NATPassthroughCardView(service: previewService, isPreview: true)
                     }
                 }
-#endif
             }
             .formStyle(.grouped)
             .navigationTitle("Add NAT Passthrough")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel) {
-                        dismiss()
-                    } label: {
-                        Label("Cancel", systemImage: "xmark")
+                    if #available(iOS 26.0, macOS 26.0, *) {
+                        Button(role: .cancel) {
+                            dismiss()
+                        } label: {
+                            Label("Cancel", systemImage: "xmark")
+                        }
+                    }
+                    else {
+                        Button("Cancel", role: .cancel) {
+                            dismiss()
+                        }
                     }
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
                     if #available(iOS 26.0, macOS 26.0, *) {
                         Button(role: .confirm) {
+                            dismiss()
                             execute()
                         } label: {
                             Label("Done", systemImage: "checkmark")
@@ -175,6 +167,7 @@ struct AddNATPassthroughServiceView: View {
                     }
                     else {
                         Button("Done") {
+                            dismiss()
                             execute()
                         }
                         .disabled(server == nil || client == nil)
@@ -200,28 +193,42 @@ struct AddNATPassthroughServiceView: View {
         }
     }
     
-    private func execute() {
-        let server = server!
-        let client = client!
-        
+    private func generateCommands() -> (serverCommand: String, clientCommand: String) {
         let serverConnectPort = Int(serverConnectPort) ?? 10022
         let serverTunnelPort = Int(serverTunnelPort) ?? 10101
         let clientServicePort = Int(clientServicePort) ?? 22
         
-        let serverCommand = "server://:\(serverTunnelPort)/:\(serverConnectPort)\(isTLS ? "?tls=1" : "")"
-        let clientCommand = "client://\(server.getHost()):\(serverTunnelPort)/127.0.0.1:\(clientServicePort)"
+        var serverCommand: String
+        serverCommand = "server://:\(serverTunnelPort)/:\(serverConnectPort)"
+        if isTLS {
+            serverCommand += "?tls=1"
+        }
+        
+        var clientCommand: String
+        clientCommand = "client://\(server?.getHost() ?? ""):\(serverTunnelPort)/127.0.0.1:\(clientServicePort)"
+        
+        return (serverCommand, clientCommand)
+    }
+    
+    private func execute() {
+        let server = server!
+        let client = client!
+        
+        let commands = generateCommands()
+        let serverCommand = commands.serverCommand
+        let clientCommand = commands.clientCommand
         
         Task {
             let instanceService = InstanceService()
             do {
                 async let createServerInstance: (Instance) = instanceService.createInstance(
-                    baseURLString: server.url!,
-                    apiKey: server.key!,
+                    baseURLString: server.url,
+                    apiKey: server.key,
                     url: serverCommand
                 )
                 async let createClientInstance: (Instance) = instanceService.createInstance(
-                    baseURLString: client.url!,
-                    apiKey: client.key!,
+                    baseURLString: client.url,
+                    apiKey: client.key,
                     url: clientCommand
                 )
                 
@@ -239,7 +246,7 @@ struct AddNATPassthroughServiceView: View {
                             name: String(localized: "\(name) Remote"),
                             type: .natPassthroughServer,
                             position: 0,
-                            serverID: server.id!,
+                            serverID: server.id,
                             instanceID: serverInstance.id,
                             command: serverCommand,
                             fullCommand: serverFullCommand
@@ -248,7 +255,7 @@ struct AddNATPassthroughServiceView: View {
                             name: String(localized: "\(name) Local"),
                             type: .natPassthroughClient,
                             position: 1,
-                            serverID: client.id!,
+                            serverID: client.id,
                             instanceID: clientInstance.id,
                             command: clientCommand,
                             fullCommand: clientFullCommand
@@ -258,7 +265,50 @@ struct AddNATPassthroughServiceView: View {
                 context.insert(service)
                 try? context.save()
                 
-                dismiss()
+                do {
+                    // Get Peer Master ID
+                    async let getServerMasterInstance: (Instance) = instanceService.getMasterInstance(
+                        baseURLString: server.url,
+                        apiKey: server.key
+                    )
+                    async let getClientMasterInstance: (Instance) = instanceService.getMasterInstance(
+                        baseURLString: client.url,
+                        apiKey: client.key
+                    )
+                    
+                    let (serverMasterInstance, clientMasterInstance) = try await (getServerMasterInstance, getClientMasterInstance)
+                    
+                    guard let serverMasterID = serverMasterInstance.config, let clientMasterID = serverMasterInstance.config else {
+                        return
+                    }
+                    
+                    // Update Instance Peer
+                    async let updateServerInstancePeer: () = instanceService.updateInstancePeer(
+                        baseURLString: server.url,
+                        apiKey: server.key,
+                        id: serverInstance.id,
+                        serviceAlias: String(localized: "\(name)"),
+                        serviceId: "<Apple><ServiceID>\(service.id)</ServiceID><ServiceType>natPassthrough</ServiceType></Apple>",
+                        peerInstanceId: clientInstance.id,
+                        peerMasterId: clientMasterID
+                    )
+                    async let updateClientInstancePeer: () = instanceService.updateInstancePeer(
+                        baseURLString: client.url,
+                        apiKey: client.key,
+                        id: clientInstance.id,
+                        serviceAlias: String(localized: "\(name)"),
+                        serviceId: "<Apple><ServiceID>\(service.id)</ServiceID><ServiceType>natPassthrough</ServiceType></Apple>",
+                        peerInstanceId: serverInstance.id,
+                        peerMasterId: serverMasterID
+                    )
+                    
+                    _ = try await (updateServerInstancePeer, updateClientInstancePeer)
+                }
+                catch {
+#if DEBUG
+                    print("Error Updating Instance Peer Metadata: \(error.localizedDescription)")
+#endif
+                }
                 
                 isSensoryFeedbackTriggered.toggle()
             } catch {

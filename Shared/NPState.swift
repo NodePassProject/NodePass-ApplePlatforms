@@ -49,8 +49,8 @@ class NPState {
             try await withThrowingTaskGroup(of: (String, ServerMetadata).self) { group in
                 for server in servers {
                     group.addTask {
-                        let metadata = try await serverService.getServerInfo(baseURLString: server.url!, apiKey: server.key!)
-                        return (server.id!, metadata)
+                        let metadata = try await serverService.getServerInfo(baseURLString: server.url, apiKey: server.key)
+                        return (server.id, metadata)
                     }
                 }
                 

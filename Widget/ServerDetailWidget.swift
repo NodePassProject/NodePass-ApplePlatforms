@@ -36,43 +36,7 @@ struct ServerDetailProvider: AppIntentTimelineProvider {
                     uptime: 432000,
                     logLevel: "warn",
                     tlsLevel: "1"
-                ),
-                instances: [
-                    Instance(
-                        id: "demo-instance-1",
-                        type: .server,
-                        status: .running,
-                        url: "server://:10001/:20001",
-                        config: "server://:10001/:20001?min=64&mode=0&proxy=0&rate=0&read=1h0m0s&slot=65536",
-                        tcp: 20,
-                        udp: 5,
-                        tcpReceive: 10737418240,
-                        tcpTransmit: 10737418240,
-                        udpReceive: 524288000,
-                        udpTransmit: 524288000,
-                        ping: 50,
-                        poolConnectionCount: 80,
-                        tags: []
-                    ),
-                    Instance(
-                        id: "demo-instance-2",
-                        type: .server,
-                        status: .running,
-                        url: "server://:10002/:20002?tls=1",
-                        config: "server://:10002/:20002?min=64&mode=0&proxy=0&rate=0&read=1h0m0s&slot=65536",
-                        tcp: 20,
-                        udp: 5,
-                        tcpReceive: 10737418240,
-                        tcpTransmit: 10737418240,
-                        udpReceive: 524288000,
-                        udpTransmit: 524288000,
-                        ping: 50,
-                        poolConnectionCount: 80,
-                        tags: [
-                            Instance.Tag(key: "config", value: "server://:10001/:20001?log=info&tls=1")
-                        ]
-                    )
-                ]
+                )
             ),
         message: "Placeholder"
     )
@@ -102,7 +66,7 @@ struct ServerDetailProvider: AppIntentTimelineProvider {
             let instanceService = InstanceService()
             let instances = try await instanceService.listInstances(baseURLString: server.url, apiKey: server.key)
             
-            return ServerEntry(date: Date(), data: ServerEntry.ServerData(id: server.id, name: server.name, metadata: metadata, instances: instances), message: "OK")
+            return ServerEntry(date: Date(), data: ServerEntry.ServerData(id: server.id, name: server.name, metadata: metadata), message: "OK")
         }
         catch {
 #if DEBUG
@@ -126,8 +90,6 @@ struct ServerDetailWidgetEntryView: View {
                         systemSmallView(data: data)
                     case .systemMedium:
                         systemMediumView(date: entry.date, data: data)
-                    case .systemLarge:
-                        systemLargeView(date: entry.date, data: data)
                     default:
                         Text("Unsupported family")
                     }
@@ -280,26 +242,6 @@ struct ServerDetailWidgetEntryView: View {
             Spacer()
         }
     }
-    
-    @ViewBuilder
-    func systemLargeView(date: Date, data: ServerEntry.ServerData) -> some View {
-        let validInstances = data.instances.filter({ [.running, .stopped, .error].contains($0.status) })
-        VStack(alignment: .leading) {
-            systemMediumView(date: date, data: data)
-            ViewThatFits {
-                VStack(alignment: .leading) {
-                    Divider()
-                    InstanceCardView(instance: validInstances[0])
-                    Divider()
-                    InstanceCardView(instance: validInstances[1])
-                }
-                VStack(alignment: .leading) {
-                    Divider()
-                    InstanceCardView(instance: validInstances[0])
-                }
-            }
-        }
-    }
 }
 
 struct ServerEntry: TimelineEntry {
@@ -307,7 +249,6 @@ struct ServerEntry: TimelineEntry {
         let id: String
         let name: String
         let metadata: ServerMetadata
-        let instances: [Instance]
     }
     let date: Date
     let data: ServerData?
@@ -323,6 +264,6 @@ struct ServerDetailWidget: Widget {
         }
         .configurationDisplayName("Server Details")
         .description("View details of your servers at a glance.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

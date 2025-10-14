@@ -89,7 +89,7 @@ struct TunnelForwardDetailView: View {
                     HStack {
                         if let server {
                             LabeledContent("Server") {
-                                Text(server.name!)
+                                Text(server.name)
                             }
                             Button {
                                 state.tab = .servers
@@ -140,11 +140,11 @@ struct TunnelForwardDetailView: View {
                         }
                     }
                     LabeledContent("Command URL") {
-                        Text(implementation.command!)
+                        Text(implementation.command)
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                     }
-                    .copiable(implementation.command!)
+                    .copiable(implementation.command)
                 }
                 
                 Section("Destination Server") {
@@ -156,7 +156,7 @@ struct TunnelForwardDetailView: View {
                     HStack {
                         if let server {
                             LabeledContent("Server") {
-                                Text(server.name!)
+                                Text(server.name)
                             }
                             Button {
                                 state.tab = .servers
@@ -207,15 +207,15 @@ struct TunnelForwardDetailView: View {
                         }
                     }
                     LabeledContent("Command URL") {
-                        Text(implementation.command!)
+                        Text(implementation.command)
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                     }
-                    .copiable(implementation.command!)
+                    .copiable(implementation.command)
                 }
             }
             .formStyle(.grouped)
-            .navigationTitle(service.name!)
+            .navigationTitle(service.name)
             .alert(editPortAlertTitle, isPresented: $isShowEditPortAlert) {
                 TextField("Port", text: $newPort)
                 Button("OK") {
@@ -250,12 +250,12 @@ struct TunnelForwardDetailView: View {
                     let implementation0 = implementation0
                     let server0 = servers.first(where: { $0.id == implementation0.serverID })!
                     let command0 = implementation0.dryModifyTunnelPort(port: newPort)
-                    async let updateInstance0: (Instance) = instanceService.updateInstance(baseURLString: server0.url!, apiKey: server0.key!, id: implementation0.instanceID!, url: command0)
+                    async let updateInstance0: (Instance) = instanceService.updateInstance(baseURLString: server0.url, apiKey: server0.key, id: implementation0.instanceID, url: command0)
                     
                     let implementation1 = implementation1
                     let server1 = servers.first(where: { $0.id == implementation1.serverID })!
                     let command1 = implementation1.dryModifyTunnelPort(port: newPort)
-                    async let updateInstance1: (Instance) = instanceService.updateInstance(baseURLString: server1.url!, apiKey: server1.key!, id: implementation1.instanceID!, url: command1)
+                    async let updateInstance1: (Instance) = instanceService.updateInstance(baseURLString: server1.url, apiKey: server1.key, id: implementation1.instanceID, url: command1)
                     
                     let (updatedInstance0, updatedInstance1) = try await (updateInstance0, updateInstance1)
                     
@@ -267,7 +267,7 @@ struct TunnelForwardDetailView: View {
                     let implementation = implementation!
                     let server = servers.first(where: { $0.id == implementation.serverID })!
                     let command = implementation.dryModifyDestinationPort(port: newPort)
-                    let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: implementation.instanceID!, url: command)
+                    let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url, apiKey: server.key, id: implementation.instanceID, url: command)
                     
                     implementation.command = command
                     implementation.fullCommand = updatedInstance.config ?? command

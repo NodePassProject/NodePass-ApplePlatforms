@@ -23,14 +23,14 @@ struct ServerQuery: EntityQuery {
         let data = NPData.shared
         let dataHandler = await data.createDataHandler()()
         let servers = await dataHandler.getAllServers()
-        return sortServers(servers: servers).map { ServerEntity(id: $0.id!, name: $0.name!, url: $0.url!, key: $0.key!) }
+        return sortServers(servers: servers).map { ServerEntity(id: $0.id, name: $0.name, url: $0.url, key: $0.key) }
     }
     
     func suggestedEntities() async throws -> [ServerEntity] {
         let data = NPData.shared
         let dataHandler = await data.createDataHandler()()
         let servers = await dataHandler.getAllServers()
-        return sortServers(servers: servers).map { ServerEntity(id: $0.id!, name: $0.name!, url: $0.url!, key: $0.key!) }
+        return sortServers(servers: servers).map { ServerEntity(id: $0.id, name: $0.name, url: $0.url, key: $0.key) }
     }
     
     func defaultResult() async -> ServerEntity? {
@@ -44,9 +44,9 @@ struct ServerQuery: EntityQuery {
             .sorted {
                 switch sortIndicator {
                 case .name:
-                    return sortOrder == .ascending ? $0.name! < $1.name! : $0.name! > $1.name!
+                    return sortOrder == .ascending ? $0.name < $1.name : $0.name > $1.name
                 case .date:
-                    return sortOrder == .ascending ? $0.timestamp! < $1.timestamp! : $0.timestamp! > $1.timestamp!
+                    return sortOrder == .ascending ? $0.timestamp < $1.timestamp : $0.timestamp > $1.timestamp
                 }
             }
     }

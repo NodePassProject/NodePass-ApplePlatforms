@@ -10,11 +10,11 @@ import SwiftData
 
 @Model
 class Server {
-    var id: String?
-    var timestamp: Date?
-    var name: String?
-    var url: String?
-    var key: String?
+    var id: String = UUID().uuidString
+    var timestamp: Date = Date()
+    var name: String = ""
+    var url: String = ""
+    var key: String = ""
     
     init(name: String, url: String, key: String) {
         self.id = UUID().uuidString
@@ -25,7 +25,7 @@ class Server {
     }
     
     func getHost() -> String {
-        let urlComponents = URLComponents(string: url!)!
+        let urlComponents = URLComponents(string: url)!
         let host = urlComponents.host!
         
         return host

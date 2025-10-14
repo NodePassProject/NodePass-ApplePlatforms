@@ -77,9 +77,9 @@ struct ServiceListView: View {
             .sorted {
                 switch sortIndicator {
                 case .name:
-                    return sortOrder == .ascending ? $0.name! < $1.name! : $0.name! > $1.name!
+                    return sortOrder == .ascending ? $0.name < $1.name : $0.name > $1.name
                 case .date:
-                    return sortOrder == .ascending ? $0.timestamp! < $1.timestamp! : $0.timestamp! > $1.timestamp!
+                    return sortOrder == .ascending ? $0.timestamp < $1.timestamp : $0.timestamp > $1.timestamp
                 }
             }
     }
@@ -90,7 +90,7 @@ struct ServiceListView: View {
             return sortedServices
         }
         else {
-            return sortedServices.filter { $0.name!.localizedCaseInsensitiveContains(searchText) }
+            return sortedServices.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
@@ -138,9 +138,6 @@ struct ServiceListView: View {
                 DirectForwardDetailView(service: service)
             case .tunnelForward:
                 TunnelForwardDetailView(service: service)
-            case .none:
-                Image(systemName: "exclamationmark.circle")
-                    .foregroundStyle(.red)
             }
         }
         .searchable(text: $searchText, placement: .toolbar)
@@ -253,7 +250,7 @@ struct ServiceListView: View {
                     .contextMenu {
                         Button {
                             serviceToRename = service
-                            newNameOfService = service.name!
+                            newNameOfService = service.name
                             isShowRenameServiceAlert = true
                         } label: {
                             Label("Rename", systemImage: "pencil")
@@ -281,7 +278,7 @@ struct ServiceListView: View {
         func deleteInstance(server: Server, instanceID: String) async -> Result<Void, Error> {
             let instanceService = InstanceService()
             do {
-                try await instanceService.deleteInstance(baseURLString: server.url!, apiKey: server.key!, id: instanceID)
+                try await instanceService.deleteInstance(baseURLString: server.url, apiKey: server.key, id: instanceID)
             }
             catch let error as NetworkError {
                 switch error {
@@ -303,10 +300,10 @@ struct ServiceListView: View {
         Task {
             switch(service.type) {
             case .natPassthrough, .tunnelForward:
-                let serverID = service.implementations![0].serverID!
-                let serverInstanceID = service.implementations![0].instanceID!
-                let clientID = service.implementations![1].serverID!
-                let clientInstanceID = service.implementations![1].instanceID!
+                let serverID = service.implementations![0].serverID
+                let serverInstanceID = service.implementations![0].instanceID
+                let clientID = service.implementations![1].serverID
+                let clientInstanceID = service.implementations![1].instanceID
                 guard let server = servers.first(where: { $0.id == serverID }) else {
                     errorMessage = "Error Deleting Instance \(serverInstanceID): Server not found. Service has been deleted but you will have to delete related instances mannually."
                     isShowErrorAlert = true
@@ -333,8 +330,8 @@ struct ServiceListView: View {
                     showGeneralizedErrorMessage(error: error, instanceID: serverInstanceID)
                 }
             case .directForward:
-                let clientID = service.implementations![0].serverID!
-                let clientInstanceID = service.implementations![0].instanceID!
+                let clientID = service.implementations![0].serverID
+                let clientInstanceID = service.implementations![0].instanceID
                 guard let client = servers.first(where: { $0.id == clientID }) else {
                     errorMessage = "Error Deleting Instance \(clientInstanceID): Server not found. Service has been deleted but you will have to delete related instances mannually."
                     isShowErrorAlert = true
@@ -348,8 +345,6 @@ struct ServiceListView: View {
                 case .failure(let error):
                     showGeneralizedErrorMessage(error: error, instanceID: clientInstanceID)
                 }
-            case .none:
-                return
             }
         }
     }

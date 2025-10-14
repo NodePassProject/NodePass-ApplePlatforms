@@ -10,14 +10,14 @@ import SwiftData
 
 @Model
 class Implementation {
-    var id: String?
-    var name: String?
-    var type: ImplementationType?
-    var position: Int?
-    var serverID: String?
-    var instanceID: String?
-    var command: String?
-    var fullCommand: String?
+    var id: String = UUID().uuidString
+    var name: String = ""
+    var type: ImplementationType = ImplementationType.directForwardClient
+    var position: Int = 0
+    var serverID: String = ""
+    var instanceID: String = ""
+    var command: String = ""
+    var fullCommand: String = ""
     
     var service: Service?
     
@@ -33,7 +33,7 @@ class Implementation {
     }
     
     func extractSchemePrefix() -> String {
-        let urlString = command!
+        let urlString = command
         let schemePrefixes = ["server://", "client://"]
         for prefix in schemePrefixes {
             if urlString.hasPrefix(prefix) {
@@ -44,7 +44,7 @@ class Implementation {
     }
     
     func extractQueryParameterString(isFull: Bool = false) -> String {
-        let urlString = isFull ? (fullCommand ?? command!) : command!
+        let urlString = isFull ? fullCommand : command
         guard let questionMarkIndex = urlString.firstIndex(of: "?") else {
             return ""
         }
@@ -52,7 +52,7 @@ class Implementation {
     }
     
     func parseAddressesAndPorts() -> (tunnel: (address: String, port: String), destination: (address: String, port: String)) {
-        let urlString = command!
+        let urlString = command
         let schemePrefixes = ["server://", "client://"]
         var stringWithoutPrefix = ""
         for prefix in schemePrefixes {

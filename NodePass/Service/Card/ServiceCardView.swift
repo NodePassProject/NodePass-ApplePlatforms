@@ -11,7 +11,7 @@ struct ServiceCardView: View {
     let service: Service
     
     var body: some View {
-        switch(service.type!) {
+        switch(service.type) {
         case .natPassthrough:
             NATPassthroughCardView(service: service)
         case .directForward:

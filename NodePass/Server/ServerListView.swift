@@ -78,9 +78,9 @@ struct ServerListView: View {
             .sorted {
                 switch sortIndicator {
                 case .name:
-                    return sortOrder == .ascending ? $0.name! < $1.name! : $0.name! > $1.name!
+                    return sortOrder == .ascending ? $0.name < $1.name : $0.name > $1.name
                 case .date:
-                    return sortOrder == .ascending ? $0.timestamp! < $1.timestamp! : $0.timestamp! > $1.timestamp!
+                    return sortOrder == .ascending ? $0.timestamp < $1.timestamp : $0.timestamp > $1.timestamp
                 }
             }
     }
@@ -91,7 +91,7 @@ struct ServerListView: View {
             return sortedServers
         }
         else {
-            return sortedServers.filter { $0.name!.localizedCaseInsensitiveContains(searchText) }
+            return sortedServers.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
@@ -211,8 +211,8 @@ struct ServerListView: View {
                             Label("Edit", systemImage: "pencil")
                         }
                         
-                        let base64EncodedURL = server.url!.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
-                        let base64EncodedKey = server.key!.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
+                        let base64EncodedURL = server.url.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
+                        let base64EncodedKey = server.key.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
                         ShareLink(item: "np://master?url=\(base64EncodedURL)&key=\(base64EncodedKey)") {
                             Label("Share", systemImage: "square.and.arrow.up")
                         }
@@ -232,11 +232,11 @@ struct ServerListView: View {
     
     @ViewBuilder
     private func serverCardView(server: Server) -> some View {
-        let metadata = state.serverMetadatas[server.id!]
+        let metadata = state.serverMetadatas[server.id]
         VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading) {
                 HStack(spacing: 10) {
-                    Text(server.name!)
+                    Text(server.name)
                     if let uptime = metadata?.uptime {
                         HStack(spacing: 5) {
                             Image(systemName: "power")

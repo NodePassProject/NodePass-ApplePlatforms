@@ -54,7 +54,7 @@ struct DirectForwardDetailView: View {
                     HStack {
                         if let server {
                             LabeledContent("Server") {
-                                Text(server.name!)
+                                Text(server.name)
                             }
                             Button {
                                 state.tab = .servers
@@ -83,11 +83,11 @@ struct DirectForwardDetailView: View {
                     }
                     .copiable(addressesAndPorts.tunnel.port)
                     LabeledContent("Command URL") {
-                        Text(implementation.command!)
+                        Text(implementation.command)
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                     }
-                    .copiable(implementation.command!)
+                    .copiable(implementation.command)
                 }
                 
                 Section("Destination Server") {
@@ -122,7 +122,7 @@ struct DirectForwardDetailView: View {
                 }
             }
             .formStyle(.grouped)
-            .navigationTitle(service.name!)
+            .navigationTitle(service.name)
             .alert("Edit Listen Port", isPresented: $isShowEditRelayPortAlert) {
                 TextField("Port", text: $newRelayPort)
                 Button("OK") {
@@ -179,7 +179,7 @@ struct DirectForwardDetailView: View {
                 let implementation = implementation
                 let server = servers.first(where: { $0.id == implementation.serverID })!
                 let command = implementation.dryModifyTunnelPort(port: newRelayPort)
-                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: implementation.instanceID!, url: command)
+                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url, apiKey: server.key, id: implementation.instanceID, url: command)
                 
                 implementation.command = command
                 implementation.fullCommand = updatedInstance.config ?? command
@@ -198,7 +198,7 @@ struct DirectForwardDetailView: View {
                 let implementation = implementation
                 let server = servers.first(where: { $0.id == implementation.serverID })!
                 let command = implementation.dryModifyDestinationAddress(address: newDestinationAddress)
-                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: implementation.instanceID!, url: command)
+                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url, apiKey: server.key, id: implementation.instanceID, url: command)
                 
                 implementation.command = command
                 implementation.fullCommand = updatedInstance.config ?? command
@@ -217,7 +217,7 @@ struct DirectForwardDetailView: View {
                 let implementation = implementation
                 let server = servers.first(where: { $0.id == implementation.serverID })!
                 let command = implementation.dryModifyDestinationPort(port: newDestinationPort)
-                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url!, apiKey: server.key!, id: implementation.instanceID!, url: command)
+                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url, apiKey: server.key, id: implementation.instanceID, url: command)
                 
                 implementation.command = command
                 implementation.fullCommand = updatedInstance.config ?? command

@@ -24,6 +24,8 @@ struct AddDirectForwardServiceView: View {
     @State private var isShowAddServerSheet: Bool = false
     @State private var newServer: Server?
     
+    @State private var isSensoryFeedbackTriggered: Bool = false
+    
     var body: some View {
         NavigationStack {
             Form {
@@ -36,7 +38,7 @@ struct AddDirectForwardServiceView: View {
                         Text("Select")
                             .tag(nil as Server?)
                         ForEach(servers) { server in
-                            Text(server.name!)
+                            Text(server.name)
                                 .tag(server)
                         }
                     }
@@ -76,58 +78,56 @@ struct AddDirectForwardServiceView: View {
                     }
                 }
                 
-                Section("Preview") {
-                    let clientConnectPort = Int(clientConnectPort) ?? 1080
-                    let clientDestinationPort = Int(clientDestinationPort) ?? 1080
-                    
-                    let command = "client://:\(clientConnectPort)/\(clientDestinationAddress):\(clientDestinationPort)?log=warn"
-                    
-                    let name = NPCore.noEmptyName(name)
-                    let previewService = Service(
-                        name: name,
-                        type: .directForward,
-                        implementations: [
-                            Implementation(
-                                name: String(localized: "\(name) Relay"),
-                                type: .directForwardClient,
-                                position: 0,
-                                serverID: client?.id ?? "",
-                                instanceID: "",
-                                command: command,
-                                fullCommand: command
-                            )
-                        ]
-                    )
-                    
-                    DirectForwardCardView(service: previewService, isPreview: true)
-                }
-                
-#if DEBUG
-                Section {
-                    Button("Sample") {
-                        name = "Sample Direct Forward"
-                        client = servers.first
-                        clientConnectPort = "60004"
-                        clientDestinationAddress = "17.253.144.10"
-                        clientDestinationPort = "60004"
+                if #available(iOS 18.0, *) {
+                    Section("Preview") {
+                        let clientConnectPort = Int(clientConnectPort) ?? 1080
+                        let clientDestinationPort = Int(clientDestinationPort) ?? 1080
+                        
+                        let command = "client://:\(clientConnectPort)/\(clientDestinationAddress):\(clientDestinationPort)?log=warn"
+                        
+                        let name = NPCore.noEmptyName(name)
+                        let previewService = Service(
+                            name: name,
+                            type: .directForward,
+                            implementations: [
+                                Implementation(
+                                    name: String(localized: "\(name) Relay"),
+                                    type: .directForwardClient,
+                                    position: 0,
+                                    serverID: client?.id ?? "",
+                                    instanceID: "",
+                                    command: command,
+                                    fullCommand: command
+                                )
+                            ]
+                        )
+                        
+                        DirectForwardCardView(service: previewService, isPreview: true)
                     }
                 }
-#endif
             }
             .formStyle(.grouped)
             .navigationTitle("Add Direct Forward")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel) {
-                        dismiss()
-                    } label: {
-                        Label("Cancel", systemImage: "xmark")
+                    if #available(iOS 26.0, macOS 26.0, *) {
+                        Button(role: .cancel) {
+                            dismiss()
+                        } label: {
+                            Label("Cancel", systemImage: "xmark")
+                        }
+                    }
+                    else {
+                        Button("Cancel", role: .cancel) {
+                            dismiss()
+                        }
                     }
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
                     if #available(iOS 26.0, macOS 26.0, *) {
                         Button(role: .confirm) {
+                            dismiss()
                             execute()
                         } label: {
                             Label("Done", systemImage: "checkmark")
@@ -136,6 +136,7 @@ struct AddDirectForwardServiceView: View {
                     }
                     else {
                         Button("Done") {
+                            dismiss()
                             execute()
                         }
                         .disabled(client == nil || clientDestinationAddress == "")
@@ -152,6 +153,7 @@ struct AddDirectForwardServiceView: View {
             } content: {
                 EditServerView(server: $newServer)
             }
+            .sensoryFeedback(.success, trigger: isSensoryFeedbackTriggered)
         }
     }
     
@@ -167,8 +169,8 @@ struct AddDirectForwardServiceView: View {
             let instanceService = InstanceService()
             do {
                 let clientInstance = try await instanceService.createInstance(
-                    baseURLString: client.url!,
-                    apiKey: client.key!,
+                    baseURLString: client.url,
+                    apiKey: client.key,
                     url: command
                 )
                 
@@ -183,7 +185,7 @@ struct AddDirectForwardServiceView: View {
                             name: String(localized: "\(name) Relay"),
                             type: .directForwardClient,
                             position: 0,
-                            serverID: client.id!,
+                            serverID: client.id,
                             instanceID: clientInstance.id,
                             command: command,
                             fullCommand: fullCommand
@@ -193,7 +195,23 @@ struct AddDirectForwardServiceView: View {
                 context.insert(service)
                 try? context.save()
                 
-                dismiss()
+                do {
+                    try await instanceService.updateInstancePeer(
+                        baseURLString: client.url,
+                        apiKey: client.key,
+                        id: clientInstance.id,
+                        serviceAlias: String(localized: "\(name)"),
+                        serviceId: "<Apple><ServiceID>\(service.id)</ServiceID><ServiceType>directForward</ServiceType></Apple>",
+                        peerInstanceId: "",
+                        peerMasterId: ""
+                    )
+                } catch {
+#if DEBUG
+                    print("Error Updating Instance Peer Metadata: \(error.localizedDescription)")
+#endif
+                }
+                
+                isSensoryFeedbackTriggered.toggle()
             } catch {
 #if DEBUG
                 print("Error Creating Instances: \(error.localizedDescription)")

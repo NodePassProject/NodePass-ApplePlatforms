@@ -67,16 +67,24 @@ struct EditServerView: View {
             .navigationTitle(state.editServerSheetMode == .adding ? "Add Server" : "Edit Server")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel) {
-                        dismiss()
-                    } label: {
-                        Label("Cancel", systemImage: "xmark")
+                    if #available(iOS 26.0, macOS 26.0, *) {
+                        Button(role: .cancel) {
+                            dismiss()
+                        } label: {
+                            Label("Cancel", systemImage: "xmark")
+                        }
+                    }
+                    else {
+                        Button("Cancel", role: .cancel) {
+                            dismiss()
+                        }
                     }
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
                     if #available(iOS 26.0, macOS 26.0, *) {
                         Button(role: .confirm) {
+                            dismiss()
                             confirm()
                         } label: {
                             Label("Done", systemImage: "checkmark")
@@ -85,6 +93,7 @@ struct EditServerView: View {
                     }
                     else {
                         Button("Done") {
+                            dismiss()
                             confirm()
                         }
                         .disabled(!isValidAPIURL(url) || key == "")
@@ -145,6 +154,5 @@ struct EditServerView: View {
             server.url = url
             server.key = key
         }
-        dismiss()
     }
 }

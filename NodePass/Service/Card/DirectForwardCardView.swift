@@ -38,7 +38,7 @@ struct DirectForwardCardView: View {
                         .foregroundStyle(.secondary)
                         .font(.caption)
                         .bold()
-                    Text(service.name!)
+                    Text(service.name)
                 }
                 Spacer()
             }
