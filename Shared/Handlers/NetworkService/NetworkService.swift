@@ -9,6 +9,7 @@ import Foundation
 
 final class NetworkService {
     private let session: URLSession
+    private let timeoutInterval: TimeInterval = 5.0
     
     init() {
         self.session = UnsafeSSLURLSession.create()
@@ -16,8 +17,6 @@ final class NetworkService {
     
     func request(
         _ endpoint: APIEndpoint,
-        maxRetries: Int = 1,
-        retryDelay: TimeInterval = 1.0,
         completion: @escaping (Result<Void, NetworkError>) -> Void
     ) {
         guard let url = buildURL(from: endpoint) else {
@@ -27,6 +26,7 @@ final class NetworkService {
         
         var request = URLRequest(url: url)
         request.httpMethod = endpoint.method.rawValue
+        request.timeoutInterval = timeoutInterval
         
         var headers = endpoint.headers ?? [:]
         headers["Content-Type"] = "application/json"
@@ -67,8 +67,6 @@ final class NetworkService {
     func request<T: Decodable>(
         _ endpoint: APIEndpoint,
         expecting type: T.Type,
-        maxRetries: Int = 1,
-        retryDelay: TimeInterval = 1.0,
         completion: @escaping (Result<APIResponse<T>, NetworkError>) -> Void
     ) {
         guard let url = buildURL(from: endpoint) else {
@@ -78,6 +76,7 @@ final class NetworkService {
         
         var request = URLRequest(url: url)
         request.httpMethod = endpoint.method.rawValue
+        request.timeoutInterval = timeoutInterval
         
         var headers = endpoint.headers ?? [:]
         headers["Content-Type"] = "application/json"

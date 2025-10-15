@@ -101,12 +101,18 @@ struct ServiceListView: View {
     @State private var isShowAddDirectForwardSheet: Bool = false
     @State private var isShowAddTunnelForwardSheet: Bool = false
     
+    @State private var isSyncing: Bool = false
+    @State private var syncProgress: (Int, Int) = (0, 0)
+    
     @State private var isShowRenameServiceAlert: Bool = false
     @State private var serviceToRename: Service?
     @State private var newNameOfService: String = ""
     
     @State private var isShowDeleteServiceAlert: Bool = false
     @State private var serviceToDelete: Service?
+    
+    @State private var isShowSyncErrorSheet: Bool = false
+    @State private var syncErrorStore: [String: String] = .init()
     
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
@@ -186,6 +192,9 @@ struct ServiceListView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(errorMessage)
+        }
+        .sheet(isPresented: $isShowSyncErrorSheet) {
+            syncErrorSheet
         }
         .sensoryFeedback(.success, trigger: isSensoryFeedbackTriggered)
     }
@@ -278,9 +287,38 @@ struct ServiceListView: View {
         .padding(.horizontal, 15)
     }
     
+    private var syncErrorSheet: some View {
+        NavigationStack {
+            List {
+                Text("\(syncErrorStore.count) error(s)")
+                ForEach(Array(syncErrorStore), id: \.key) {
+                    Text("\($0.key) - \($0.value)")
+                }
+            }
+            .listStyle(.plain)
+            .navigationTitle("Sync Error Report")
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    if #available(iOS 26.0, macOS 26.0, *) {
+                        Button(role: .confirm) {
+                            isShowSyncErrorSheet = false
+                        } label: {
+                            Label("Done", systemImage: "checkmark")
+                        }
+                    }
+                    else {
+                        Button("Done") {
+                            isShowSyncErrorSheet = false
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     private func deleteService(service: Service) {
         func showGeneralizedErrorMessage(error: Error, instanceID: String) {
-            errorMessage = "Error Deleting Instance \(instanceID):\(error.localizedDescription)"
+            errorMessage = String(localized: "Error Deleting Instance \(instanceID):\(error.localizedDescription)")
             isShowErrorAlert = true
         }
         
@@ -314,13 +352,13 @@ struct ServiceListView: View {
                 let clientID = service.implementations![1].serverID
                 let clientInstanceID = service.implementations![1].instanceID
                 guard let server = servers.first(where: { $0.id == serverID }) else {
-                    errorMessage = "Error Deleting Instance \(serverInstanceID): Server not found. Service has been deleted but you will have to delete related instances mannually."
+                    errorMessage = String(localized: "Error Deleting Instance \(serverInstanceID): Server not found. Service has been deleted but you will have to delete related instances mannually.")
                     isShowErrorAlert = true
                     context.delete(service)
                     return
                 }
                 guard let client = servers.first(where: { $0.id == clientID }) else {
-                    errorMessage = "Error Deleting Instance \(clientInstanceID): Server not found. Service has been deleted but you will have to delete related instances mannually."
+                    errorMessage = String(localized: "Error Deleting Instance \(clientInstanceID): Server not found. Service has been deleted but you will have to delete related instances mannually.")
                     isShowErrorAlert = true
                     context.delete(service)
                     return
@@ -342,7 +380,7 @@ struct ServiceListView: View {
                 let clientID = service.implementations![0].serverID
                 let clientInstanceID = service.implementations![0].instanceID
                 guard let client = servers.first(where: { $0.id == clientID }) else {
-                    errorMessage = "Error Deleting Instance \(clientInstanceID): Server not found. Service has been deleted but you will have to delete related instances mannually."
+                    errorMessage = String(localized: "Error Deleting Instance \(clientInstanceID): Server not found. Service has been deleted but you will have to delete related instances mannually.")
                     isShowErrorAlert = true
                     context.delete(service)
                     return
@@ -361,20 +399,33 @@ struct ServiceListView: View {
     private func sync() {
         Task {
             let instanceService = InstanceService()
-            var store: [String: [Instance]] = .init()
+            var store: [String: [Instance]] = .init() // Server.id: [Instance]
+            var errorStore: [String: String] = .init() // (Server.name || Server.id): Error.localizedDescription
             var examinedServiceIds: [String] = .init()
-            try await withThrowingTaskGroup(of: (serverId: Server.ID, instances: [Instance]).self) { group in
+            syncProgress = (0, servers.count)
+            try await withThrowingTaskGroup(of: (server: Server, result: Result<[Instance], Error>).self) { group in
                 for server in servers {
                     group.addTask {
-                        let instances = try await instanceService.listInstances(
-                            baseURLString: server.url,
-                            apiKey: server.key
-                        )
-                        return (server.id, instances)
+                        do {
+                            let instances = try await instanceService.listInstances(
+                                baseURLString: server.url,
+                                apiKey: server.key
+                            )
+                            return (server, .success(instances))
+                        } catch {
+                            return (server, .failure(error))
+                        }
                     }
                 }
-                for try await result in group {
-                    store[result.serverId] = result.instances
+                
+                for try await (server, result) in group {
+                    switch result {
+                    case .success(let instances):
+                        store[server.id] = instances
+                    case .failure(let error):
+                        errorStore[server.id] = error.localizedDescription
+                    }
+                    syncProgress = (syncProgress.0 + 1, syncProgress.1)
                 }
             }
             for serverId in store.keys {
@@ -537,11 +588,17 @@ struct ServiceListView: View {
                     }
                 }
             }
+            if errorStore.count == 0 {
 #if os(iOS)
                 let drop = Drop(title: String(localized: "Success"), subtitle: String(localized: "Sync completed"), icon: UIImage(systemName: "checkmark.circle"))
                 Drops.show(drop)
 #endif
-            isSensoryFeedbackTriggered.toggle()
+                isSensoryFeedbackTriggered.toggle()
+            }
+            else {
+                syncErrorStore = errorStore
+                isShowSyncErrorSheet = true
+            }
         }
     }
 }

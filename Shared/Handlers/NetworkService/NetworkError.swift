@@ -18,13 +18,13 @@ enum NetworkError: Error, LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .invalidURL: return "Invalid URL"
-        case .requestFailed(let error): return "Request Failed: \(error.localizedDescription)"
-        case .invalidResponse: return "Invalid Response"
-        case .unauthorized: return "Unauthorized"
-        case .decodingFailed(let error): return "Decoding Failed: \(error.localizedDescription)"
+        case .invalidURL: return String(localized: "Invalid URL")
+        case .requestFailed(let error): return String(localized: "Request Failed: \(error.localizedDescription)")
+        case .invalidResponse: return String(localized: "Invalid Response")
+        case .unauthorized: return String(localized: "Unauthorized")
+        case .decodingFailed(let error): return String(localized: "Decoding Failed: \(error.localizedDescription)")
         case .serverError(let code, let message):
-            return "Server Error(\(code)): \(message ?? "Unknown Error")"
+            return String(localized: "Server Error(\(code)): \(message ?? "Unknown Error")")
         case .custom(let message): return message
         }
     }

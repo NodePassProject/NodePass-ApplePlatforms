@@ -182,11 +182,7 @@ struct InstanceListView: View {
                 )
                 listInstances()
             } catch {
-#if DEBUG
-                print("Error Creating Instance: \(error.localizedDescription)")
-#endif
-                
-                errorMessage = error.localizedDescription
+                errorMessage = String(localized: "Error Creating Instances: \(error.localizedDescription)")
                 isShowErrorAlert = true
             }
         }
@@ -200,7 +196,7 @@ struct InstanceListView: View {
                 listInstances()
             }
             catch {
-                errorMessage = "Error Deleting Instances: \(error.localizedDescription)"
+                errorMessage = String(localized: "Error Deleting Instances: \(error.localizedDescription)")
                 isShowErrorAlert = true
             }
         }
@@ -214,7 +210,7 @@ struct InstanceListView: View {
                 listInstances()
             }
             catch {
-                errorMessage = "Error Updating Instances: \(error.localizedDescription)"
+                errorMessage = String(localized: "Error Updating Instances: \(error.localizedDescription)")
                 isShowErrorAlert = true
             }
         }
@@ -230,11 +226,11 @@ struct InstanceListView: View {
             catch {
                 switch(action) {
                 case .start:
-                    errorMessage = "Error Starting Instances: \(error.localizedDescription)"
+                    errorMessage = String(localized: "Error Starting Instances: \(error.localizedDescription)")
                 case .stop:
-                    errorMessage = "Error Stopping Instances: \(error.localizedDescription)"
+                    errorMessage = String(localized: "Error Stopping Instances: \(error.localizedDescription)")
                 case .restart:
-                    errorMessage = "Error Restarting Instances: \(error.localizedDescription)"
+                    errorMessage = String(localized: "Error Restarting Instances: \(error.localizedDescription)")
                 }
                 isShowErrorAlert = true
             }

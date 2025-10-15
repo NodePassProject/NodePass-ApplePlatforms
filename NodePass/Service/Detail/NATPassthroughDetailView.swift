@@ -269,7 +269,7 @@ struct NATPassthroughDetailView: View {
                 isSensoryFeedbackTriggered.toggle()
             }
             catch {
-                errorMessage = "Error Updating Instances: \(error.localizedDescription)"
+                errorMessage = String(localized: "Error Updating Instances: \(error.localizedDescription)")
                 isShowErrorAlert = true
             }
         }

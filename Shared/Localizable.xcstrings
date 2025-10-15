@@ -21,6 +21,22 @@
         }
       }
     },
+    "%@ - %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ - %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ - %2$@"
+          }
+        }
+      }
+    },
     "%@ %@" : {
       "localizations" : {
         "en" : {
@@ -103,6 +119,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld"
+          }
+        }
+      }
+    },
+    "%lld error(s)" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld error"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld errors"
+                }
+              }
+            }
+          }
+        },
+        "zh-Hans" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld个错误"
+                }
+              }
+            }
           }
         }
       }
@@ -421,6 +471,16 @@
         }
       }
     },
+    "Decoding Failed: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解码失败：%@"
+          }
+        }
+      }
+    },
     "Delete" : {
       "localizations" : {
         "zh-Hans" : {
@@ -651,12 +711,118 @@
         }
       }
     },
+    "Error Creating Instances: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建实例时遇到错误：%@"
+          }
+        }
+      }
+    },
+    "Error Deleting Instance %@: Server not found. Service has been deleted but you will have to delete related instances mannually." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除实例%@时遇到错误：服务器未找到。服务已被删除但你可能需要手动删除相关的实例。"
+          }
+        }
+      }
+    },
+    "Error Deleting Instance %@:%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Error Deleting Instance %1$@:%2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除实例%1$@时遇到错误：%2$@"
+          }
+        }
+      }
+    },
+    "Error Deleting Instances: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除实例时遇到错误：%@"
+          }
+        }
+      }
+    },
+    "Error Restarting Instances: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新启动实例时遇到错误：%@"
+          }
+        }
+      }
+    },
+    "Error Starting Instances: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动时遇到错误：%@"
+          }
+        }
+      }
+    },
+    "Error Stopping Instances: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止实例时遇到错误：%@"
+          }
+        }
+      }
+    },
+    "Error Updating Instances: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新实例时遇到错误：%@"
+          }
+        }
+      }
+    },
     "Get up-to-date information in your Widget." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "在小组件中获取服务器的最新信息。"
+          }
+        }
+      }
+    },
+    "Invalid Response" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效响应"
+          }
+        }
+      }
+    },
+    "Invalid URL" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无效URL"
           }
         }
       }
@@ -1001,6 +1167,16 @@
         }
       }
     },
+    "Request Failed: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求失败：%@"
+          }
+        }
+      }
+    },
     "Restart" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1027,17 +1203,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在运行"
-          }
-        }
-      }
-    },
-    "Sample" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "样例"
           }
         }
       }
@@ -1089,6 +1254,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "服务器信息"
+          }
+        }
+      }
+    },
+    "Server Error(%lld): %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Server Error(%1$lld): %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器错误（%1$lld）：%2$@"
           }
         }
       }
@@ -1229,6 +1410,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "同步完成"
+          }
+        }
+      }
+    },
+    "Sync Error Report" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步错误报告"
           }
         }
       }
@@ -1454,6 +1645,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "UDP"
+          }
+        }
+      }
+    },
+    "Unauthorized" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未授权"
           }
         }
       }

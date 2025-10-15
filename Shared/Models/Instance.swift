@@ -10,7 +10,7 @@ import Foundation
 struct Instance: Identifiable, Codable, Equatable {
     struct Metadata: Codable, Hashable {
         let peer: Peer
-        let tags: Dictionary<String, String>?
+        let tags: Dictionary<String, String>
     }
     
     struct Peer: Codable, Hashable {
