@@ -185,7 +185,10 @@ struct DirectForwardDetailView: View {
                 implementation.fullCommand = updatedInstance.config ?? command
             }
             catch {
-                errorMessage = String(localized: "Error Updating Instances: \(error.localizedDescription)")
+#if DEBUG
+                print("Error Updating Instances: \(error.localizedDescription)")
+#endif
+                errorMessage = error.localizedDescription
                 isShowErrorAlert = true
             }
         }
@@ -204,7 +207,10 @@ struct DirectForwardDetailView: View {
                 implementation.fullCommand = updatedInstance.config ?? command
             }
             catch {
-                errorMessage = String(localized: "Error Updating Instances: \(error.localizedDescription)")
+#if DEBUG
+                print("Error Updating Instances: \(error.localizedDescription)")
+#endif
+                errorMessage = error.localizedDescription
                 isShowErrorAlert = true
             }
         }
@@ -229,7 +235,10 @@ struct DirectForwardDetailView: View {
                 isSensoryFeedbackTriggered.toggle()
             }
             catch {
-                errorMessage = String(localized: "Error Updating Instances: \(error.localizedDescription)")
+#if DEBUG
+                print("Error Updating Instances: \(error.localizedDescription)")
+#endif
+                errorMessage = error.localizedDescription
                 isShowErrorAlert = true
             }
         }

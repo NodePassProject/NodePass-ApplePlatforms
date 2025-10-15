@@ -166,7 +166,10 @@ struct InstanceListView: View {
                 loadingState = .loaded
             }
             catch {
-                loadingState = .error("Error Listing Instances: \(error.localizedDescription)")
+#if DEBUG
+                print("Error Listing Instances: \(error.localizedDescription)")
+                loadingState = .error(error.localizedDescription)
+#endif
             }
         }
     }
@@ -182,7 +185,11 @@ struct InstanceListView: View {
                 )
                 listInstances()
             } catch {
-                errorMessage = String(localized: "Error Creating Instances: \(error.localizedDescription)")
+#if DEBUG
+                print("Error Creating Instances: \(error.localizedDescription)")
+                loadingState = .error(error.localizedDescription)
+#endif
+                errorMessage = error.localizedDescription
                 isShowErrorAlert = true
             }
         }
@@ -196,7 +203,11 @@ struct InstanceListView: View {
                 listInstances()
             }
             catch {
-                errorMessage = String(localized: "Error Deleting Instances: \(error.localizedDescription)")
+#if DEBUG
+                print("Error Deleting Instances: \(error.localizedDescription)")
+                loadingState = .error(error.localizedDescription)
+#endif
+                errorMessage = error.localizedDescription
                 isShowErrorAlert = true
             }
         }
@@ -210,7 +221,11 @@ struct InstanceListView: View {
                 listInstances()
             }
             catch {
-                errorMessage = String(localized: "Error Updating Instances: \(error.localizedDescription)")
+#if DEBUG
+                print("Error Updating Instances: \(error.localizedDescription)")
+                loadingState = .error(error.localizedDescription)
+#endif
+                errorMessage = error.localizedDescription
                 isShowErrorAlert = true
             }
         }
@@ -226,11 +241,23 @@ struct InstanceListView: View {
             catch {
                 switch(action) {
                 case .start:
-                    errorMessage = String(localized: "Error Starting Instances: \(error.localizedDescription)")
+#if DEBUG
+                    print("Error Starting Instances: \(error.localizedDescription)")
+                    loadingState = .error(error.localizedDescription)
+#endif
+                    errorMessage = error.localizedDescription
                 case .stop:
-                    errorMessage = String(localized: "Error Stopping Instances: \(error.localizedDescription)")
+#if DEBUG
+                    print("Error Stopping Instances: \(error.localizedDescription)")
+                    loadingState = .error(error.localizedDescription)
+#endif
+                    errorMessage = error.localizedDescription
                 case .restart:
-                    errorMessage = String(localized: "Error Restarting Instances: \(error.localizedDescription)")
+#if DEBUG
+                    print("Error Restarting Instances: \(error.localizedDescription)")
+                    loadingState = .error(error.localizedDescription)
+#endif
+                    errorMessage = error.localizedDescription
                 }
                 isShowErrorAlert = true
             }

@@ -194,7 +194,7 @@ struct ServiceListView: View {
             Text(errorMessage)
         }
         .sheet(isPresented: $isShowSyncErrorSheet) {
-            syncErrorSheet
+            SyncErrorReportView(syncErrorStore: $syncErrorStore)
         }
         .sensoryFeedback(.success, trigger: isSensoryFeedbackTriggered)
     }
@@ -285,35 +285,6 @@ struct ServiceListView: View {
             .animation(.default, value: filteredServices)
         }
         .padding(.horizontal, 15)
-    }
-    
-    private var syncErrorSheet: some View {
-        NavigationStack {
-            List {
-                Text("\(syncErrorStore.count) error(s)")
-                ForEach(Array(syncErrorStore), id: \.key) {
-                    Text("\($0.key) - \($0.value)")
-                }
-            }
-            .listStyle(.plain)
-            .navigationTitle("Sync Error Report")
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    if #available(iOS 26.0, macOS 26.0, *) {
-                        Button(role: .confirm) {
-                            isShowSyncErrorSheet = false
-                        } label: {
-                            Label("Done", systemImage: "checkmark")
-                        }
-                    }
-                    else {
-                        Button("Done") {
-                            isShowSyncErrorSheet = false
-                        }
-                    }
-                }
-            }
-        }
     }
     
     private func deleteService(service: Service) {

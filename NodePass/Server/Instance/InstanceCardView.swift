@@ -35,7 +35,6 @@ struct InstanceCardView: View {
             }
             
             Text(instance.url)
-                .font(.system(size: 16))
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
             
