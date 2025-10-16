@@ -24,9 +24,9 @@ struct InstanceCardView: View {
                 case .stopped:
                     Badge("Stopped", backgroundColor: .yellow, textColor: .white)
                 case .error:
-                    Badge("Stopped", backgroundColor: .red, textColor: .white)
-                default:
-                    Badge("Unknown")
+                    Badge("Error", backgroundColor: .red, textColor: .white)
+                case .other(let status):
+                    Badge(status)
                 }
                 if let ping = instance.ping {
                     Badge("\(ping) ms", backgroundColor: .blue, textColor: .white)
