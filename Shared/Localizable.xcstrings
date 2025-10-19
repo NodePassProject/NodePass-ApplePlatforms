@@ -331,6 +331,16 @@
         }
       }
     },
+    "Advanced Mode" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "高级模式"
+          }
+        }
+      }
+    },
     "An error occurred" : {
       "localizations" : {
         "zh-Hans" : {
@@ -917,12 +927,32 @@
         }
       }
     },
+    "Log Level" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日志级别"
+          }
+        }
+      }
+    },
     "Matrix Unavailable" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "指标不可用"
+          }
+        }
+      }
+    },
+    "Maximum Pool Connection" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大池连接数"
           }
         }
       }
@@ -943,6 +973,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "元数据不可用"
+          }
+        }
+      }
+    },
+    "Minimum Pool Connection" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最小池连接数"
           }
         }
       }
@@ -1320,6 +1360,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "服务"
+          }
+        }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置"
           }
         }
       }

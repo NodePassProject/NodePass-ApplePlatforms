@@ -141,7 +141,6 @@ struct TunnelForwardDetailView: View {
                     }
                     LabeledContent("Command URL") {
                         Text(implementation.command)
-                            .lineLimit(1)
                             .minimumScaleFactor(0.5)
                     }
                     .copiable(implementation.command)
@@ -208,7 +207,6 @@ struct TunnelForwardDetailView: View {
                     }
                     LabeledContent("Command URL") {
                         Text(implementation.command)
-                            .lineLimit(1)
                             .minimumScaleFactor(0.5)
                     }
                     .copiable(implementation.command)

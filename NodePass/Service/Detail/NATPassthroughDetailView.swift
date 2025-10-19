@@ -138,6 +138,7 @@ struct NATPassthroughDetailView: View {
                     }
                     LabeledContent("Command URL") {
                         Text(implementation.command)
+                            .minimumScaleFactor(0.5)
                     }
                     .copiable(implementation.command)
                 }
@@ -197,7 +198,6 @@ struct NATPassthroughDetailView: View {
                     .copiable(addressesAndPorts.tunnel.port)
                     LabeledContent("Command URL") {
                         Text(implementation.command)
-                            .lineLimit(1)
                             .minimumScaleFactor(0.5)
                     }
                     .copiable(implementation.command)

@@ -104,6 +104,9 @@
 		CB6682D72E1E990D00A27696 /* QRCodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682D62E1E990300A27696 /* QRCodeScannerView.swift */; };
 		CB6682D92E1E9DA300A27696 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CB6682D82E1E9DA300A27696 /* InfoPlist.xcstrings */; };
 		CB9142EC2E9F5D6900A030D1 /* SyncErrorReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB9142EB2E9F5D5E00A030D1 /* SyncErrorReportView.swift */; };
+		CBAC5A1E2EA485860062FBC6 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAC5A1D2EA485820062FBC6 /* LogLevel.swift */; };
+		CBAC5A1F2EA485860062FBC6 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAC5A1D2EA485820062FBC6 /* LogLevel.swift */; };
+		CBAC5A212EA48E140062FBC6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAC5A202EA48E0C0062FBC6 /* SettingsView.swift */; };
 		CBAE7F622E88D12700864A74 /* Drops in Frameworks */ = {isa = PBXBuildFile; productRef = CBAE7F612E88D12700864A74 /* Drops */; };
 		CBD4335F2E10FA4C002B153F /* NodePassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD4335E2E10FA4C002B153F /* NodePassApp.swift */; };
 		CBD433612E10FA4C002B153F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433602E10FA4C002B153F /* ContentView.swift */; };
@@ -202,6 +205,8 @@
 		CB6682D62E1E990300A27696 /* QRCodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScannerView.swift; sourceTree = "<group>"; };
 		CB6682D82E1E9DA300A27696 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		CB9142EB2E9F5D5E00A030D1 /* SyncErrorReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncErrorReportView.swift; sourceTree = "<group>"; };
+		CBAC5A1D2EA485820062FBC6 /* LogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevel.swift; sourceTree = "<group>"; };
+		CBAC5A202EA48E0C0062FBC6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		CBD4335B2E10FA4C002B153F /* NodePass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NodePass.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBD4335E2E10FA4C002B153F /* NodePassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodePassApp.swift; sourceTree = "<group>"; };
 		CBD433602E10FA4C002B153F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -331,6 +336,7 @@
 				CB6682922E135B3C00A27696 /* InstanceType.swift */,
 				CB66829B2E140CD900A27696 /* InstanceStatus.swift */,
 				CB6682CF2E1DD9BD00A27696 /* UpdateInstanceStatusAction.swift */,
+				CBAC5A1D2EA485820062FBC6 /* LogLevel.swift */,
 			);
 			path = enums;
 			sourceTree = "<group>";
@@ -437,6 +443,7 @@
 				CB6682A42E172F3F00A27696 /* View Modifiers */,
 				CB6682AA2E17342400A27696 /* Service */,
 				CB6682BC2E174F7800A27696 /* Server */,
+				CBAC5A202EA48E0C0062FBC6 /* SettingsView.swift */,
 				CB6682C92E1899A100A27696 /* AppIcon.icon */,
 				CBD433622E10FA4D002B153F /* Assets.xcassets */,
 				CB66827F2E11829B00A27696 /* Info.plist */,
@@ -621,6 +628,7 @@
 				CB5E137A2E80E7B800870962 /* ImplementationType.swift in Sources */,
 				CB5E13912E81243500870962 /* EqualWidthModifier.swift in Sources */,
 				CB5E137C2E80E7BF00870962 /* InstanceStatus.swift in Sources */,
+				CBAC5A1F2EA485860062FBC6 /* LogLevel.swift in Sources */,
 				CB5E13782E80E7B000870962 /* LoadingState.swift in Sources */,
 				CB5E13772E80E7AB00870962 /* Implementation.swift in Sources */,
 				CB5E13762E80E7A600870962 /* Instance.swift in Sources */,
@@ -692,6 +700,8 @@
 				CB62C0832E2BDB5500919507 /* ServerMetadata.swift in Sources */,
 				CB6682832E1183EB00A27696 /* ErrorResponse.swift in Sources */,
 				CB6682D72E1E990D00A27696 /* QRCodeScannerView.swift in Sources */,
+				CBAC5A1E2EA485860062FBC6 /* LogLevel.swift in Sources */,
+				CBAC5A212EA48E140062FBC6 /* SettingsView.swift in Sources */,
 				CB6682952E135C5B00A27696 /* ImplementationType.swift in Sources */,
 				CB66829C2E140CDE00A27696 /* InstanceStatus.swift in Sources */,
 				CB6682982E13FD5500A27696 /* ServiceCardView.swift in Sources */,
@@ -719,7 +729,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -735,7 +745,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -761,7 +771,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -777,7 +787,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -924,7 +934,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -951,7 +961,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -978,7 +988,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1005,7 +1015,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

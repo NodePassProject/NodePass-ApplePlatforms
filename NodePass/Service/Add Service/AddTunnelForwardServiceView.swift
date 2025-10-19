@@ -13,6 +13,8 @@ struct AddTunnelForwardServiceView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Server.timestamp) private var servers: [Server]
     
+    @State private var isAdvancedModeEnabled: Bool = NPCore.isAdvancedModeEnabled
+    
     @State private var name: String = ""
     @State private var relayServer: Server?
     @State private var relayServerConnectPort: String = ""
@@ -22,6 +24,10 @@ struct AddTunnelForwardServiceView: View {
     @State private var isRelayServerAsNPServer: Bool = true
     @State private var isDestinationServerAsNPServer: Bool = false
     @State private var isTLS: Bool = false
+    @State private var npServerLogLevel: LogLevel = .info
+    @State private var npClientLogLevel: LogLevel = .info
+    @State private var maximumPoolConnection: String = ""
+    @State private var minimumPoolConnection: String = ""
     
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
@@ -54,7 +60,10 @@ struct AddTunnelForwardServiceView: View {
                             isDestinationServerAsNPServer = !newValue
                         }
                     if isRelayServerAsNPServer {
-                        LabeledTextField("Tunnel Port", prompt: "10101", text: $tunnelPort, isNumberOnly: true)
+                        npServerConfig
+                    }
+                    else {
+                        npClientConfig
                     }
                 } header: {
                     HStack {
@@ -94,7 +103,10 @@ struct AddTunnelForwardServiceView: View {
                             isRelayServerAsNPServer = !newValue
                         }
                     if isDestinationServerAsNPServer {
-                        LabeledTextField("Tunnel Port", prompt: "10101", text: $tunnelPort, isNumberOnly: true)
+                        npServerConfig
+                    }
+                    else {
+                        npClientConfig
                     }
                 } header: {
                     HStack {
@@ -217,43 +229,95 @@ struct AddTunnelForwardServiceView: View {
         }
     }
     
+    private var npServerConfig: some View {
+        Group {
+            LabeledTextField("Tunnel Port", prompt: "10101", text: $tunnelPort, isNumberOnly: true)
+            if isAdvancedModeEnabled {
+                Picker("Log Level", selection: $npServerLogLevel) {
+                    ForEach(LogLevel.allCases, id: \.self) {
+                        Text($0.rawValue)
+                            .tag($0)
+                    }
+                }
+                LabeledTextField("Maximum Pool Connection", prompt: "1024", text: $maximumPoolConnection, isNumberOnly: true)
+            }
+        }
+    }
+    
+    private var npClientConfig: some View {
+        Group {
+            if isAdvancedModeEnabled {
+                Picker("Log Level", selection: $npClientLogLevel) {
+                    ForEach(LogLevel.allCases, id: \.self) {
+                        Text($0.rawValue)
+                            .tag($0)
+                    }
+                }
+                LabeledTextField("Minimum Pool Connection", prompt: "64", text: $minimumPoolConnection, isNumberOnly: true)
+            }
+        }
+    }
+    
     private func generateCommands() -> (relayServerCommand: String, destinationServerCommand: String) {
         let relayServerConnectPort = Int(relayServerConnectPort) ?? 10022
         let destinationServerServicePort = Int(destinationServerServicePort) ?? 1080
         let tunnelPort = Int(tunnelPort) ?? 10101
         
         var relayServerCommand: String
+        // URL Base
         if isRelayServerAsNPServer {
             relayServerCommand = "server://:\(tunnelPort)/:\(relayServerConnectPort)"
         }
         else {
             relayServerCommand = "client://\(destinationServer?.getHost() ?? ""):\(tunnelPort)/:\(relayServerConnectPort)"
         }
+        // Core Confugurations
         if isRelayServerAsNPServer {
             relayServerCommand += "?mode=1"
-            if isTLS {
-                relayServerCommand += "&tls=1"
-            }
+            relayServerCommand += isTLS ? "&tls=1" : "&tls=0"
         }
         else {
             relayServerCommand += "?mode=2"
         }
         
         var destinationServerCommand: String
+        // URL Base
         if isDestinationServerAsNPServer {
             destinationServerCommand = "server://:\(tunnelPort)/127.0.0.1:\(destinationServerServicePort)"
         }
         else {
             destinationServerCommand = "client://\(relayServer?.getHost() ?? ""):\(tunnelPort)/127.0.0.1:\(destinationServerServicePort)"
         }
-        if isDestinationServerAsNPServer && isTLS {
+        // Core Confugurations
+        if isDestinationServerAsNPServer {
             destinationServerCommand += "?mode=2"
-            if isTLS {
-                destinationServerCommand += "&tls=1"
-            }
+            destinationServerCommand += isTLS ? "&tls=1" : "&tls=0"
         }
         else {
             destinationServerCommand += "?mode=2"
+        }
+        
+        if isAdvancedModeEnabled {
+            let maximumPoolConnection = Int(maximumPoolConnection) ?? 1024
+            let minimumPoolConnection = Int(minimumPoolConnection) ?? 64
+            // Advanced Confugurations
+            if isRelayServerAsNPServer {
+                relayServerCommand += "&log=\(npServerLogLevel.rawValue)"
+                relayServerCommand += "&max=\(maximumPoolConnection)"
+            }
+            else {
+                relayServerCommand += "&log=\(npClientLogLevel.rawValue)"
+                relayServerCommand += "&min=\(minimumPoolConnection)"
+            }
+            // Advanced Confugurations
+            if isDestinationServerAsNPServer {
+                destinationServerCommand += "&log=\(npServerLogLevel.rawValue)"
+                destinationServerCommand += "&max=\(maximumPoolConnection)"
+            }
+            else {
+                destinationServerCommand += "&log=\(npClientLogLevel.rawValue)"
+                destinationServerCommand += "&min=\(minimumPoolConnection)"
+            }
         }
         
         return (relayServerCommand, destinationServerCommand)

@@ -13,11 +13,14 @@ struct AddDirectForwardServiceView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Server.timestamp) private var servers: [Server]
     
+    private var isAdvancedModeEnabled: Bool = NPCore.isAdvancedModeEnabled
+    
     @State private var name: String = ""
     @State private var client: Server?
     @State private var clientConnectPort: String = ""
     @State private var clientDestinationAddress: String = ""
     @State private var clientDestinationPort: String = ""
+    @State private var logLevel: LogLevel = .info
     
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
@@ -43,6 +46,14 @@ struct AddDirectForwardServiceView: View {
                         }
                     }
                     LabeledTextField("Listen Port", prompt: "1080", text: $clientConnectPort, isNumberOnly: true)
+                    if isAdvancedModeEnabled {
+                        Picker("Log Level", selection: $logLevel) {
+                            ForEach(LogLevel.allCases, id: \.self) {
+                                Text($0.rawValue)
+                                    .tag($0)
+                            }
+                        }
+                    }
                 } header: {
                     HStack {
                         Text("Relay Server")
@@ -163,7 +174,13 @@ struct AddDirectForwardServiceView: View {
         let clientConnectPort = Int(clientConnectPort) ?? 1080
         let clientDestinationPort = Int(clientDestinationPort) ?? 1080
         
-        let command = "client://:\(clientConnectPort)/\(clientDestinationAddress):\(clientDestinationPort)"
+        var command: String
+        // URL Base
+        command = "client://:\(clientConnectPort)/\(clientDestinationAddress):\(clientDestinationPort)"
+        // Advanced Confugurations
+        if isAdvancedModeEnabled {
+            command += "&log=\(logLevel.rawValue)"
+        }
         
         Task {
             let instanceService = InstanceService()

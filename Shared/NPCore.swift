@@ -14,6 +14,7 @@ class NPCore {
         static let NPServiceSortOrder = "NPServiceSortOrder"
         static let NPServerSortIndicator = "NPServerSortIndicator"
         static let NPServerSortOrder = "NPServerSortOrder"
+        static let NPAdvancedMode = "NPAdvancedMode"
     }
     
     // MARK: - User Defaults
@@ -24,9 +25,14 @@ class NPCore {
             Strings.NPServiceSortIndicator: "date",
             Strings.NPServiceSortOrder: "ascending",
             Strings.NPServerSortIndicator: "date",
-            Strings.NPServerSortOrder: "ascending"
+            Strings.NPServerSortOrder: "ascending",
+            Strings.NPAdvancedMode: false
         ]
         userDefaults.register(defaults: defaultValues)
+    }
+    
+    static var isAdvancedModeEnabled: Bool {
+        userDefaults.bool(forKey: NPCore.Strings.NPAdvancedMode)
     }
     
     // MARK: Command URL Process

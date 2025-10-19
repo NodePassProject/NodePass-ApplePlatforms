@@ -10,11 +10,13 @@ import SwiftUI
 enum MainTab: String, CaseIterable {
     case services = "services"
     case servers = "servers"
+    case settings = "settings"
     
     var systemName: String {
         switch self {
         case .services: "arrow.left.and.right.circle"
         case .servers: "apple.terminal"
+        case .settings: "gear.circle.fill"
         }
     }
     
@@ -22,6 +24,7 @@ enum MainTab: String, CaseIterable {
         switch self {
         case .services: String(localized: "Services")
         case .servers: String(localized: "Servers")
+        case .settings: String(localized: "Settings")
         }
     }
 }
@@ -47,6 +50,14 @@ struct ContentView: View {
                 } label: {
                     Label(MainTab.servers.title, systemImage: MainTab.servers.systemName)
                 }
+                
+                Tab(value: MainTab.settings) {
+                    NavigationStack {
+                        SettingsView()
+                    }
+                } label: {
+                    Label(MainTab.settings.title, systemImage: MainTab.settings.systemName)
+                }
             }
             .tabViewStyle(.sidebarAdaptable)
         }
@@ -66,6 +77,14 @@ struct ContentView: View {
                 .tag(MainTab.servers)
                 .tabItem {
                     Label(MainTab.servers.title, systemImage: MainTab.servers.systemName)
+                }
+                
+                NavigationStack {
+                    SettingsView()
+                }
+                .tag(MainTab.settings)
+                .tabItem {
+                    Label(MainTab.settings.title, systemImage: MainTab.settings.systemName)
                 }
             }
         }

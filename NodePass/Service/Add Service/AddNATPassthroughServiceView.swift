@@ -13,6 +13,8 @@ struct AddNATPassthroughServiceView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Server.timestamp) private var servers: [Server]
     
+    private var isAdvancedModeEnabled: Bool = NPCore.isAdvancedModeEnabled
+    
     @State private var name: String = ""
     @State private var server: Server?
     @State private var serverConnectPort: String = ""
@@ -20,6 +22,10 @@ struct AddNATPassthroughServiceView: View {
     @State private var client: Server?
     @State private var clientServicePort: String = ""
     @State private var isTLS: Bool = false
+    @State private var npServerLogLevel: LogLevel = .info
+    @State private var npClientLogLevel: LogLevel = .info
+    @State private var maximumPoolConnection: String = ""
+    @State private var minimumPoolConnection: String = ""
     
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
@@ -48,6 +54,15 @@ struct AddNATPassthroughServiceView: View {
                     }
                     LabeledTextField("Listen Port", prompt: "10022", text: $serverConnectPort, isNumberOnly: true)
                     LabeledTextField("Tunnel Port", prompt: "10101", text: $serverTunnelPort, isNumberOnly: true)
+                    if isAdvancedModeEnabled {
+                        Picker("Log Level", selection: $npServerLogLevel) {
+                            ForEach(LogLevel.allCases, id: \.self) {
+                                Text($0.rawValue)
+                                    .tag($0)
+                            }
+                        }
+                        LabeledTextField("Maximum Pool Connection", prompt: "1024", text: $maximumPoolConnection, isNumberOnly: true)
+                    }
                 } header: {
                     HStack {
                         Text("Remote Server (with Public IP)")
@@ -78,6 +93,15 @@ struct AddNATPassthroughServiceView: View {
                         }
                     }
                     LabeledTextField("Service Port", prompt: "22", text: $clientServicePort, isNumberOnly: true)
+                    if isAdvancedModeEnabled {
+                        Picker("Log Level", selection: $npClientLogLevel) {
+                            ForEach(LogLevel.allCases, id: \.self) {
+                                Text($0.rawValue)
+                                    .tag($0)
+                            }
+                        }
+                        LabeledTextField("Minimum Pool Connection", prompt: "64", text: $minimumPoolConnection, isNumberOnly: true)
+                    }
                 } header: {
                     HStack {
                         Text("Local Server (Behind NAT)")
@@ -199,13 +223,29 @@ struct AddNATPassthroughServiceView: View {
         let clientServicePort = Int(clientServicePort) ?? 22
         
         var serverCommand: String
+        // URL Base
         serverCommand = "server://:\(serverTunnelPort)/:\(serverConnectPort)"
-        if isTLS {
-            serverCommand += "?tls=1"
-        }
+        // Core Confugurations
+        serverCommand += "?mode=1"
+        serverCommand += isTLS ? "&tls=1" : "&tls=0"
+        
         
         var clientCommand: String
+        // URL Base
         clientCommand = "client://\(server?.getHost() ?? ""):\(serverTunnelPort)/127.0.0.1:\(clientServicePort)"
+        // Core Confugurations
+        clientCommand += "?mode=2"
+        
+        if isAdvancedModeEnabled {
+            let maximumPoolConnection = Int(maximumPoolConnection) ?? 1024
+            let minimumPoolConnection = Int(minimumPoolConnection) ?? 64
+            // Advanced Confugurations
+            serverCommand += "&log=\(npServerLogLevel.rawValue)"
+            serverCommand += "&max=\(maximumPoolConnection)"
+            // Advanced Confugurations
+            clientCommand += "&log=\(npClientLogLevel.rawValue)"
+            clientCommand += "&min=\(minimumPoolConnection)"
+        }
         
         return (serverCommand, clientCommand)
     }
