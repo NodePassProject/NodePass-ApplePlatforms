@@ -109,6 +109,7 @@ struct ServiceListView: View {
     @State private var newNameOfService: String = ""
     
     @State private var isShowDeleteServiceAlert: Bool = false
+    @State private var isShowForceDeleteServiceAlert: Bool = false
     @State private var serviceToDelete: Service?
     
     @State private var isShowSyncErrorSheet: Bool = false
@@ -187,6 +188,15 @@ struct ServiceListView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("You are about to delete this service. This action is irreversible. Are you sure?")
+        }
+        .alert("Force Delete Service", isPresented: $isShowForceDeleteServiceAlert) {
+            Button("Delete", role: .destructive) {
+                deleteService(service: serviceToDelete!)
+                serviceToDelete = nil
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You are about to force delete this service. This action is irreversible and any error will be ignored. Are you sure?")
         }
         .alert("Error", isPresented: $isShowErrorAlert) {
             Button("OK", role: .cancel) {}
@@ -287,7 +297,7 @@ struct ServiceListView: View {
         .padding(.horizontal, 15)
     }
     
-    private func deleteService(service: Service) {
+    private func deleteService(service: Service, isForce: Bool = false) {
         func showGeneralizedErrorMessage(error: Error, instanceID: String) {
             errorMessage = String(localized: "Error Deleting Instance \(instanceID):\(error.localizedDescription)")
             isShowErrorAlert = true
@@ -323,15 +333,23 @@ struct ServiceListView: View {
                 let clientID = service.implementations![1].serverID
                 let clientInstanceID = service.implementations![1].instanceID
                 guard let server = servers.first(where: { $0.id == serverID }) else {
-                    errorMessage = String(localized: "Error Deleting Instance \(serverInstanceID): Server not found. Service has been deleted but you will have to delete related instances mannually.")
-                    isShowErrorAlert = true
-                    context.delete(service)
+                    if isForce {
+                        context.delete(service)
+                    }
+                    else {
+                        errorMessage = String(localized: "Error Deleting Instance \(serverInstanceID): Server not found.")
+                        isShowErrorAlert = true
+                    }
                     return
                 }
                 guard let client = servers.first(where: { $0.id == clientID }) else {
-                    errorMessage = String(localized: "Error Deleting Instance \(clientInstanceID): Server not found. Service has been deleted but you will have to delete related instances mannually.")
-                    isShowErrorAlert = true
-                    context.delete(service)
+                    if isForce {
+                        context.delete(service)
+                    }
+                    else {
+                        errorMessage = String(localized: "Error Deleting Instance \(clientInstanceID): Server not found.")
+                        isShowErrorAlert = true
+                    }
                     return
                 }
                 let deleteServerInstanceResult = await deleteInstance(server: server, instanceID: serverInstanceID)
@@ -342,18 +360,32 @@ struct ServiceListView: View {
                     case .success:
                         context.delete(service)
                     case .failure(let error):
-                        showGeneralizedErrorMessage(error: error, instanceID: serverInstanceID)
+                        if isForce {
+                            context.delete(service)
+                        }
+                        else {
+                            showGeneralizedErrorMessage(error: error, instanceID: serverInstanceID)
+                        }
                     }
                 case .failure(let error):
-                    showGeneralizedErrorMessage(error: error, instanceID: serverInstanceID)
+                    if isForce {
+                        context.delete(service)
+                    }
+                    else {
+                        showGeneralizedErrorMessage(error: error, instanceID: serverInstanceID)
+                    }
                 }
             case .directForward:
                 let clientID = service.implementations![0].serverID
                 let clientInstanceID = service.implementations![0].instanceID
                 guard let client = servers.first(where: { $0.id == clientID }) else {
-                    errorMessage = String(localized: "Error Deleting Instance \(clientInstanceID): Server not found. Service has been deleted but you will have to delete related instances mannually.")
-                    isShowErrorAlert = true
-                    context.delete(service)
+                    if isForce {
+                        context.delete(service)
+                    }
+                    else {
+                        errorMessage = String(localized: "Error Deleting Instance \(clientInstanceID): Server not found.")
+                        isShowErrorAlert = true
+                    }
                     return
                 }
                 let deleteClientInstanceResult = await deleteInstance(server: client, instanceID: clientInstanceID)
@@ -361,7 +393,12 @@ struct ServiceListView: View {
                 case .success:
                     context.delete(service)
                 case .failure(let error):
-                    showGeneralizedErrorMessage(error: error, instanceID: clientInstanceID)
+                    if isForce {
+                        context.delete(service)
+                    }
+                    else {
+                        showGeneralizedErrorMessage(error: error, instanceID: clientInstanceID)
+                    }
                 }
             }
         }

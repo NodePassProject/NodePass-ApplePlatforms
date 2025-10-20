@@ -331,6 +331,16 @@
         }
       }
     },
+    "Adjust the updating rate of server metadata." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "调整服务器元数据的更新速率。"
+          }
+        }
+      }
+    },
     "Advanced Mode" : {
       "localizations" : {
         "zh-Hans" : {
@@ -731,12 +741,12 @@
         }
       }
     },
-    "Error Deleting Instance %@: Server not found. Service has been deleted but you will have to delete related instances mannually." : {
+    "Error Deleting Instance %@: Server not found." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "删除实例%@时遇到错误：服务器未找到。服务已被删除但你可能需要手动删除相关的实例。"
+            "value" : "删除实例%@时遇到错误：服务器未找到。"
           }
         }
       }
@@ -803,6 +813,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更新实例时遇到错误：%@"
+          }
+        }
+      }
+    },
+    "Force Delete Service" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制删除服务"
           }
         }
       }
@@ -1314,6 +1334,16 @@
         }
       }
     },
+    "Server Metadata Updating Rate" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器元数据更新速率"
+          }
+        }
+      }
+    },
     "Servers" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1816,6 +1846,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你将要删除这个服务。这个操作不可逆。你确定吗？"
+          }
+        }
+      }
+    },
+    "You are about to force delete this service. This action is irreversible and any error will be ignored. Are you sure?" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你将要删除这个服务。这个操作不可逆且任何错误都将被忽略。你确定吗？"
           }
         }
       }

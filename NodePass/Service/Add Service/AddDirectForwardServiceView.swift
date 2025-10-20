@@ -179,7 +179,7 @@ struct AddDirectForwardServiceView: View {
         command = "client://:\(clientConnectPort)/\(clientDestinationAddress):\(clientDestinationPort)"
         // Advanced Confugurations
         if isAdvancedModeEnabled {
-            command += "&log=\(logLevel.rawValue)"
+            command += "?log=\(logLevel.rawValue)"
         }
         
         Task {

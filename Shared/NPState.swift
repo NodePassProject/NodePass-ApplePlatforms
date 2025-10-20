@@ -26,9 +26,17 @@ class NPState {
     var serverMetadatas: [String: ServerMetadata] = .init()
     private var timer: Timer?
     
+    func modifyContinuousUpdatingServerMetadataTimerInterval(to interval: Double) {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+            self?.updateServerMetadatas()
+        }
+    }
+    
     func startContinuousUpdatingServerMetadatas() {
         updateServerMetadatas()
-        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
+        let interval = NPCore.serverMetadataUpdateInterval
+        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             self?.updateServerMetadatas()
         }
     }
@@ -44,11 +52,10 @@ class NPState {
     
     private func getServerMetadatas(servers: [Server]) async {
         do {
-            let serverService = ServerService()
-            
             try await withThrowingTaskGroup(of: (String, ServerMetadata).self) { group in
                 for server in servers {
                     group.addTask {
+                        let serverService = await ServerService()
                         let metadata = try await serverService.getServerInfo(baseURLString: server.url, apiKey: server.key)
                         return (server.id, metadata)
                     }
