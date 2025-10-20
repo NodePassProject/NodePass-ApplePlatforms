@@ -15,11 +15,11 @@ class NPCore {
         static let NPServerSortIndicator = "NPServerSortIndicator"
         static let NPServerSortOrder = "NPServerSortOrder"
         static let NPAdvancedMode = "NPAdvancedMode"
-        static let NPServerMetadataUpdateInterval = "NPServerMetadataUpdateInterval"
+        static let NPServerMetadataUpdatingRate = "NPServerMetadataUpdatingRate"
     }
     
     class Defaults {
-        static let serverMetadataUpdateInterval: Double = 5
+        static let serverMetadataUpdatingRate: Double = 0.2
     }
     
     // MARK: - User Defaults
@@ -32,7 +32,7 @@ class NPCore {
             Strings.NPServerSortIndicator: "date",
             Strings.NPServerSortOrder: "ascending",
             Strings.NPAdvancedMode: false,
-            Strings.NPServerMetadataUpdateInterval: Defaults.serverMetadataUpdateInterval
+            Strings.NPServerMetadataUpdatingRate: Defaults.serverMetadataUpdatingRate
         ]
         userDefaults.register(defaults: defaultValues)
     }
@@ -41,8 +41,8 @@ class NPCore {
         userDefaults.bool(forKey: NPCore.Strings.NPAdvancedMode)
     }
     
-    static var serverMetadataUpdateInterval: Double {
-        userDefaults.double(forKey: Strings.NPServerMetadataUpdateInterval)
+    static var serverMetadataUpdatingRate: Double {
+        userDefaults.double(forKey: Strings.NPServerMetadataUpdatingRate)
     }
     
     // MARK: Command URL Process

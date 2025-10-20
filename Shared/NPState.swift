@@ -35,7 +35,7 @@ class NPState {
     
     func startContinuousUpdatingServerMetadatas() {
         updateServerMetadatas()
-        let interval = NPCore.serverMetadataUpdateInterval
+        let interval = 1 / NPCore.serverMetadataUpdatingRate
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             self?.updateServerMetadatas()
         }

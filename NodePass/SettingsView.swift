@@ -11,7 +11,7 @@ struct SettingsView: View {
     @Environment(NPState.self) var state
     
     @State private var isAdvancedModeEnabled: Bool = NPCore.isAdvancedModeEnabled
-    @State private var serverMetadataUpdateInterval: Double = NPCore.serverMetadataUpdateInterval
+    @State private var serverMetadataUpdatingRate: Double = NPCore.serverMetadataUpdatingRate
     
     var body: some View {
         Form {
@@ -20,9 +20,9 @@ struct SettingsView: View {
                     .onChange(of: isAdvancedModeEnabled) {
                         NPCore.userDefaults.set(isAdvancedModeEnabled, forKey: NPCore.Strings.NPAdvancedMode)
                         if isAdvancedModeEnabled {
-                            let defaultServerMetadataUpdateInterval = NPCore.Defaults.serverMetadataUpdateInterval
-                            NPCore.userDefaults.set(defaultServerMetadataUpdateInterval, forKey: NPCore.Strings.NPServerMetadataUpdateInterval)
-                            state.modifyContinuousUpdatingServerMetadataTimerInterval(to: defaultServerMetadataUpdateInterval)
+                            let defaultServerMetadataUpdatingRate = NPCore.Defaults.serverMetadataUpdatingRate
+                            NPCore.userDefaults.set(defaultServerMetadataUpdatingRate, forKey: NPCore.Strings.NPServerMetadataUpdatingRate)
+                            state.modifyContinuousUpdatingServerMetadataTimerInterval(to: 1 / defaultServerMetadataUpdatingRate)
                         }
                     }
             }
@@ -30,7 +30,7 @@ struct SettingsView: View {
             if isAdvancedModeEnabled {
                 Section {
                     if #available(iOS 26.0, macOS 26.0, *) {
-                        Slider(value: $serverMetadataUpdateInterval, in: 2...30) {
+                        Slider(value: $serverMetadataUpdatingRate, in: 0.05...0.2) {
                             Text("Server Metadata Updating Rate")
                         } minimumValueLabel: {
                             Image(systemName: "tortoise.fill")
@@ -39,18 +39,16 @@ struct SettingsView: View {
                             Image(systemName: "hare.fill")
                                 .foregroundStyle(.secondary)
                         } ticks: {
-                            SliderTick(5)
-                            SliderTick(10)
-                            SliderTick(15)
+                            SliderTick(0.1)
                         } onEditingChanged: { editing in
                             if !editing {
-                                NPCore.userDefaults.set(serverMetadataUpdateInterval, forKey: NPCore.Strings.NPServerMetadataUpdateInterval)
-                                state.modifyContinuousUpdatingServerMetadataTimerInterval(to: serverMetadataUpdateInterval)
+                                NPCore.userDefaults.set(serverMetadataUpdatingRate, forKey: NPCore.Strings.NPServerMetadataUpdatingRate)
+                                state.modifyContinuousUpdatingServerMetadataTimerInterval(to: 1 / serverMetadataUpdatingRate)
                             }
                         }
                     }
                     else {
-                        Slider(value: $serverMetadataUpdateInterval, in: 2...30, step: 0.5) {
+                        Slider(value: $serverMetadataUpdatingRate, in: 0.05...0.2) {
                             Text("Server Metadata Updating Rate")
                         } minimumValueLabel: {
                             Image(systemName: "tortoise")
@@ -58,7 +56,8 @@ struct SettingsView: View {
                             Image(systemName: "hare")
                         } onEditingChanged: { editing in
                             if !editing {
-                                state.modifyContinuousUpdatingServerMetadataTimerInterval(to: serverMetadataUpdateInterval)
+                                NPCore.userDefaults.set(serverMetadataUpdatingRate, forKey: NPCore.Strings.NPServerMetadataUpdatingRate)
+                                state.modifyContinuousUpdatingServerMetadataTimerInterval(to: 1 / serverMetadataUpdatingRate)
                             }
                         }
                     }
