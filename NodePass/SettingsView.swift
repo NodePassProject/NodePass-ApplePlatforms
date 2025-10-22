@@ -19,10 +19,14 @@ struct SettingsView: View {
                 Toggle("Advanced Mode", isOn: $isAdvancedModeEnabled)
                     .onChange(of: isAdvancedModeEnabled) {
                         NPCore.userDefaults.set(isAdvancedModeEnabled, forKey: NPCore.Strings.NPAdvancedMode)
-                        if isAdvancedModeEnabled {
+                        if !isAdvancedModeEnabled {
+                            // Restore server metadata updating rate to default
                             let defaultServerMetadataUpdatingRate = NPCore.Defaults.serverMetadataUpdatingRate
-                            NPCore.userDefaults.set(defaultServerMetadataUpdatingRate, forKey: NPCore.Strings.NPServerMetadataUpdatingRate)
+                            
+                            serverMetadataUpdatingRate = defaultServerMetadataUpdatingRate
                             state.modifyContinuousUpdatingServerMetadataTimerInterval(to: 1 / defaultServerMetadataUpdatingRate)
+                            
+                            NPCore.userDefaults.set(defaultServerMetadataUpdatingRate, forKey: NPCore.Strings.NPServerMetadataUpdatingRate)
                         }
                     }
             }
@@ -39,11 +43,12 @@ struct SettingsView: View {
                             Image(systemName: "hare.fill")
                                 .foregroundStyle(.secondary)
                         } ticks: {
+                            SliderTick(0.05)
                             SliderTick(0.1)
+                            SliderTick(0.2)
                         } onEditingChanged: { editing in
                             if !editing {
-                                NPCore.userDefaults.set(serverMetadataUpdatingRate, forKey: NPCore.Strings.NPServerMetadataUpdatingRate)
-                                state.modifyContinuousUpdatingServerMetadataTimerInterval(to: 1 / serverMetadataUpdatingRate)
+                                updateServerMetadataUpdatingRate()
                             }
                         }
                     }
@@ -56,8 +61,7 @@ struct SettingsView: View {
                             Image(systemName: "hare")
                         } onEditingChanged: { editing in
                             if !editing {
-                                NPCore.userDefaults.set(serverMetadataUpdatingRate, forKey: NPCore.Strings.NPServerMetadataUpdatingRate)
-                                state.modifyContinuousUpdatingServerMetadataTimerInterval(to: 1 / serverMetadataUpdatingRate)
+                                updateServerMetadataUpdatingRate()
                             }
                         }
                     }
@@ -69,5 +73,11 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
+    }
+    
+    private func updateServerMetadataUpdatingRate() {
+        state.modifyContinuousUpdatingServerMetadataTimerInterval(to: 1 / serverMetadataUpdatingRate)
+        
+        NPCore.userDefaults.set(serverMetadataUpdatingRate, forKey: NPCore.Strings.NPServerMetadataUpdatingRate)
     }
 }
