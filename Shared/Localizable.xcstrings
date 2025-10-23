@@ -817,6 +817,16 @@
         }
       }
     },
+    "Force Delete" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "强制删除"
+          }
+        }
+      }
+    },
     "Force Delete Service" : {
       "localizations" : {
         "zh-Hans" : {

@@ -290,6 +290,13 @@ struct ServiceListView: View {
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
+                        
+                        Button(role: .destructive) {
+                            serviceToDelete = service
+                            isShowForceDeleteServiceAlert = true
+                        } label: {
+                            Label("Force Delete", systemImage: "trash.slash")
+                        }
                     }
             }
             .animation(.default, value: filteredServices)

@@ -144,7 +144,7 @@ class NPCore {
         var unitIndex = 0
         
         while value >= 1024 && unitIndex < units.count - 1 {
-            value /= 1024
+            value /= 1000
             unitIndex += 1
         }
         

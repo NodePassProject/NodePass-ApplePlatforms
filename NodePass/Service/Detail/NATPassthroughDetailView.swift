@@ -83,22 +83,16 @@ struct NATPassthroughDetailView: View {
                     let addressesAndPorts = addressesAndPorts0
                     let queryParameters = queryParameters0
                     
-                    HStack {
-                        if let server {
-                            LabeledContent("Server") {
-                                Text(server.name)
-                            }
-                            Button {
+                    if let server {
+                        ServerCardView(server: server)
+                            .onTapGesture {
                                 state.tab = .servers
                                 state.pathServers.append(server)
-                            } label: {
-                                Image(systemName: "arrow.right")
                             }
-                        }
-                        else {
-                            LabeledContent("Server") {
-                                Text("Not on this device")
-                            }
+                    }
+                    else {
+                        LabeledContent("Server") {
+                            Text("Not on this device")
                         }
                     }
                     HStack {
@@ -148,22 +142,16 @@ struct NATPassthroughDetailView: View {
                     let server = server1
                     let addressesAndPorts = addressesAndPorts1
                     
-                    HStack {
-                        if let server {
-                            LabeledContent("Server") {
-                                Text(server.name)
-                            }
-                            Button {
+                    if let server {
+                        ServerCardView(server: server)
+                            .onTapGesture {
                                 state.tab = .servers
                                 state.pathServers.append(server)
-                            } label: {
-                                Image(systemName: "arrow.right")
                             }
-                        }
-                        else {
-                            LabeledContent("Server") {
-                                Text("Not on this device")
-                            }
+                    }
+                    else {
+                        LabeledContent("Server") {
+                            Text("Not on this device")
                         }
                     }
                     HStack {
