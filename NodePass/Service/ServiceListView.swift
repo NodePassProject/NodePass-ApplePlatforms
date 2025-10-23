@@ -191,7 +191,7 @@ struct ServiceListView: View {
         }
         .alert("Force Delete Service", isPresented: $isShowForceDeleteServiceAlert) {
             Button("Delete", role: .destructive) {
-                deleteService(service: serviceToDelete!)
+                deleteService(service: serviceToDelete!, isForce: true)
                 serviceToDelete = nil
             }
             Button("Cancel", role: .cancel) {}
