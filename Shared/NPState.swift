@@ -23,7 +23,7 @@ class NPState {
     var editServerSheetServer: Server?
     
     // Metadata of Servers
-    var serverMetadatas: [String: ServerMetadata] = .init()
+    var serverMetadatas: [String: Result<ServerMetadata, Error>] = .init()
     private var timer: Timer?
     
     func modifyContinuousUpdatingServerMetadataTimerInterval(to interval: Double) {
@@ -68,14 +68,7 @@ class NPState {
             }
             
             for await (serverId, result) in group {
-                switch result {
-                case .success(let metadata):
-                    serverMetadatas[serverId] = metadata
-                case .failure(let error):
-#if DEBUG
-                    print("Error getting metadata for server \(serverId): \(error.localizedDescription)")
-#endif
-                }
+                serverMetadatas[serverId] = result
             }
         }
     }

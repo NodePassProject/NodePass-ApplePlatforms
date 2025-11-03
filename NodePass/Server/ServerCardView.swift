@@ -11,8 +11,19 @@ struct ServerCardView: View {
     @Environment(NPState.self) var state
     let server: Server
     
+    var metadataResult: Result<ServerMetadata, Error>? {
+        state.serverMetadatas[server.id]
+    }
+    var metadata: ServerMetadata? {
+        if let metadataResult {
+            return try? metadataResult.get()
+        }
+        else {
+            return nil
+        }
+    }
+    
     var body: some View {
-        let metadata = state.serverMetadatas[server.id]
         VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading) {
                 HStack(spacing: 10) {
@@ -104,10 +115,23 @@ struct ServerCardView: View {
                 .foregroundStyle(.secondary)
             }
             else {
-                Text("Metadata Unavailable")
-                    .bold()
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity)
+                if let metadataResult {
+                    switch metadataResult {
+                    case .success:
+                        Text("Metadata Unavailable")
+                            .bold()
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity)
+                    case .failure(let error):
+                        Text(error.localizedDescription)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+                else {
+                    ProgressView()
+                }
                 Spacer()
             }
         }

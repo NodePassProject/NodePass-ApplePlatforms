@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RevenueCatUI
 
 struct SettingsView: View {
     @Environment(NPState.self) var state
@@ -33,42 +34,29 @@ struct SettingsView: View {
             
             if isAdvancedModeEnabled {
                 Section {
-                    if #available(iOS 26.0, macOS 26.0, *) {
-                        Slider(value: $serverMetadataUpdatingRate, in: 0.05...0.2) {
-                            Text("Server Metadata Updating Rate")
-                        } minimumValueLabel: {
-                            Image(systemName: "tortoise.fill")
-                                .foregroundStyle(.secondary)
-                        } maximumValueLabel: {
-                            Image(systemName: "hare.fill")
-                                .foregroundStyle(.secondary)
-                        } ticks: {
-                            SliderTick(0.05)
-                            SliderTick(0.1)
-                            SliderTick(0.2)
-                        } onEditingChanged: { editing in
-                            if !editing {
-                                updateServerMetadataUpdatingRate()
-                            }
-                        }
-                    }
-                    else {
-                        Slider(value: $serverMetadataUpdatingRate, in: 0.05...0.2) {
-                            Text("Server Metadata Updating Rate")
-                        } minimumValueLabel: {
-                            Image(systemName: "tortoise")
-                        } maximumValueLabel: {
-                            Image(systemName: "hare")
-                        } onEditingChanged: { editing in
-                            if !editing {
-                                updateServerMetadataUpdatingRate()
-                            }
+                    Slider(value: $serverMetadataUpdatingRate, in: 0.05...0.2) {
+                        Text("Server Metadata Updating Rate")
+                    } minimumValueLabel: {
+                        Image(systemName: "tortoise")
+                            .foregroundStyle(.secondary)
+                    } maximumValueLabel: {
+                        Image(systemName: "hare")
+                            .foregroundStyle(.secondary)
+                    } onEditingChanged: { editing in
+                        if !editing {
+                            updateServerMetadataUpdatingRate()
                         }
                     }
                 } header: {
                     Text("Server Metadata Updating Rate")
                 } footer: {
                     Text("Adjust the updating rate of server metadata.")
+                }
+                
+                Section {
+                    NavigationLink("Support Us") {
+                        PaywallView()
+                    }
                 }
             }
         }

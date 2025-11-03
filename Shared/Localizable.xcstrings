@@ -1474,6 +1474,16 @@
         }
       }
     },
+    "Support Us" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "支持我们"
+          }
+        }
+      }
+    },
     "Swap" : {
       "localizations" : {
         "zh-Hans" : {

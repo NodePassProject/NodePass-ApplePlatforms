@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import RevenueCat
 
 @main
 struct NodePassApp: App {
@@ -14,6 +15,10 @@ struct NodePassApp: App {
     
     init() {
         NPCore.registerUserDefaults()
+        guard let revenueCatAPIKey = Bundle.main.object(forInfoDictionaryKey: "RevenueCatAPIKey") as? String else {
+            fatalError("RevenueCatAPIKey not found in Info.plist")
+        }
+        Purchases.configure(withAPIKey: revenueCatAPIKey)
         state.startContinuousUpdatingServerMetadatas()
     }
     
