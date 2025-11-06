@@ -63,9 +63,6 @@ struct ServerDetailProvider: AppIntentTimelineProvider {
             let serverService = ServerService()
             let metadata = try await serverService.getServerInfo(baseURLString: server.url, apiKey: server.key)
             
-            let instanceService = InstanceService()
-            let instances = try await instanceService.listInstances(baseURLString: server.url, apiKey: server.key)
-            
             return ServerEntry(date: Date(), data: ServerEntry.ServerData(id: server.id, name: server.name, metadata: metadata), message: "OK")
         }
         catch {

@@ -92,6 +92,7 @@ struct AddDirectForwardServiceView: View {
                 if #available(iOS 18.0, *) {
                     Section("Preview") {
                         let clientConnectPort = Int(clientConnectPort) ?? 1080
+                        let clientDestinationAddress = clientDestinationAddress == "" ? "17.253.144.10" : clientDestinationAddress
                         let clientDestinationPort = Int(clientDestinationPort) ?? 1080
                         
                         let command = "client://:\(clientConnectPort)/\(clientDestinationAddress):\(clientDestinationPort)?log=warn"
@@ -172,6 +173,7 @@ struct AddDirectForwardServiceView: View {
         let client = client!
         
         let clientConnectPort = Int(clientConnectPort) ?? 1080
+        let clientDestinationAddress = clientDestinationAddress == "" ? "17.253.144.10" : clientDestinationAddress
         let clientDestinationPort = Int(clientDestinationPort) ?? 1080
         
         var command: String

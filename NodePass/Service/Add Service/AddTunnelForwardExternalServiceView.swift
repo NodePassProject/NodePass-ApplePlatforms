@@ -224,6 +224,7 @@ struct AddTunnelForwardExternalServiceView: View {
     
     private func generateCommands() -> (relayServerCommand: String, destinationServerCommand: String) {
         let relayServerConnectPort = Int(relayServerConnectPort) ?? 10022
+        let destinationServerServiceAddress = destinationServerServiceAddress == "" ? "17.253.144.10" : destinationServerServiceAddress
         let destinationServerServicePort = Int(destinationServerServicePort) ?? 1080
         let tunnelPort = Int(tunnelPort) ?? 10101
         

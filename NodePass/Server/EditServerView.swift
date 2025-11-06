@@ -107,9 +107,9 @@ struct EditServerView: View {
 #endif
             .onAppear {
                 if let server {
-                    name = server.name ?? ""
-                    url = server.url ?? ""
-                    key = server.key ?? ""
+                    name = server.name
+                    url = server.url
+                    key = server.key
                 }
             }
         }

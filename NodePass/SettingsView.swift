@@ -52,11 +52,11 @@ struct SettingsView: View {
                 } footer: {
                     Text("Adjust the updating rate of server metadata.")
                 }
-                
-                Section {
-                    NavigationLink("Support Us") {
-                        PaywallView()
-                    }
+            }
+            
+            Section {
+                NavigationLink("Support Us") {
+                    PaywallView()
                 }
             }
         }

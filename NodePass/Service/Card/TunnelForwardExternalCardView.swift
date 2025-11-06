@@ -34,7 +34,7 @@ struct TunnelForwardExternalCardView: View {
         VStack(spacing: 20) {
             HStack {
                 VStack(alignment: .leading) {
-                    Text("Tunnel Forward")
+                    Text("Tunnel Forward(External)")
                         .foregroundStyle(.secondary)
                         .font(.caption)
                         .bold()
