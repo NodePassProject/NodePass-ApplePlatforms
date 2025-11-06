@@ -11,4 +11,6 @@ enum ImplementationType: String, Codable {
     case directForwardClient = "directForwardClient"
     case tunnelForwardRelay = "tunnelForwardRelay"
     case tunnelForwardDestination = "tunnelForwardDestination"
+    case tunnelForwardExternalFrontRelay = "tunnelForwardExternalFrontRelay"
+    case tunnelForwardExternalBackRelay = "tunnelForwardExternalBackRelay"
 }

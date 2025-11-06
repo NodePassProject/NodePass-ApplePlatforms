@@ -70,7 +70,7 @@ struct TunnelForwardDetailView: View {
     @State private var isSensoryFeedbackTriggered: Bool = false
     
     var body: some View {
-        if service.type == .tunnelForward {
+        if [.tunnelForward, .tunnelForwardExternal].contains(service.type) {
             Form {
                 if let server = server0 {
                     let connectionString = "\(server.getHost()):\(addressesAndPorts0.destination.port)"
@@ -158,21 +158,46 @@ struct TunnelForwardDetailView: View {
                             Text("Not on this device")
                         }
                     }
-                    HStack {
-                        LabeledContent("Service Port") {
-                            Text(addressesAndPorts.destination.port)
-                        }
-                        if server != nil {
-                            Button {
-                                editPortOption = .destination
-                                implementationToEdit = implementation1
-                                isShowEditPortAlert = true
-                            } label: {
-                                Image(systemName: "pencil")
+                    if service.type == .tunnelForward {
+                        HStack {
+                            LabeledContent("Service Port") {
+                                Text(addressesAndPorts.destination.port)
+                            }
+                            if server != nil {
+                                Button {
+                                    editPortOption = .destination
+                                    implementationToEdit = implementation1
+                                    isShowEditPortAlert = true
+                                } label: {
+                                    Image(systemName: "pencil")
+                                }
                             }
                         }
+                        .copiable(addressesAndPorts.destination.port)
                     }
-                    .copiable(addressesAndPorts.destination.port)
+                    if service.type == .tunnelForwardExternal {
+                        HStack {
+                            LabeledContent("Target Address") {
+                                Text(addressesAndPorts.destination.address)
+                            }
+                        }
+                        .copiable(addressesAndPorts.destination.address)
+                        HStack {
+                            LabeledContent("Target Port") {
+                                Text(addressesAndPorts.destination.port)
+                            }
+                            if server != nil {
+                                Button {
+                                    editPortOption = .destination
+                                    implementationToEdit = implementation1
+                                    isShowEditPortAlert = true
+                                } label: {
+                                    Image(systemName: "pencil")
+                                }
+                            }
+                        }
+                        .copiable(addressesAndPorts.destination.port)
+                    }
                     HStack {
                         LabeledContent("Tunnel Port") {
                             Text(addressesAndPorts.tunnel.port)

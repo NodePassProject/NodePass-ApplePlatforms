@@ -18,6 +18,8 @@ struct ServiceCardView: View {
             DirectForwardCardView(service: service)
         case .tunnelForward:
             TunnelForwardCardView(service: service)
+        case .tunnelForwardExternal:
+            TunnelForwardExternalCardView(service: service)
         }
     }
 }
