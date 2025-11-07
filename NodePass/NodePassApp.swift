@@ -34,6 +34,32 @@ struct NodePassApp: App {
                     handleIncomingURL(url)
                 }
         }
+        
+#if os(macOS)
+        Settings {
+            if #available(macOS 15.0, *) {
+                TabView {
+                    Tab("General", systemImage: "gear") {
+                        SettingsView()
+                            .environment(state)
+                    }
+                }
+                .scenePadding()
+                .frame(width: 500, height: 300)
+            }
+            else {
+                TabView {
+                    SettingsView()
+                        .environment(state)
+                        .tabItem {
+                            Label("General", systemImage: "gear")
+                        }
+                }
+                .scenePadding()
+                .frame(width: 500, height: 300)
+            }
+        }
+#endif
     }
     
     private func handleIncomingURL(_ url: URL) {

@@ -15,38 +15,15 @@ struct SettingsView: View {
     @State private var serverMetadataUpdatingRate: Double = NPCore.serverMetadataUpdatingRate
     
     var body: some View {
+#if os(iOS)
         Form {
             Section {
-                Toggle("Advanced Mode", isOn: $isAdvancedModeEnabled)
-                    .onChange(of: isAdvancedModeEnabled) {
-                        NPCore.userDefaults.set(isAdvancedModeEnabled, forKey: NPCore.Strings.NPAdvancedMode)
-                        if !isAdvancedModeEnabled {
-                            // Restore server metadata updating rate to default
-                            let defaultServerMetadataUpdatingRate = NPCore.Defaults.serverMetadataUpdatingRate
-                            
-                            serverMetadataUpdatingRate = defaultServerMetadataUpdatingRate
-                            state.modifyContinuousUpdatingServerMetadataTimerInterval(to: 1 / defaultServerMetadataUpdatingRate)
-                            
-                            NPCore.userDefaults.set(defaultServerMetadataUpdatingRate, forKey: NPCore.Strings.NPServerMetadataUpdatingRate)
-                        }
-                    }
+                advancedModeButton
             }
             
             if isAdvancedModeEnabled {
                 Section {
-                    Slider(value: $serverMetadataUpdatingRate, in: 0.05...0.2) {
-                        Text("Server Metadata Updating Rate")
-                    } minimumValueLabel: {
-                        Image(systemName: "tortoise")
-                            .foregroundStyle(.secondary)
-                    } maximumValueLabel: {
-                        Image(systemName: "hare")
-                            .foregroundStyle(.secondary)
-                    } onEditingChanged: { editing in
-                        if !editing {
-                            updateServerMetadataUpdatingRate()
-                        }
-                    }
+                    serverMetadataUpdatingRateSlider
                 } header: {
                     Text("Server Metadata Updating Rate")
                 } footer: {
@@ -61,6 +38,54 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
+#endif
+        
+#if os(macOS)
+        NavigationStack {
+            Form {
+                advancedModeButton
+                if isAdvancedModeEnabled {
+                    serverMetadataUpdatingRateSlider
+                }
+                NavigationLink("Support Us") {
+                    PaywallView()
+                }
+            }
+            .navigationTitle("Settings")
+        }
+#endif
+    }
+    
+    private var advancedModeButton: some View {
+        Toggle("Advanced Mode", isOn: $isAdvancedModeEnabled)
+            .onChange(of: isAdvancedModeEnabled) {
+                NPCore.userDefaults.set(isAdvancedModeEnabled, forKey: NPCore.Strings.NPAdvancedMode)
+                if !isAdvancedModeEnabled {
+                    // Restore server metadata updating rate to default
+                    let defaultServerMetadataUpdatingRate = NPCore.Defaults.serverMetadataUpdatingRate
+                    
+                    serverMetadataUpdatingRate = defaultServerMetadataUpdatingRate
+                    state.modifyContinuousUpdatingServerMetadataTimerInterval(to: 1 / defaultServerMetadataUpdatingRate)
+                    
+                    NPCore.userDefaults.set(defaultServerMetadataUpdatingRate, forKey: NPCore.Strings.NPServerMetadataUpdatingRate)
+                }
+            }
+    }
+    
+    private var serverMetadataUpdatingRateSlider: some View {
+        Slider(value: $serverMetadataUpdatingRate, in: 0.05...0.2) {
+            Text("Server Metadata Updating Rate")
+        } minimumValueLabel: {
+            Image(systemName: "tortoise")
+                .foregroundStyle(.secondary)
+        } maximumValueLabel: {
+            Image(systemName: "hare")
+                .foregroundStyle(.secondary)
+        } onEditingChanged: { editing in
+            if !editing {
+                updateServerMetadataUpdatingRate()
+            }
+        }
     }
     
     private func updateServerMetadataUpdatingRate() {

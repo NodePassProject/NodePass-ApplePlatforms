@@ -51,6 +51,7 @@ struct ContentView: View {
                     Label(MainTab.servers.title, systemImage: MainTab.servers.systemName)
                 }
                 
+#if !os(macOS)
                 Tab(value: MainTab.settings) {
                     NavigationStack {
                         SettingsView()
@@ -58,6 +59,7 @@ struct ContentView: View {
                 } label: {
                     Label(MainTab.settings.title, systemImage: MainTab.settings.systemName)
                 }
+#endif
             }
             .tabViewStyle(.sidebarAdaptable)
         }
@@ -79,6 +81,7 @@ struct ContentView: View {
                     Label(MainTab.servers.title, systemImage: MainTab.servers.systemName)
                 }
                 
+#if !os(macOS)
                 NavigationStack {
                     SettingsView()
                 }
@@ -86,6 +89,7 @@ struct ContentView: View {
                 .tabItem {
                     Label(MainTab.settings.title, systemImage: MainTab.settings.systemName)
                 }
+#endif
             }
         }
     }

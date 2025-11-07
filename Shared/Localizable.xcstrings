@@ -907,6 +907,9 @@
         }
       }
     },
+    "General" : {
+
+    },
     "Get up-to-date information in your Widget." : {
       "localizations" : {
         "zh-Hans" : {
