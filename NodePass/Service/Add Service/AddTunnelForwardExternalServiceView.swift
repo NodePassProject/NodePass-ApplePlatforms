@@ -94,6 +94,11 @@ struct AddTunnelForwardExternalServiceView: View {
                         }
                     }
                     LabeledTextField("Target Address", prompt: "17.253.144.10", text: $destinationServerServiceAddress)
+                        .autocorrectionDisabled()
+#if os(iOS)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.URL)
+#endif
                     LabeledTextField("Target Port", prompt: "1080", text: $destinationServerServicePort, isNumberOnly: true)
                     if isAdvancedModeEnabled {
                         Picker("Log Level", selection: $npClientLogLevel) {

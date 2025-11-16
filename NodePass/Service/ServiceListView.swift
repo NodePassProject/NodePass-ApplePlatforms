@@ -126,17 +126,18 @@ struct ServiceListView: View {
             BackgroundColorfulView.shared
             
 #if os(macOS)
-            ScrollView {
-                servicesList
-            }
+            scrollView
 #else
             if services.isEmpty {
-                ContentUnavailableView("No Service", systemImage: "square.stack.3d.up.fill", description: Text("To add a service, tap the add service icon in the toolbar.").font(.caption))
+                if isSyncing {
+                    ProgressView("Syncing", value: Double(syncProgress.0 / syncProgress.1))
+                }
+                else {
+                    ContentUnavailableView("No Service", systemImage: "square.stack.3d.up.fill", description: Text("To add a service, tap the add service icon in the toolbar.").font(.caption))
+                }
             }
             else {
-                ScrollView {
-                    servicesList
-                }
+                scrollView
             }
 #endif
         }
@@ -277,6 +278,17 @@ struct ServiceListView: View {
                     .tag(sortIndicator)
                 }
             }
+        }
+    }
+    
+    private var scrollView: some View {
+        ScrollView {
+            if isSyncing {
+                ProgressView("Syncing", value: Double(syncProgress.0 / syncProgress.1))
+                    .padding()
+            }
+            
+            servicesList
         }
     }
     
@@ -429,6 +441,7 @@ struct ServiceListView: View {
             var store: [String: [Instance]] = .init() // Server.id: [Instance]
             var errorStore: [String: String] = .init() // (Server.name || Server.id): Error.localizedDescription
             var examinedServiceIds: [String] = .init()
+            isSyncing = true
             syncProgress = (0, servers.count)
             try await withThrowingTaskGroup(of: (server: Server, result: Result<[Instance], Error>).self) { group in
                 for server in servers {
@@ -626,6 +639,7 @@ struct ServiceListView: View {
                 syncErrorStore = errorStore
                 isShowSyncErrorSheet = true
             }
+            isSyncing = false
         }
     }
 }

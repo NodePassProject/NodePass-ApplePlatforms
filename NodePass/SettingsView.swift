@@ -14,6 +14,10 @@ struct SettingsView: View {
     @State private var isAdvancedModeEnabled: Bool = NPCore.isAdvancedModeEnabled
     @State private var serverMetadataUpdatingRate: Double = NPCore.serverMetadataUpdatingRate
     
+#if os(macOS)
+    @State private var isShowPaywallView: Bool = false
+#endif
+    
     var body: some View {
 #if os(iOS)
         Form {
@@ -47,11 +51,24 @@ struct SettingsView: View {
                 if isAdvancedModeEnabled {
                     serverMetadataUpdatingRateSlider
                 }
-                NavigationLink("Support Us") {
-                    PaywallView()
+                
+                Button("Support Us") {
+                    isShowPaywallView = true
                 }
             }
-            .navigationTitle("Settings")
+            .sheet(isPresented: $isShowPaywallView) {
+                PaywallView()
+                    .frame(minHeight: 600)
+                    .overlay(alignment: .topTrailing) {
+                        Button {
+                            isShowPaywallView = false
+                        } label: {
+                            Image(systemName: "xmark")
+                                .foregroundStyle(.white)
+                                .padding()
+                        }
+                    }
+            }
         }
 #endif
     }

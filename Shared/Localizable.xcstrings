@@ -908,7 +908,14 @@
       }
     },
     "General" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通用"
+          }
+        }
+      }
     },
     "Get up-to-date information in your Widget." : {
       "localizations" : {
@@ -1603,6 +1610,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "同步错误报告"
+          }
+        }
+      }
+    },
+    "Syncing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在同步"
           }
         }
       }
