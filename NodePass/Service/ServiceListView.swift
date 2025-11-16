@@ -102,7 +102,7 @@ struct ServiceListView: View {
     @State private var isShowAddTunnelForwardSheet: Bool = false
     @State private var isShowAddTunnelForwardExternalSheet: Bool = false
     
-    @State private var isSyncing: Bool = false
+    @State private var isShowSyncProgressView: Bool = false
     @State private var syncProgress: (Int, Int) = (0, 0)
     
     @State private var isShowRenameServiceAlert: Bool = false
@@ -129,8 +129,8 @@ struct ServiceListView: View {
             scrollView
 #else
             if services.isEmpty {
-                if isSyncing {
-                    ProgressView("Syncing", value: Double(syncProgress.0 / syncProgress.1))
+                if isShowSyncProgressView {
+                    progressView
                 }
                 else {
                     ContentUnavailableView("No Service", systemImage: "square.stack.3d.up.fill", description: Text("To add a service, tap the add service icon in the toolbar.").font(.caption))
@@ -283,12 +283,33 @@ struct ServiceListView: View {
     
     private var scrollView: some View {
         ScrollView {
-            if isSyncing {
-                ProgressView("Syncing", value: Double(syncProgress.0 / syncProgress.1))
-                    .padding()
+            if isShowSyncProgressView {
+                progressView
             }
-            
             servicesList
+        }
+    }
+    
+    private var progressView: some View {
+        Group {
+            let progressPercentage = Double(syncProgress.0) / Double(syncProgress.1)
+            let isSyncCompleted = progressPercentage == 1
+            
+            Group {
+                if isSyncCompleted {
+                    HStack {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.green)
+                        Text("Sync completed")
+                    }
+                    .transition(.scale.combined(with: .opacity))
+                } else {
+                    ProgressView("Syncing", value: progressPercentage)
+                        .transition(.opacity)
+                }
+            }
+            .padding()
+            .animation(.easeInOut(duration: 2.0), value: isSyncCompleted)
         }
     }
     
@@ -441,8 +462,10 @@ struct ServiceListView: View {
             var store: [String: [Instance]] = .init() // Server.id: [Instance]
             var errorStore: [String: String] = .init() // (Server.name || Server.id): Error.localizedDescription
             var examinedServiceIds: [String] = .init()
-            isSyncing = true
             syncProgress = (0, servers.count)
+            withAnimation {
+                isShowSyncProgressView = true
+            }
             try await withThrowingTaskGroup(of: (server: Server, result: Result<[Instance], Error>).self) { group in
                 for server in servers {
                     group.addTask {
@@ -639,7 +662,11 @@ struct ServiceListView: View {
                 syncErrorStore = errorStore
                 isShowSyncErrorSheet = true
             }
-            isSyncing = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                withAnimation {
+                    isShowSyncProgressView = false
+                }
+            }
         }
     }
 }
