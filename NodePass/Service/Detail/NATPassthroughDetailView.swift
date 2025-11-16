@@ -84,11 +84,14 @@ struct NATPassthroughDetailView: View {
                     let queryParameters = queryParameters0
                     
                     if let server {
-                        ServerCardView(server: server)
-                            .onTapGesture {
-                                state.tab = .servers
-                                state.pathServers.append(server)
-                            }
+                        VStack {
+                            ServerCardView(server: server)
+                                .onTapGesture {
+                                    state.tab = .servers
+                                    state.pathServers.append(server)
+                                }
+                        }
+                        .frame(maxWidth: .infinity)
                     }
                     else {
                         LabeledContent("Server") {
@@ -143,11 +146,14 @@ struct NATPassthroughDetailView: View {
                     let addressesAndPorts = addressesAndPorts1
                     
                     if let server {
-                        ServerCardView(server: server)
-                            .onTapGesture {
-                                state.tab = .servers
-                                state.pathServers.append(server)
-                            }
+                        VStack {
+                            ServerCardView(server: server)
+                                .onTapGesture {
+                                    state.tab = .servers
+                                    state.pathServers.append(server)
+                                }
+                        }
+                        .frame(maxWidth: .infinity)
                     }
                     else {
                         LabeledContent("Server") {
@@ -195,6 +201,9 @@ struct NATPassthroughDetailView: View {
             .navigationTitle(service.name)
             .alert(editPortAlertTitle, isPresented: $isShowEditPortAlert) {
                 TextField("Port", text: $newPort)
+#if os(iOS)
+                    .keyboardType(.numberPad)
+#endif
                 Button("OK") {
                     updateImplementation(implementation: implementationToEdit, editPortOption: editPortOption, newPort: newPort)
                     newPort = ""

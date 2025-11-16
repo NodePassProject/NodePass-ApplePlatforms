@@ -135,7 +135,7 @@ struct ServerCardView: View {
                 Spacer()
             }
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: 400)
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)

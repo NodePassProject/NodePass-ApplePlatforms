@@ -283,10 +283,13 @@ struct ServiceListView: View {
     
     private var scrollView: some View {
         ScrollView {
-            if isShowSyncProgressView {
-                progressView
+            VStack {
+                if isShowSyncProgressView {
+                    progressView
+                }
+                servicesList
             }
-            servicesList
+            .padding(.vertical)
         }
     }
     
@@ -295,21 +298,21 @@ struct ServiceListView: View {
             let progressPercentage = Double(syncProgress.0) / Double(syncProgress.1)
             let isSyncCompleted = progressPercentage == 1
             
-            Group {
+            VStack {
                 if isSyncCompleted {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
                         Text("Sync completed")
                     }
-                    .transition(.scale.combined(with: .opacity))
                 } else {
                     ProgressView("Syncing", value: progressPercentage)
-                        .transition(.opacity)
+                        .animation(.default, value: progressPercentage)
                 }
             }
+            .frame(height: 20)
             .padding()
-            .animation(.easeInOut(duration: 2.0), value: isSyncCompleted)
+            .animation(.easeInOut, value: isSyncCompleted)
         }
     }
     
@@ -652,10 +655,6 @@ struct ServiceListView: View {
                 }
             }
             if errorStore.count == 0 {
-#if os(iOS)
-                let drop = Drop(title: String(localized: "Success"), subtitle: String(localized: "Sync completed"), icon: UIImage(systemName: "checkmark.circle"))
-                Drops.show(drop)
-#endif
                 isSensoryFeedbackTriggered.toggle()
             }
             else {

@@ -45,6 +45,9 @@ struct TunnelForwardDetailView: View {
     
     @Query private var servers: [Server]
     
+    @State private var isShowEditAddressAlert: Bool = false
+    @State private var newAddress: String = ""
+    
     @State private var isShowEditPortAlert: Bool = false
     private var editPortAlertTitle: String {
         switch(editPortOption) {
@@ -87,11 +90,14 @@ struct TunnelForwardDetailView: View {
                     let queryParameters = queryParameters0
                     
                     if let server {
-                        ServerCardView(server: server)
-                            .onTapGesture {
-                                state.tab = .servers
-                                state.pathServers.append(server)
-                            }
+                        VStack {
+                            ServerCardView(server: server)
+                                .onTapGesture {
+                                    state.tab = .servers
+                                    state.pathServers.append(server)
+                                }
+                        }
+                        .frame(maxWidth: .infinity)
                     }
                     else {
                         LabeledContent("Server") {
@@ -147,11 +153,14 @@ struct TunnelForwardDetailView: View {
                     let queryParameters = queryParameters1
                     
                     if let server {
-                        ServerCardView(server: server)
-                            .onTapGesture {
-                                state.tab = .servers
-                                state.pathServers.append(server)
-                            }
+                        VStack {
+                            ServerCardView(server: server)
+                                .onTapGesture {
+                                    state.tab = .servers
+                                    state.pathServers.append(server)
+                                }
+                        }
+                        .frame(maxWidth: .infinity)
                     }
                     else {
                         LabeledContent("Server") {
@@ -179,6 +188,13 @@ struct TunnelForwardDetailView: View {
                         HStack {
                             LabeledContent("Target Address") {
                                 Text(addressesAndPorts.destination.address)
+                            }
+                            if server != nil {
+                                Button {
+                                    isShowEditAddressAlert = true
+                                } label: {
+                                    Image(systemName: "pencil")
+                                }
                             }
                         }
                         .copiable(addressesAndPorts.destination.address)
@@ -227,8 +243,28 @@ struct TunnelForwardDetailView: View {
             }
             .formStyle(.grouped)
             .navigationTitle(service.name)
+            .alert("Edit Address", isPresented: $isShowEditAddressAlert) {
+                TextField("Address", text: $newAddress)
+                    .autocorrectionDisabled()
+#if os(iOS)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.URL)
+#endif
+                Button("OK") {
+                    updateImplementation(newAddress: newAddress)
+                    newAddress = ""
+                }
+                Button("Cancel", role: .cancel) {
+                    newAddress = ""
+                }
+            } message: {
+                Text("Enter a new address.")
+            }
             .alert(editPortAlertTitle, isPresented: $isShowEditPortAlert) {
                 TextField("Port", text: $newPort)
+#if os(iOS)
+                    .keyboardType(.numberPad)
+#endif
                 Button("OK") {
                     updateImplementation(implementation: implementationToEdit, editPortOption: editPortOption, newPort: newPort)
                     newPort = ""
@@ -249,6 +285,28 @@ struct TunnelForwardDetailView: View {
         else {
             Image(systemName: "exclamationmark.circle")
                 .foregroundStyle(.red)
+        }
+    }
+    
+    private func updateImplementation(newAddress: String) {
+        Task {
+            let instanceService = InstanceService()
+            do {
+                let implementation = implementation1
+                let server = servers.first(where: { $0.id == implementation.serverID })!
+                let command = implementation.dryModifyDestinationAddress(address: newAddress)
+                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url, apiKey: server.key, id: implementation.instanceID, url: command)
+                
+                implementation.command = command
+                implementation.fullCommand = updatedInstance.config ?? command
+            }
+            catch {
+#if DEBUG
+                print("Error Updating Instances: \(error.localizedDescription)")
+#endif
+                errorMessage = error.localizedDescription
+                isShowErrorAlert = true
+            }
         }
     }
     

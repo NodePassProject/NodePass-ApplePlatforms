@@ -52,11 +52,14 @@ struct DirectForwardDetailView: View {
                 
                 Section("Relay Server") {
                     if let server {
-                        ServerCardView(server: server)
-                            .onTapGesture {
-                                state.tab = .servers
-                                state.pathServers.append(server)
-                            }
+                        VStack {
+                            ServerCardView(server: server)
+                                .onTapGesture {
+                                    state.tab = .servers
+                                    state.pathServers.append(server)
+                                }
+                        }
+                        .frame(maxWidth: .infinity)
                     }
                     else {
                         LabeledContent("Server") {
@@ -117,6 +120,9 @@ struct DirectForwardDetailView: View {
             .navigationTitle(service.name)
             .alert("Edit Listen Port", isPresented: $isShowEditRelayPortAlert) {
                 TextField("Port", text: $newRelayPort)
+#if os(iOS)
+                    .keyboardType(.numberPad)
+#endif
                 Button("OK") {
                     updateImplementation(newRelayPort: newRelayPort)
                     newRelayPort = ""
@@ -129,6 +135,11 @@ struct DirectForwardDetailView: View {
             }
             .alert("Edit Address", isPresented: $isShowEditDestinationAddressAlert) {
                 TextField("Address", text: $newDestinationAddress)
+                    .autocorrectionDisabled()
+#if os(iOS)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.URL)
+#endif
                 Button("OK") {
                     updateImplementation(newDestinationAddress: newDestinationAddress)
                     newDestinationAddress = ""
@@ -141,6 +152,9 @@ struct DirectForwardDetailView: View {
             }
             .alert("Edit Port", isPresented: $isShowEditDestinationPortAlert) {
                 TextField("Port", text: $newDestinationPort)
+#if os(iOS)
+                    .keyboardType(.numberPad)
+#endif
                 Button("OK") {
                     updateImplementation(newDestinationPort: newDestinationPort)
                     newDestinationPort = ""
