@@ -167,7 +167,7 @@ struct TunnelForwardDetailView: View {
                             Text("Not on this device")
                         }
                     }
-                    if service.type == .tunnelForward {
+                    if addressesAndPorts.destination.address == "127.0.0.1" {
                         HStack {
                             LabeledContent("Service Port") {
                                 Text(addressesAndPorts.destination.port)
@@ -184,7 +184,7 @@ struct TunnelForwardDetailView: View {
                         }
                         .copiable(addressesAndPorts.destination.port)
                     }
-                    if service.type == .tunnelForwardExternal {
+                    else {
                         HStack {
                             LabeledContent("Target Address") {
                                 Text(addressesAndPorts.destination.address)

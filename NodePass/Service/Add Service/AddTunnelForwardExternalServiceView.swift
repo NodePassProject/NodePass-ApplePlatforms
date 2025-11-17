@@ -167,7 +167,7 @@ struct AddTunnelForwardExternalServiceView: View {
                             ]
                         )
                         
-                        TunnelForwardExternalCardView(service: previewService, isPreview: true)
+                        TunnelForwardCardView(service: previewService, isPreview: true)
                     }
                 }
             }

@@ -14,8 +14,21 @@ struct TunnelForwardCardView: View {
     
     @Query private var servers: [Server]
     
+    var implementation0: Implementation {
+        service.implementations!.first(where: { $0.position == 0 })!
+    }
+    var addressesAndPorts0: (tunnel: (address: String, port: String), destination: (address: String, port: String)) {
+        NPCore.parseAddressesAndPorts(urlString: implementation0.command)
+    }
+    var implementation1: Implementation {
+        service.implementations!.first(where: { $0.position == 1 })!
+    }
+    var addressesAndPorts1: (tunnel: (address: String, port: String), destination: (address: String, port: String)) {
+        NPCore.parseAddressesAndPorts(urlString: implementation1.command)
+    }
+    
     var body: some View {
-        if service.type == .tunnelForward {
+        if service.type == .tunnelForward || service.type == .tunnelForwardExternal {
             cardContent
                 .background(
                     RoundedRectangle(cornerRadius: 16)
@@ -44,8 +57,6 @@ struct TunnelForwardCardView: View {
             }
             
             HStack {
-                let implementation0 = service.implementations!.first(where: { $0.position == 0 })!
-                let implementation1 = service.implementations!.first(where: { $0.position == 1 })!
                 Image(systemName: "laptopcomputer.and.iphone")
                     .font(.title)
                 Spacer()
@@ -81,19 +92,57 @@ struct TunnelForwardCardView: View {
                     d[.bottom] - 7
                 }
                 Spacer()
-                VStack(spacing: 3) {
-                    let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                Group {
                     let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: implementation1.command)
-                    Text(serverName)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.5)
-                        .font(.system(size: 8))
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: 60)
-                    Image(systemName: "airplane.arrival")
-                        .font(.title)
-                    Text(addressesAndPorts.destination.port)
-                        .font(.system(size: 8))
+                    if addressesAndPorts.destination.address == "127.0.0.1" {
+                        VStack(spacing: 3) {
+                            let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                            let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: implementation1.command)
+                            Text(serverName)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
+                                .font(.system(size: 8))
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: 60)
+                            Image(systemName: "airplane.arrival")
+                                .font(.title)
+                            Text(addressesAndPorts.destination.port)
+                                .font(.system(size: 8))
+                        }
+                    }
+                    else {
+                        VStack(spacing: 3) {
+                            let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                            Text(serverName)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
+                                .font(.system(size: 8))
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: 60)
+                            Image(systemName: "airplane.cloud")
+                                .font(.title)
+                            Text(addressesAndPorts.tunnel.port)
+                                .font(.system(size: 8))
+                        }
+                        Spacer()
+                        Image(systemName: "arrowshape.right")
+                            .alignmentGuide(VerticalAlignment.center) { d in
+                                d[.bottom] - 7
+                            }
+                        Spacer()
+                        VStack(spacing: 3) {
+                            Text(addressesAndPorts.destination.address)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
+                                .font(.system(size: 8))
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: 60)
+                            Image(systemName: "airplane.arrival")
+                                .font(.title)
+                            Text(addressesAndPorts.destination.port)
+                                .font(.system(size: 8))
+                        }
+                    }
                 }
             }
         }
