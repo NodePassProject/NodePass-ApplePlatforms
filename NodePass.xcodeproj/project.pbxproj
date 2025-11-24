@@ -113,7 +113,6 @@
 		CBD433632E10FA4D002B153F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CBD433622E10FA4D002B153F /* Assets.xcassets */; };
 		CBE71A522EB4DE53002D4EF8 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = CBE71A512EB4DE53002D4EF8 /* RevenueCat */; };
 		CBE71A542EB4DE53002D4EF8 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = CBE71A532EB4DE53002D4EF8 /* RevenueCatUI */; };
-		CBE71A572EBC54DA002D4EF8 /* AddTunnelForwardExternalServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE71A562EBC54D3002D4EF8 /* AddTunnelForwardExternalServiceView.swift */; };
 		CBFD0E4E2EAA475800223AD1 /* ServerCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFD0E4D2EAA475200223AD1 /* ServerCardView.swift */; };
 /* End PBXBuildFile section */
 
@@ -219,7 +218,6 @@
 		CBD433702E111275002B153F /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		CBD433712E111527002B153F /* NPCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPCore.swift; sourceTree = "<group>"; };
 		CBD433722E11157B002B153F /* NPState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPState.swift; sourceTree = "<group>"; };
-		CBE71A562EBC54D3002D4EF8 /* AddTunnelForwardExternalServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTunnelForwardExternalServiceView.swift; sourceTree = "<group>"; };
 		CBFD0E4D2EAA475200223AD1 /* ServerCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerCardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -374,7 +372,6 @@
 				CB66829D2E154FD200A27696 /* AddNATPassthroughServiceView.swift */,
 				CB6682AD2E17345200A27696 /* AddDirectForwardServiceView.swift */,
 				CB6682AF2E17348300A27696 /* AddTunnelForwardServiceView.swift */,
-				CBE71A562EBC54D3002D4EF8 /* AddTunnelForwardExternalServiceView.swift */,
 			);
 			path = "Add Service";
 			sourceTree = "<group>";
@@ -711,7 +708,6 @@
 				CB6682892E12B74100A27696 /* ServerListView.swift in Sources */,
 				CB6682772E1181C700A27696 /* NPState.swift in Sources */,
 				CB6682B92E17466000A27696 /* DirectForwardCardView.swift in Sources */,
-				CBE71A572EBC54DA002D4EF8 /* AddTunnelForwardExternalServiceView.swift in Sources */,
 				CB62C0832E2BDB5500919507 /* ServerMetadata.swift in Sources */,
 				CB6682832E1183EB00A27696 /* ErrorResponse.swift in Sources */,
 				CB6682D72E1E990D00A27696 /* QRCodeScannerView.swift in Sources */,
@@ -744,7 +740,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -786,7 +782,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -949,7 +945,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1004,7 +1000,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 44;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;

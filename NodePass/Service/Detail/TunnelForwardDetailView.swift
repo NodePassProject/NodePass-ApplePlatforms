@@ -73,7 +73,7 @@ struct TunnelForwardDetailView: View {
     @State private var isSensoryFeedbackTriggered: Bool = false
     
     var body: some View {
-        if [.tunnelForward, .tunnelForwardExternal].contains(service.type) {
+        if service.type == .tunnelForward {
             Form {
                 if let server = server0 {
                     let connectionString = "\(server.getHost()):\(addressesAndPorts0.destination.port)"

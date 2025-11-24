@@ -100,7 +100,6 @@ struct ServiceListView: View {
     @State private var isShowAddNATPassthroughSheet: Bool = false
     @State private var isShowAddDirectForwardSheet: Bool = false
     @State private var isShowAddTunnelForwardSheet: Bool = false
-    @State private var isShowAddTunnelForwardExternalSheet: Bool = false
     
     @State private var isShowSyncProgressView: Bool = false
     @State private var syncProgress: (Int, Int) = (0, 0)
@@ -150,8 +149,6 @@ struct ServiceListView: View {
                 DirectForwardDetailView(service: service)
             case .tunnelForward:
                 TunnelForwardDetailView(service: service)
-            case .tunnelForwardExternal:
-                TunnelForwardDetailView(service: service)
             }
         }
         .searchable(text: $searchText, placement: .toolbar)
@@ -174,9 +171,6 @@ struct ServiceListView: View {
         }
         .sheet(isPresented: $isShowAddTunnelForwardSheet) {
             AddTunnelForwardServiceView()
-        }
-        .sheet(isPresented: $isShowAddTunnelForwardExternalSheet) {
-            AddTunnelForwardExternalServiceView()
         }
         .alert("Rename Service", isPresented: $isShowRenameServiceAlert) {
             TextField("Name", text: $newNameOfService)
@@ -234,12 +228,6 @@ struct ServiceListView: View {
                 isShowAddTunnelForwardSheet = true
             } label: {
                 Label("Tunnel Forward", systemImage: "arrow.left.arrow.right.circle")
-            }
-            
-            Button {
-                isShowAddTunnelForwardExternalSheet = true
-            } label: {
-                Label("Tunnel Forward(External)", systemImage: "arrow.left.arrow.right.circle")
             }
         }
     }
@@ -382,7 +370,7 @@ struct ServiceListView: View {
         
         Task {
             switch(service.type) {
-            case .natPassthrough, .tunnelForward, .tunnelForwardExternal:
+            case .natPassthrough, .tunnelForward:
                 let serverID = service.implementations![0].serverID
                 let serverInstanceID = service.implementations![0].instanceID
                 let clientID = service.implementations![1].serverID
@@ -586,7 +574,7 @@ struct ServiceListView: View {
                                             
                                             examinedServiceIds.append(serverId)
                                             continue
-                                        case "2":
+                                        case "2", "4":
                                             // Tunnel Forward
                                             let schemeOfInstance0 = NPCore.parseScheme(urlString: instance0.url)
                                             let modeOfInstance0 = NPCore.parseQueryParameters(urlString: instance0.url)["mode"]

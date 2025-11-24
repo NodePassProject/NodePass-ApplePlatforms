@@ -17,12 +17,12 @@ struct AddTunnelForwardServiceView: View {
     
     @State private var name: String = ""
     @State private var relayServer: Server?
-    @State private var relayServerConnectPort: String = ""
+    @State private var listenPort: String = ""
     @State private var destinationServer: Server?
-    @State private var destinationServerServicePort: String = ""
+    @State private var isExternalTarget: Bool = false
+    @State private var externalTargetAddress: String = ""
+    @State private var servicePort: String = ""
     @State private var tunnelPort: String = ""
-    @State private var isRelayServerAsNPServer: Bool = true
-    @State private var isDestinationServerAsNPServer: Bool = false
     @State private var isTLS: Bool = false
     @State private var npServerLogLevel: LogLevel = .info
     @State private var npClientLogLevel: LogLevel = .info
@@ -54,16 +54,15 @@ struct AddTunnelForwardServiceView: View {
                                 .tag(server)
                         }
                     }
-                    LabeledTextField("Listen Port", prompt: "10022", text: $relayServerConnectPort, isNumberOnly: true)
-                    Toggle("As NodePass Server", isOn: $isRelayServerAsNPServer)
-                        .onChange(of: isRelayServerAsNPServer) { _, newValue in
-                            isDestinationServerAsNPServer = !newValue
+                    LabeledTextField("Listen Port", prompt: "10022", text: $listenPort, isNumberOnly: true)
+                    if isAdvancedModeEnabled {
+                        Picker("Log Level", selection: $npClientLogLevel) {
+                            ForEach(LogLevel.allCases, id: \.self) {
+                                Text($0.rawValue)
+                                    .tag($0)
+                            }
                         }
-                    if isRelayServerAsNPServer {
-                        npServerConfig
-                    }
-                    else {
-                        npClientConfig
+                        LabeledTextField("Minimum Pool Connection", prompt: "64", text: $minimumPoolConnection, isNumberOnly: true)
                     }
                 } header: {
                     HStack {
@@ -81,10 +80,6 @@ struct AddTunnelForwardServiceView: View {
                     VStack(alignment: .leading) {
                         Text("Relay Server: Server you want to use as a relay.")
                         Text("Listen Port: Port you use to connect to the relay server.")
-                        Text("As NodePass Server: If on, relay server receives tunnel requests from destination server.")
-                        if isRelayServerAsNPServer {
-                            Text("Tunnel Port: Any available port.")
-                        }
                     }
                 }
                 
@@ -97,16 +92,28 @@ struct AddTunnelForwardServiceView: View {
                                 .tag(server)
                         }
                     }
-                    LabeledTextField("Service Port", prompt: "1080", text: $destinationServerServicePort, isNumberOnly: true)
-                    Toggle("As NodePass Server", isOn: $isDestinationServerAsNPServer)
-                        .onChange(of: isDestinationServerAsNPServer) { _, newValue in
-                            isRelayServerAsNPServer = !newValue
-                        }
-                    if isDestinationServerAsNPServer {
-                        npServerConfig
+                    Toggle("External Target", isOn: $isExternalTarget)
+                    if isExternalTarget {
+                        LabeledTextField("Target Address", prompt: "17.253.144.10", text: $servicePort)
+                            .autocorrectionDisabled()
+#if os(iOS)
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.URL)
+#endif
+                        LabeledTextField("Target Port", prompt: "1080", text: $servicePort, isNumberOnly: true)
                     }
                     else {
-                        npClientConfig
+                        LabeledTextField("Service Port", prompt: "1080", text: $servicePort, isNumberOnly: true)
+                    }
+                    LabeledTextField("Tunnel Port", prompt: "10101", text: $tunnelPort, isNumberOnly: true)
+                    if isAdvancedModeEnabled {
+                        Picker("Log Level", selection: $npServerLogLevel) {
+                            ForEach(LogLevel.allCases, id: \.self) {
+                                Text($0.rawValue)
+                                    .tag($0)
+                            }
+                        }
+                        LabeledTextField("Maximum Pool Connection", prompt: "1024", text: $maximumPoolConnection, isNumberOnly: true)
                     }
                 } header: {
                     HStack {
@@ -124,10 +131,11 @@ struct AddTunnelForwardServiceView: View {
                     VStack(alignment: .leading) {
                         Text("Destination Server: Server you want your traffic to relay to.")
                         Text("Service Port: Port on which your service like Socks5(1080) is running.")
-                        Text("As NodePass Server: If on, destination server receives tunnel requests from relay server.")
-                        if isDestinationServerAsNPServer {
-                            Text("Tunnel Port: Any available port.")
+                        if isExternalTarget {
+                            Text("Target Address: Address of your external target server.")
+                            Text("Target Port: Port on which your service like Socks5(1080) is running on your external target server.")
                         }
+                        Text("Tunnel Port: Any available port.")
                     }
                 }
                 
@@ -229,95 +237,39 @@ struct AddTunnelForwardServiceView: View {
         }
     }
     
-    private var npServerConfig: some View {
-        Group {
-            LabeledTextField("Tunnel Port", prompt: "10101", text: $tunnelPort, isNumberOnly: true)
-            if isAdvancedModeEnabled {
-                Picker("Log Level", selection: $npServerLogLevel) {
-                    ForEach(LogLevel.allCases, id: \.self) {
-                        Text($0.rawValue)
-                            .tag($0)
-                    }
-                }
-                LabeledTextField("Maximum Pool Connection", prompt: "1024", text: $maximumPoolConnection, isNumberOnly: true)
-            }
-        }
-    }
-    
-    private var npClientConfig: some View {
-        Group {
-            if isAdvancedModeEnabled {
-                Picker("Log Level", selection: $npClientLogLevel) {
-                    ForEach(LogLevel.allCases, id: \.self) {
-                        Text($0.rawValue)
-                            .tag($0)
-                    }
-                }
-                LabeledTextField("Minimum Pool Connection", prompt: "64", text: $minimumPoolConnection, isNumberOnly: true)
-            }
-        }
-    }
-    
     private func generateCommands() -> (relayServerCommand: String, destinationServerCommand: String) {
-        let relayServerConnectPort = Int(relayServerConnectPort) ?? 10022
-        let destinationServerServicePort = Int(destinationServerServicePort) ?? 1080
+        let listenPort = Int(listenPort) ?? 10022
+        let externalTargetAddress = externalTargetAddress == "" ? "17.253.144.10" : externalTargetAddress
+        let servicePort = Int(servicePort) ?? 1080
         let tunnelPort = Int(tunnelPort) ?? 10101
         
         var relayServerCommand: String
         // URL Base
-        if isRelayServerAsNPServer {
-            relayServerCommand = "server://:\(tunnelPort)/:\(relayServerConnectPort)"
-        }
-        else {
-            relayServerCommand = "client://\(destinationServer?.getHost() ?? ""):\(tunnelPort)/:\(relayServerConnectPort)"
-        }
+        relayServerCommand = "client://\(destinationServer?.getHost() ?? ""):\(tunnelPort)/:\(servicePort)"
         // Core Confugurations
-        if isRelayServerAsNPServer {
-            relayServerCommand += "?mode=1"
-            relayServerCommand += isTLS ? "&tls=1" : "&tls=0"
-        }
-        else {
-            relayServerCommand += "?mode=2"
-        }
+        relayServerCommand += "?mode=2"
         
         var destinationServerCommand: String
         // URL Base
-        if isDestinationServerAsNPServer {
-            destinationServerCommand = "server://:\(tunnelPort)/127.0.0.1:\(destinationServerServicePort)"
+        if isExternalTarget {
+            destinationServerCommand = "server://:\(tunnelPort)/\(externalTargetAddress):\(servicePort)"
         }
         else {
-            destinationServerCommand = "client://\(relayServer?.getHost() ?? ""):\(tunnelPort)/127.0.0.1:\(destinationServerServicePort)"
+            destinationServerCommand = "server://:\(tunnelPort)/127.0.0.1:\(servicePort)"
         }
         // Core Confugurations
-        if isDestinationServerAsNPServer {
-            destinationServerCommand += "?mode=2"
-            destinationServerCommand += isTLS ? "&tls=1" : "&tls=0"
-        }
-        else {
-            destinationServerCommand += "?mode=2"
-        }
+        destinationServerCommand += "?mode=2"
+        destinationServerCommand += isTLS ? "&tls=1" : "&tls=0"
         
         if isAdvancedModeEnabled {
             let maximumPoolConnection = Int(maximumPoolConnection) ?? 1024
             let minimumPoolConnection = Int(minimumPoolConnection) ?? 64
             // Advanced Confugurations
-            if isRelayServerAsNPServer {
-                relayServerCommand += "&log=\(npServerLogLevel.rawValue)"
-                relayServerCommand += "&max=\(maximumPoolConnection)"
-            }
-            else {
-                relayServerCommand += "&log=\(npClientLogLevel.rawValue)"
-                relayServerCommand += "&min=\(minimumPoolConnection)"
-            }
+            relayServerCommand += "&log=\(npClientLogLevel.rawValue)"
+            relayServerCommand += "&min=\(minimumPoolConnection)"
             // Advanced Confugurations
-            if isDestinationServerAsNPServer {
-                destinationServerCommand += "&log=\(npServerLogLevel.rawValue)"
-                destinationServerCommand += "&max=\(maximumPoolConnection)"
-            }
-            else {
-                destinationServerCommand += "&log=\(npClientLogLevel.rawValue)"
-                destinationServerCommand += "&min=\(minimumPoolConnection)"
-            }
+            destinationServerCommand += "&log=\(npServerLogLevel.rawValue)"
+            destinationServerCommand += "&max=\(maximumPoolConnection)"
         }
         
         return (relayServerCommand, destinationServerCommand)
@@ -388,7 +340,7 @@ struct AddTunnelForwardServiceView: View {
                         id: relayServerInstance.id,
                         serviceAlias: String(localized: "\(name)"),
                         serviceId: serviceId.uuidString,
-                        serviceType: "2"
+                        serviceType: isExternalTarget ? "4" : "2"
                     )
                     async let updateDestinationServerInstancePeer: () = instanceService.updateInstancePeer(
                         baseURLString: destinationServer.url,
@@ -396,7 +348,7 @@ struct AddTunnelForwardServiceView: View {
                         id: destinationServerInstance.id,
                         serviceAlias: String(localized: "\(name)"),
                         serviceId: serviceId.uuidString,
-                        serviceType: "2"
+                        serviceType: isExternalTarget ? "4" : "2"
                     )
                     
                     _ = try await (updateRelayServerInstancePeer, updateDestinationServerInstancePeer)

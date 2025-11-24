@@ -28,7 +28,7 @@ struct TunnelForwardCardView: View {
     }
     
     var body: some View {
-        if service.type == .tunnelForward || service.type == .tunnelForwardExternal {
+        if service.type == .tunnelForward {
             cardContent
                 .background(
                     RoundedRectangle(cornerRadius: 16)

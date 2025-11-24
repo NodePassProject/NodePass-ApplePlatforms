@@ -37,32 +37,12 @@
         }
       }
     },
-    "%@ Back Relay" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@后置中转"
-          }
-        }
-      }
-    },
     "%@ Destination" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@目标"
-          }
-        }
-      }
-    },
-    "%@ Front Relay" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@前置中转"
           }
         }
       }
@@ -331,16 +311,6 @@
         }
       }
     },
-    "Add Tunnel Forward(External)" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加隧道转发（外部）"
-          }
-        }
-      }
-    },
     "Address" : {
       "localizations" : {
         "zh-Hans" : {
@@ -392,6 +362,7 @@
       }
     },
     "As NodePass Server" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -402,6 +373,7 @@
       }
     },
     "As NodePass Server: If on, destination server receives tunnel requests from relay server." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -412,6 +384,7 @@
       }
     },
     "As NodePass Server: If on, relay server receives tunnel requests from destination server." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -427,26 +400,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "升序"
-          }
-        }
-      }
-    },
-    "Back Relay Server" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "后置中转服务器"
-          }
-        }
-      }
-    },
-    "Back Relay Server: Server helps you relay your traffic to your target server." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "后置中转服务器：用以将你的流量中转至你的外部目标服务器。"
           }
         }
       }
@@ -867,6 +820,16 @@
         }
       }
     },
+    "External Target" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部目标"
+          }
+        }
+      }
+    },
     "Force Delete" : {
       "localizations" : {
         "zh-Hans" : {
@@ -883,26 +846,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "强制删除服务"
-          }
-        }
-      }
-    },
-    "Front Relay Server" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "前置中转服务器"
-          }
-        }
-      }
-    },
-    "Front Relay Server: Server you connect to and relays your data to Back Relay Server." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "前置中转服务器：用以连接并中转流量至后置中转服务器。"
           }
         }
       }
@@ -983,16 +926,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "监听端口"
-          }
-        }
-      }
-    },
-    "Listen Port: Port you use to connect to Front Relay Server." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "监听端口：用以连接到你的前置中转服务器。"
           }
         }
       }
@@ -1855,16 +1788,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "隧道转发"
-          }
-        }
-      }
-    },
-    "Tunnel Forward(External)" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "隧道转发（外部）"
           }
         }
       }

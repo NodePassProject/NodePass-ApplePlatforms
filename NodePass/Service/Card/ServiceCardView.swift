@@ -16,7 +16,7 @@ struct ServiceCardView: View {
             NATPassthroughCardView(service: service)
         case .directForward:
             DirectForwardCardView(service: service)
-        case .tunnelForward, .tunnelForwardExternal:
+        case .tunnelForward:
             TunnelForwardCardView(service: service)
         }
     }

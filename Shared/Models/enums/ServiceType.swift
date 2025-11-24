@@ -9,5 +9,4 @@ enum ServiceType: String, Codable, Equatable {
     case natPassthrough = "natPassthrough"
     case directForward = "directForward"
     case tunnelForward = "tunnelForward"
-    case tunnelForwardExternal = "tunnelForwardExternal"
 }
