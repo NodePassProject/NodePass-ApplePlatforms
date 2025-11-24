@@ -521,7 +521,7 @@ struct ServiceListView: View {
                                         let instance1 = instance
                                         
                                         switch(instance.metadata!.peer.serviceType) {
-                                        case "1":
+                                        case "1", "3":
                                             // NAT Passthrough
                                             let schemeOfInstance0 = NPCore.parseScheme(urlString: instance0.url)
                                             let schemeOfInstance1 = NPCore.parseScheme(urlString: instance1.url)

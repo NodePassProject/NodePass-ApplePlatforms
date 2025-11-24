@@ -42,6 +42,9 @@ struct NATPassthroughDetailView: View {
     
     @Query private var servers: [Server]
     
+    @State private var isShowEditAddressAlert: Bool = false
+    @State private var newAddress: String = ""
+    
     @State private var isShowEditPortAlert: Bool = false
     private var editPortAlertTitle: String {
         switch(editPortOption) {
@@ -77,7 +80,7 @@ struct NATPassthroughDetailView: View {
                     .copiable(connectionString)
                 }
                 
-                Section("Remote Server (with Public IP)") {
+                Section("Remote Server") {
                     let implementation = implementation0
                     let server = server0
                     let addressesAndPorts = addressesAndPorts0
@@ -140,7 +143,7 @@ struct NATPassthroughDetailView: View {
                     .copiable(implementation.command)
                 }
                 
-                Section("Local Server (Behind NAT)") {
+                Section("Local Server") {
                     let implementation = implementation1
                     let server = server1
                     let addressesAndPorts = addressesAndPorts1
@@ -160,21 +163,53 @@ struct NATPassthroughDetailView: View {
                             Text("Not on this device")
                         }
                     }
-                    HStack {
-                        LabeledContent("Service Port") {
-                            Text(addressesAndPorts.destination.port)
-                        }
-                        if server != nil {
-                            Button {
-                                editPortOption = .destination
-                                implementationToEdit = implementation1
-                                isShowEditPortAlert = true
-                            } label: {
-                                Image(systemName: "pencil")
+                    if addressesAndPorts.destination.address == "127.0.0.1" {
+                        HStack {
+                            LabeledContent("Service Port") {
+                                Text(addressesAndPorts.destination.port)
+                            }
+                            if server != nil {
+                                Button {
+                                    editPortOption = .destination
+                                    implementationToEdit = implementation1
+                                    isShowEditPortAlert = true
+                                } label: {
+                                    Image(systemName: "pencil")
+                                }
                             }
                         }
+                        .copiable(addressesAndPorts.destination.port)
                     }
-                    .copiable(addressesAndPorts.destination.port)
+                    else {
+                        HStack {
+                            LabeledContent("Target Address") {
+                                Text(addressesAndPorts.destination.address)
+                            }
+                            if server != nil {
+                                Button {
+                                    isShowEditAddressAlert = true
+                                } label: {
+                                    Image(systemName: "pencil")
+                                }
+                            }
+                        }
+                        .copiable(addressesAndPorts.destination.address)
+                        HStack {
+                            LabeledContent("Target Port") {
+                                Text(addressesAndPorts.destination.port)
+                            }
+                            if server != nil {
+                                Button {
+                                    editPortOption = .destination
+                                    implementationToEdit = implementation1
+                                    isShowEditPortAlert = true
+                                } label: {
+                                    Image(systemName: "pencil")
+                                }
+                            }
+                        }
+                        .copiable(addressesAndPorts.destination.port)
+                    }
                     HStack {
                         LabeledContent("Tunnel Port") {
                             Text(addressesAndPorts.tunnel.port)
@@ -199,6 +234,23 @@ struct NATPassthroughDetailView: View {
             }
             .formStyle(.grouped)
             .navigationTitle(service.name)
+            .alert("Edit Address", isPresented: $isShowEditAddressAlert) {
+                TextField("Address", text: $newAddress)
+                    .autocorrectionDisabled()
+#if os(iOS)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.URL)
+#endif
+                Button("OK") {
+                    updateImplementation(newAddress: newAddress)
+                    newAddress = ""
+                }
+                Button("Cancel", role: .cancel) {
+                    newAddress = ""
+                }
+            } message: {
+                Text("Enter a new address.")
+            }
             .alert(editPortAlertTitle, isPresented: $isShowEditPortAlert) {
                 TextField("Port", text: $newPort)
 #if os(iOS)
@@ -224,6 +276,28 @@ struct NATPassthroughDetailView: View {
         else {
             Image(systemName: "exclamationmark.circle")
                 .foregroundStyle(.red)
+        }
+    }
+    
+    private func updateImplementation(newAddress: String) {
+        Task {
+            let instanceService = InstanceService()
+            do {
+                let implementation = implementation1
+                let server = servers.first(where: { $0.id == implementation.serverID })!
+                let command = implementation.dryModifyDestinationAddress(address: newAddress)
+                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url, apiKey: server.key, id: implementation.instanceID, url: command)
+                
+                implementation.command = command
+                implementation.fullCommand = updatedInstance.config ?? command
+            }
+            catch {
+#if DEBUG
+                print("Error Updating Instances: \(error.localizedDescription)")
+#endif
+                errorMessage = error.localizedDescription
+                isShowErrorAlert = true
+            }
         }
     }
     

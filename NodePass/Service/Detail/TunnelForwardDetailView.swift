@@ -87,7 +87,6 @@ struct TunnelForwardDetailView: View {
                     let implementation = implementation0
                     let server = server0
                     let addressesAndPorts = addressesAndPorts0
-                    let queryParameters = queryParameters0
                     
                     if let server {
                         VStack {
@@ -134,11 +133,6 @@ struct TunnelForwardDetailView: View {
                         }
                     }
                     .copiable(addressesAndPorts.tunnel.port)
-                    if let tlsLevel = queryParameters["tls"] {
-                        LabeledContent("TLS Level") {
-                            Text(NPCore.localizedTLSLevel(tlsLevel: tlsLevel))
-                        }
-                    }
                     LabeledContent("Command URL") {
                         Text(implementation.command)
                             .minimumScaleFactor(0.5)

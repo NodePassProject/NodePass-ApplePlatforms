@@ -94,7 +94,7 @@ struct AddTunnelForwardServiceView: View {
                     }
                     Toggle("External Target", isOn: $isExternalTarget)
                     if isExternalTarget {
-                        LabeledTextField("Target Address", prompt: "17.253.144.10", text: $servicePort)
+                        LabeledTextField("Target Address", prompt: "17.253.144.10", text: $externalTargetAddress)
                             .autocorrectionDisabled()
 #if os(iOS)
                             .textInputAutocapitalization(.never)
@@ -245,7 +245,7 @@ struct AddTunnelForwardServiceView: View {
         
         var relayServerCommand: String
         // URL Base
-        relayServerCommand = "client://\(destinationServer?.getHost() ?? ""):\(tunnelPort)/:\(servicePort)"
+        relayServerCommand = "client://\(destinationServer?.getHost() ?? ""):\(tunnelPort)/:\(listenPort)"
         // Core Confugurations
         relayServerCommand += "?mode=2"
         

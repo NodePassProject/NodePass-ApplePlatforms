@@ -16,11 +16,13 @@ struct AddNATPassthroughServiceView: View {
     private var isAdvancedModeEnabled: Bool = NPCore.isAdvancedModeEnabled
     
     @State private var name: String = ""
-    @State private var server: Server?
-    @State private var serverConnectPort: String = ""
-    @State private var serverTunnelPort: String = ""
-    @State private var client: Server?
-    @State private var clientServicePort: String = ""
+    @State private var remoteServer: Server?
+    @State private var listenPort: String = ""
+    @State private var tunnelPort: String = ""
+    @State private var localServer: Server?
+    @State private var isExternalTarget: Bool = false
+    @State private var externalTargetAddress: String = ""
+    @State private var servicePort: String = ""
     @State private var isTLS: Bool = false
     @State private var npServerLogLevel: LogLevel = .info
     @State private var npClientLogLevel: LogLevel = .info
@@ -44,7 +46,7 @@ struct AddNATPassthroughServiceView: View {
                 }
                 
                 Section {
-                    Picker("Server", selection: $server) {
+                    Picker("Server", selection: $remoteServer) {
                         Text("Select")
                             .tag(nil as Server?)
                         ForEach(servers) { server in
@@ -52,8 +54,8 @@ struct AddNATPassthroughServiceView: View {
                                 .tag(server)
                         }
                     }
-                    LabeledTextField("Listen Port", prompt: "10022", text: $serverConnectPort, isNumberOnly: true)
-                    LabeledTextField("Tunnel Port", prompt: "10101", text: $serverTunnelPort, isNumberOnly: true)
+                    LabeledTextField("Listen Port", prompt: "10022", text: $listenPort, isNumberOnly: true)
+                    LabeledTextField("Tunnel Port", prompt: "10101", text: $tunnelPort, isNumberOnly: true)
                     if isAdvancedModeEnabled {
                         Picker("Log Level", selection: $npServerLogLevel) {
                             ForEach(LogLevel.allCases, id: \.self) {
@@ -65,7 +67,7 @@ struct AddNATPassthroughServiceView: View {
                     }
                 } header: {
                     HStack {
-                        Text("Remote Server (with Public IP)")
+                        Text("Remote Server")
                         Spacer()
                         Button {
                             isAddingServer = true
@@ -84,7 +86,7 @@ struct AddNATPassthroughServiceView: View {
                 }
                 
                 Section {
-                    Picker("Server", selection: $client) {
+                    Picker("Server", selection: $localServer) {
                         Text("Select")
                             .tag(nil as Server?)
                         ForEach(servers) { server in
@@ -92,7 +94,19 @@ struct AddNATPassthroughServiceView: View {
                                 .tag(server)
                         }
                     }
-                    LabeledTextField("Service Port", prompt: "22", text: $clientServicePort, isNumberOnly: true)
+                    Toggle("External Target", isOn: $isExternalTarget)
+                    if isExternalTarget {
+                        LabeledTextField("Target Address", prompt: "192.168.1.1", text: $externalTargetAddress)
+                            .autocorrectionDisabled()
+#if os(iOS)
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.URL)
+#endif
+                        LabeledTextField("Service Port", prompt: "22", text: $servicePort, isNumberOnly: true)
+                    }
+                    else {
+                        LabeledTextField("Service Port", prompt: "22", text: $servicePort, isNumberOnly: true)
+                    }
                     if isAdvancedModeEnabled {
                         Picker("Log Level", selection: $npClientLogLevel) {
                             ForEach(LogLevel.allCases, id: \.self) {
@@ -104,7 +118,7 @@ struct AddNATPassthroughServiceView: View {
                     }
                 } header: {
                     HStack {
-                        Text("Local Server (Behind NAT)")
+                        Text("Local Server")
                         Spacer()
                         Button {
                             isAddingClient = true
@@ -140,7 +154,7 @@ struct AddNATPassthroughServiceView: View {
                                     name: String(localized: "\(name) Remote"),
                                     type: .natPassthroughServer,
                                     position: 0,
-                                    serverID: server?.id ?? "",
+                                    serverID: remoteServer?.id ?? "",
                                     instanceID: "",
                                     command: serverCommand,
                                     fullCommand: serverCommand
@@ -149,7 +163,7 @@ struct AddNATPassthroughServiceView: View {
                                     name: String(localized: "\(name) Local"),
                                     type: .natPassthroughClient,
                                     position: 1,
-                                    serverID: client?.id ?? "",
+                                    serverID: localServer?.id ?? "",
                                     instanceID: "",
                                     command: clientCommand,
                                     fullCommand: clientCommand
@@ -187,14 +201,14 @@ struct AddNATPassthroughServiceView: View {
                         } label: {
                             Label("Done", systemImage: "checkmark")
                         }
-                        .disabled(server == nil || client == nil)
+                        .disabled(remoteServer == nil || localServer == nil)
                     }
                     else {
                         Button("Done") {
                             dismiss()
                             execute()
                         }
-                        .disabled(server == nil || client == nil)
+                        .disabled(remoteServer == nil || localServer == nil)
                     }
                 }
             }
@@ -205,10 +219,10 @@ struct AddNATPassthroughServiceView: View {
             }
             .sheet(isPresented: $isShowAddServerSheet) {
                 if isAddingServer {
-                    server = newServer
+                    remoteServer = newServer
                 }
                 if isAddingClient {
-                    client = newServer
+                    localServer = newServer
                 }
             } content: {
                 EditServerView(server: $newServer)
@@ -218,13 +232,14 @@ struct AddNATPassthroughServiceView: View {
     }
     
     private func generateCommands() -> (serverCommand: String, clientCommand: String) {
-        let serverConnectPort = Int(serverConnectPort) ?? 10022
-        let serverTunnelPort = Int(serverTunnelPort) ?? 10101
-        let clientServicePort = Int(clientServicePort) ?? 22
+        let listenPort = Int(listenPort) ?? 10022
+        let externalTargetAddress = externalTargetAddress == "" ? "192.168.1.1" : externalTargetAddress
+        let servicePort = Int(servicePort) ?? 22
+        let tunnelPort = Int(tunnelPort) ?? 10101
         
         var serverCommand: String
         // URL Base
-        serverCommand = "server://:\(serverTunnelPort)/:\(serverConnectPort)"
+        serverCommand = "server://:\(tunnelPort)/:\(listenPort)"
         // Core Confugurations
         serverCommand += "?mode=1"
         serverCommand += isTLS ? "&tls=1" : "&tls=0"
@@ -232,7 +247,12 @@ struct AddNATPassthroughServiceView: View {
         
         var clientCommand: String
         // URL Base
-        clientCommand = "client://\(server?.getHost() ?? ""):\(serverTunnelPort)/127.0.0.1:\(clientServicePort)"
+        if isExternalTarget {
+            clientCommand = "client://\(remoteServer?.getHost() ?? ""):\(tunnelPort)/\(externalTargetAddress):\(servicePort)"
+        }
+        else {
+            clientCommand = "client://\(remoteServer?.getHost() ?? ""):\(tunnelPort)/127.0.0.1:\(servicePort)"
+        }
         // Core Confugurations
         clientCommand += "?mode=2"
         
@@ -251,8 +271,8 @@ struct AddNATPassthroughServiceView: View {
     }
     
     private func execute() {
-        let server = server!
-        let client = client!
+        let remoteServer = remoteServer!
+        let localServer = localServer!
         
         let commands = generateCommands()
         let serverCommand = commands.serverCommand
@@ -262,13 +282,13 @@ struct AddNATPassthroughServiceView: View {
             let instanceService = InstanceService()
             do {
                 async let createServerInstance: (Instance) = instanceService.createInstance(
-                    baseURLString: server.url,
-                    apiKey: server.key,
+                    baseURLString: remoteServer.url,
+                    apiKey: remoteServer.key,
                     url: serverCommand
                 )
                 async let createClientInstance: (Instance) = instanceService.createInstance(
-                    baseURLString: client.url,
-                    apiKey: client.key,
+                    baseURLString: localServer.url,
+                    apiKey: localServer.key,
                     url: clientCommand
                 )
                 
@@ -288,7 +308,7 @@ struct AddNATPassthroughServiceView: View {
                             name: String(localized: "\(name) Remote"),
                             type: .natPassthroughServer,
                             position: 0,
-                            serverID: server.id,
+                            serverID: remoteServer.id,
                             instanceID: serverInstance.id,
                             command: serverCommand,
                             fullCommand: serverFullCommand
@@ -297,7 +317,7 @@ struct AddNATPassthroughServiceView: View {
                             name: String(localized: "\(name) Local"),
                             type: .natPassthroughClient,
                             position: 1,
-                            serverID: client.id,
+                            serverID: localServer.id,
                             instanceID: clientInstance.id,
                             command: clientCommand,
                             fullCommand: clientFullCommand
@@ -310,20 +330,20 @@ struct AddNATPassthroughServiceView: View {
                 do {
                     // Update Instance Peer
                     async let updateServerInstancePeer: () = instanceService.updateInstancePeer(
-                        baseURLString: server.url,
-                        apiKey: server.key,
+                        baseURLString: remoteServer.url,
+                        apiKey: remoteServer.key,
                         id: serverInstance.id,
                         serviceAlias: String(localized: "\(name)"),
                         serviceId: serviceId.uuidString,
-                        serviceType: "1"
+                        serviceType: isExternalTarget ? "3" : "1"
                     )
                     async let updateClientInstancePeer: () = instanceService.updateInstancePeer(
-                        baseURLString: client.url,
-                        apiKey: client.key,
+                        baseURLString: localServer.url,
+                        apiKey: localServer.key,
                         id: clientInstance.id,
                         serviceAlias: String(localized: "\(name)"),
                         serviceId: serviceId.uuidString,
-                        serviceType: "1"
+                        serviceType: isExternalTarget ? "3" : "1"
                     )
                     
                     _ = try await (updateServerInstancePeer, updateClientInstancePeer)

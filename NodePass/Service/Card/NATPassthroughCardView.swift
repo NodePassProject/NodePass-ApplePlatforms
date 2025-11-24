@@ -81,19 +81,57 @@ struct NATPassthroughCardView: View {
                     d[.bottom] - 7
                 }
                 Spacer()
-                VStack(spacing: 3) {
-                    let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                Group {
                     let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: implementation1.command)
-                    Text(serverName)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.5)
-                        .font(.system(size: 8))
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: 60)
-                    Image(systemName: "house.fill")
-                        .font(.title)
-                    Text(addressesAndPorts.destination.port)
-                        .font(.system(size: 8))
+                    if addressesAndPorts.destination.address == "127.0.0.1" {
+                        VStack(spacing: 3) {
+                            let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                            let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: implementation1.command)
+                            Text(serverName)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
+                                .font(.system(size: 8))
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: 60)
+                            Image(systemName: "house.fill")
+                                .font(.title)
+                            Text(addressesAndPorts.destination.port)
+                                .font(.system(size: 8))
+                        }
+                    }
+                    else {
+                        VStack(spacing: 3) {
+                            let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                            Text(serverName)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
+                                .font(.system(size: 8))
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: 60)
+                            Image(systemName: "house.fill")
+                                .font(.title)
+                            Text(addressesAndPorts.tunnel.port)
+                                .font(.system(size: 8))
+                        }
+                        Spacer()
+                        Image(systemName: "arrowshape.right")
+                            .alignmentGuide(VerticalAlignment.center) { d in
+                                d[.bottom] - 7
+                            }
+                        Spacer()
+                        VStack(spacing: 3) {
+                            Text(addressesAndPorts.destination.address)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
+                                .font(.system(size: 8))
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: 60)
+                            Image(systemName: "house.fill")
+                                .font(.title)
+                            Text(addressesAndPorts.destination.port)
+                                .font(.system(size: 8))
+                        }
+                    }
                 }
             }
         }

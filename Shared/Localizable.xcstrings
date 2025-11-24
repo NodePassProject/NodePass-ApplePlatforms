@@ -960,12 +960,12 @@
         }
       }
     },
-    "Local Server (Behind NAT)" : {
+    "Local Server" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本地服务器（受到NAT限制）"
+            "value" : "本地服务器"
           }
         }
       }
@@ -975,7 +975,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本地服务器：无公网的服务器。"
+            "value" : "本地服务器：受到NAT限制的服务器。"
           }
         }
       }
@@ -1220,12 +1220,12 @@
         }
       }
     },
-    "Remote Server (with Public IP)" : {
+    "Remote Server" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "公网服务器（拥有公网IP）"
+            "value" : "公网服务器"
           }
         }
       }
