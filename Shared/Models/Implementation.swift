@@ -19,7 +19,10 @@ class Implementation {
     var command: String = ""
     var fullCommand: String = ""
     var isMultipleDestination: Bool {
-        command.contains(",")
+        destinationCount > 1
+    }
+    var destinationCount: Int {
+        command.filter { $0 == "," }.count + 1
     }
     
     var service: Service?

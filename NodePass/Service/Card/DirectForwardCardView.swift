@@ -14,6 +14,8 @@ struct DirectForwardCardView: View {
     
     @Query private var servers: [Server]
     
+    @State private var heightForMainImages: CGFloat?
+    
     var body: some View {
         if service.type == .directForward {
             cardContent
@@ -43,14 +45,17 @@ struct DirectForwardCardView: View {
                 Spacer()
             }
             
-            HStack {
+            HStack(alignment: .imageAlignment) {
                 let implementation = service.implementations!.first(where: { $0.position == 0 })!
                 let serverName = servers.first(where: { $0.id == implementation.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
                 let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: implementation.command)
                 Image(systemName: "laptopcomputer.and.iphone")
                     .font(.title)
+                    .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                    .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                 Spacer()
                 Image(systemName: "arrowshape.right")
+                    .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                 Spacer()
                 VStack(spacing: 3) {
                     Text(serverName)
@@ -61,15 +66,25 @@ struct DirectForwardCardView: View {
                         .frame(maxWidth: 60)
                     Image(systemName: "airplane.cloud")
                         .font(.title)
-                    Text(addressesAndPorts.tunnel.port)
-                        .font(.system(size: 8))
+                        .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                        .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                 }
                 Spacer()
                 Image(systemName: "arrowshape.right")
                 Spacer()
                 if implementation.isMultipleDestination {
-                    Image(systemName: "point.3.filled.connected.trianglepath.dotted")
-                        .font(.title)
+                    VStack(spacing: 3) {
+                        Text("\(implementation.destinationCount) Targets")
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                            .font(.system(size: 8))
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: 60)
+                        Image(systemName: "point.3.filled.connected.trianglepath.dotted")
+                            .font(.title)
+                            .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                            .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
+                    }
                 }
                 else {
                     VStack(spacing: 3) {
@@ -81,6 +96,8 @@ struct DirectForwardCardView: View {
                             .frame(maxWidth: 60)
                         Image(systemName: "airplane.arrival")
                             .font(.title)
+                            .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                            .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                         Text(addressesAndPorts.destination.port)
                             .font(.system(size: 8))
                     }

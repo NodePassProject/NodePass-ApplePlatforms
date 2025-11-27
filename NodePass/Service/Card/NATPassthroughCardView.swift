@@ -14,6 +14,8 @@ struct NATPassthroughCardView: View {
     
     @Query private var servers: [Server]
     
+    @State private var heightForMainImages: CGFloat?
+    
     var body: some View {
         if service.type == .natPassthrough {
             cardContent
@@ -43,16 +45,16 @@ struct NATPassthroughCardView: View {
                 Spacer()
             }
             
-            HStack {
+            HStack(alignment: .imageAlignment) {
                 let implementation0 = service.implementations!.first(where: { $0.position == 0 })!
                 let implementation1 = service.implementations!.first(where: { $0.position == 1 })!
                 Image(systemName: "laptopcomputer.and.iphone")
                     .font(.title)
+                    .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                    .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                 Spacer()
                 Image(systemName: "arrowshape.right")
-                    .alignmentGuide(VerticalAlignment.center) { d in
-                        d[.bottom] - 7
-                    }
+                    .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                 Spacer()
                 VStack(spacing: 3) {
                     let serverName = servers.first(where: { $0.id == implementation0.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
@@ -65,6 +67,8 @@ struct NATPassthroughCardView: View {
                         .frame(maxWidth: 60)
                     Image(systemName: "cloud.fill")
                         .font(.title)
+                        .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                        .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                     Text(addressesAndPorts.destination.port)
                         .font(.system(size: 8))
                 }
@@ -76,9 +80,7 @@ struct NATPassthroughCardView: View {
                             .font(.caption)
                     }
                     Image(systemName: "arrowshape.right")
-                }
-                .alignmentGuide(VerticalAlignment.center) { d in
-                    d[.bottom] - 7
+                        .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                 }
                 Spacer()
                 Group {
@@ -95,6 +97,8 @@ struct NATPassthroughCardView: View {
                                 .frame(maxWidth: 60)
                             Image(systemName: "house.fill")
                                 .font(.title)
+                                .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                                .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                             Text(addressesAndPorts.destination.port)
                                 .font(.system(size: 8))
                         }
@@ -110,18 +114,26 @@ struct NATPassthroughCardView: View {
                                 .frame(maxWidth: 60)
                             Image(systemName: "house.fill")
                                 .font(.title)
-                            Text(addressesAndPorts.tunnel.port)
-                                .font(.system(size: 8))
+                                .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                                .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                         }
                         Spacer()
                         Image(systemName: "arrowshape.right")
-                            .alignmentGuide(VerticalAlignment.center) { d in
-                                d[.bottom] - 7
-                            }
+                            .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                         Spacer()
                         if implementation1.isMultipleDestination {
-                            Image(systemName: "point.3.filled.connected.trianglepath.dotted")
-                                .font(.title)
+                            VStack(spacing: 3) {
+                                Text("\(implementation1.destinationCount) Targets")
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.5)
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: 60)
+                                Image(systemName: "point.3.filled.connected.trianglepath.dotted")
+                                    .font(.title)
+                                    .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                                    .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
+                            }
                         }
                         else {
                             VStack(spacing: 3) {
@@ -133,6 +145,8 @@ struct NATPassthroughCardView: View {
                                     .frame(maxWidth: 60)
                                 Image(systemName: "house.fill")
                                     .font(.title)
+                                    .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                                    .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                                 Text(addressesAndPorts.destination.port)
                                     .font(.system(size: 8))
                             }

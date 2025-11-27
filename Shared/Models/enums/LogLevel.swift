@@ -7,9 +7,9 @@
 
 enum LogLevel: String, CaseIterable {
     case none = "none"
-    case error = "error"
-    case warn = "warn"
-    case info = "info"
-    case event = "event"
     case debug = "debug"
+    case info = "info"
+    case warn = "warn"
+    case error = "error"
+    case event = "event"
 }

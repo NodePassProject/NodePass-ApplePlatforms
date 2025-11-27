@@ -41,48 +41,48 @@ struct InstanceCardView: View {
             HStack {
                 Text("TCP")
                     .bold()
-                    .modifier(EqualWidthModifier(width: $widthForSubtitleText))
+                    .modifier(EqualWidthModifier(width: $widthForSubtitleText, alignment: .leading))
                 if let tcp = instance.tcp {
                     Text("\(String(tcp))")
                         .foregroundStyle(.secondary)
-                        .modifier(EqualWidthModifier(width: $widthForConnectionCountContent))
+                        .modifier(EqualWidthModifier(width: $widthForConnectionCountContent, alignment: .leading))
                 }
                 HStack(spacing: 3) {
                     Text("↓")
                     Text("\(NPCore.formatBytes(instance.tcpReceive))")
                         .foregroundStyle(.secondary)
                 }
-                .modifier(EqualWidthModifier(width: $widthForRXTitleAndContent))
+                .modifier(EqualWidthModifier(width: $widthForRXTitleAndContent, alignment: .leading))
                 HStack(spacing: 3) {
                     Text("↑")
                     Text("\(NPCore.formatBytes(instance.tcpTransmit))")
                         .foregroundStyle(.secondary)
                 }
-                .modifier(EqualWidthModifier(width: $widthForTXTitleAndContent))
+                .modifier(EqualWidthModifier(width: $widthForTXTitleAndContent, alignment: .leading))
             }
             .font(.caption)
             
             HStack {
                 Text("UDP")
                     .bold()
-                    .modifier(EqualWidthModifier(width: $widthForSubtitleText))
+                    .modifier(EqualWidthModifier(width: $widthForSubtitleText, alignment: .leading))
                 if let udp = instance.udp {
                     Text("\(String(udp))")
                         .foregroundStyle(.secondary)
-                        .modifier(EqualWidthModifier(width: $widthForConnectionCountContent))
+                        .modifier(EqualWidthModifier(width: $widthForConnectionCountContent, alignment: .leading))
                 }
                 HStack(spacing: 3) {
                     Text("↓")
                     Text("\(NPCore.formatBytes(instance.udpReceive))")
                         .foregroundStyle(.secondary)
                 }
-                .modifier(EqualWidthModifier(width: $widthForRXTitleAndContent))
+                .modifier(EqualWidthModifier(width: $widthForRXTitleAndContent, alignment: .leading))
                 HStack(spacing: 3) {
                     Text("↑")
                     Text("\(NPCore.formatBytes(instance.udpTransmit))")
                         .foregroundStyle(.secondary)
                 }
-                .modifier(EqualWidthModifier(width: $widthForTXTitleAndContent))
+                .modifier(EqualWidthModifier(width: $widthForTXTitleAndContent, alignment: .leading))
             }
             .font(.caption)
             
@@ -90,10 +90,10 @@ struct InstanceCardView: View {
                 HStack {
                     Text("Pool")
                         .bold()
-                        .modifier(EqualWidthModifier(width: $widthForSubtitleText))
+                        .modifier(EqualWidthModifier(width: $widthForSubtitleText, alignment: .leading))
                     Text(String(poolConnectionCount))
                         .foregroundStyle(.secondary)
-                        .modifier(EqualWidthModifier(width: $widthForConnectionCountContent))
+                        .modifier(EqualWidthModifier(width: $widthForConnectionCountContent, alignment: .leading))
                 }
                 .font(.caption)
             }

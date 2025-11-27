@@ -157,6 +157,9 @@
         }
       }
     },
+    "%lld Targets" : {
+
+    },
     "%lld%@" : {
       "comment" : "Short format: 5d",
       "localizations" : {
@@ -302,6 +305,7 @@
       }
     },
     "Add Target" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

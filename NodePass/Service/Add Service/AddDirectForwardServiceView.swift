@@ -112,15 +112,45 @@ struct AddDirectForwardServiceView: View {
 #endif
                         LabeledTextField("Port", prompt: "1080", text: $clientDestinationPort, isNumberOnly: true)
                     }
-                    Button("Add Target", systemImage: "plus") {
-                        if externalTargets.isEmpty {
-                            externalTargets.append(ExternalTarget(position: 0, address: clientDestinationAddress, port: clientDestinationPort))
-                            externalTargets.append(ExternalTarget(position: 1))
-                            isLoadBalancing = true
+                    HStack(spacing: 5) {
+                        Button {
+                            if externalTargets.isEmpty {
+                                externalTargets.append(ExternalTarget(position: 0, address: clientDestinationAddress, port: clientDestinationPort))
+                                externalTargets.append(ExternalTarget(position: 1))
+                                isLoadBalancing = true
+                            }
+                            else {
+                                externalTargets.append(ExternalTarget(position: externalTargets.count))
+                            }
+                        } label: {
+                            Image(systemName: "plus")
+                                .frame(width: 20, height: 20)
                         }
-                        else {
-                            externalTargets.append(ExternalTarget(position: externalTargets.count))
+#if os(iOS)
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.borderedProminent)
+#else
+                        .buttonStyle(.borderless)
+#endif
+                        Button(role: .destructive) {
+                            if externalTargets.count == 2 {
+                                externalTargets.removeAll()
+                                isLoadBalancing = false
+                            }
+                            else {
+                                externalTargets.remove(at: externalTargets.endIndex - 1)
+                            }
+                        } label: {
+                            Image(systemName: "minus")
+                                .frame(width: 20, height: 20)
                         }
+                        .disabled(externalTargets.count < 2)
+#if os(iOS)
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.borderedProminent)
+#else
+                        .buttonStyle(.borderless)
+#endif
                     }
                 } header: {
                     Text("Destination Server")

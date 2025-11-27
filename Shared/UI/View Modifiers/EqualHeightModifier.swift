@@ -1,14 +1,14 @@
 //
-//  EqualWidthModifier.swift
+//  EqualHeightModifier.swift
 //  NodePass
 //
-//  Created by Junhui Lou on 7/4/25.
+//  Created by Junhui Lou on 11/27/25.
 //
 
 import SwiftUI
 
-struct EqualWidthModifier: ViewModifier {
-    @Binding var width: CGFloat?
+struct EqualHeightModifier: ViewModifier {
+    @Binding var height: CGFloat?
     let alignment: Alignment
     
     func body(content: Content) -> some View {
@@ -18,10 +18,10 @@ struct EqualWidthModifier: ViewModifier {
                 GeometryReader { geo in
                     Color.clear
                         .onAppear {
-                            width = max(width ?? 0, geo.size.width)
+                            height = max(height ?? 0, geo.size.height)
                         }
                 }
             )
-            .frame(width: width, alignment: alignment)
+            .frame(height: height, alignment: alignment)
     }
 }

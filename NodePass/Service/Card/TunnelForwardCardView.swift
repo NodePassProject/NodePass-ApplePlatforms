@@ -14,6 +14,8 @@ struct TunnelForwardCardView: View {
     
     @Query private var servers: [Server]
     
+    @State private var heightForMainImages: CGFloat?
+    
     var implementation0: Implementation {
         service.implementations!.first(where: { $0.position == 0 })!
     }
@@ -56,14 +58,14 @@ struct TunnelForwardCardView: View {
                 Spacer()
             }
             
-            HStack {
+            HStack(alignment: .imageAlignment) {
                 Image(systemName: "laptopcomputer.and.iphone")
                     .font(.title)
+                    .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                    .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                 Spacer()
                 Image(systemName: "arrowshape.right")
-                    .alignmentGuide(VerticalAlignment.center) { d in
-                        d[.bottom] - 7
-                    }
+                    .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                 Spacer()
                 VStack(spacing: 3) {
                     let serverName = servers.first(where: { $0.id == implementation0.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
@@ -76,6 +78,8 @@ struct TunnelForwardCardView: View {
                         .frame(maxWidth: 60)
                     Image(systemName: "airplane.cloud")
                         .font(.title)
+                        .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                        .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                     Text(addressesAndPorts.destination.port)
                         .font(.system(size: 8))
                 }
@@ -87,9 +91,7 @@ struct TunnelForwardCardView: View {
                             .font(.caption)
                     }
                     Image(systemName: "arrowshape.right")
-                }
-                .alignmentGuide(VerticalAlignment.center) { d in
-                    d[.bottom] - 7
+                        .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                 }
                 Spacer()
                 Group {
@@ -106,6 +108,8 @@ struct TunnelForwardCardView: View {
                                 .frame(maxWidth: 60)
                             Image(systemName: "airplane.arrival")
                                 .font(.title)
+                                .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                                .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                             Text(addressesAndPorts.destination.port)
                                 .font(.system(size: 8))
                         }
@@ -121,18 +125,26 @@ struct TunnelForwardCardView: View {
                                 .frame(maxWidth: 60)
                             Image(systemName: "airplane.cloud")
                                 .font(.title)
-                            Text(addressesAndPorts.tunnel.port)
-                                .font(.system(size: 8))
+                                .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                                .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                         }
                         Spacer()
                         Image(systemName: "arrowshape.right")
-                            .alignmentGuide(VerticalAlignment.center) { d in
-                                d[.bottom] - 7
-                            }
+                            .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                         Spacer()
                         if implementation1.isMultipleDestination {
-                            Image(systemName: "point.3.filled.connected.trianglepath.dotted")
-                                .font(.title)
+                            VStack(spacing: 3) {
+                                Text("\(implementation1.destinationCount) Targets")
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.5)
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: 60)
+                                Image(systemName: "point.3.filled.connected.trianglepath.dotted")
+                                    .font(.title)
+                                    .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                                    .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
+                            }
                         }
                         else {
                             VStack(spacing: 3) {
@@ -144,6 +156,8 @@ struct TunnelForwardCardView: View {
                                     .frame(maxWidth: 60)
                                 Image(systemName: "airplane.arrival")
                                     .font(.title)
+                                    .modifier(EqualHeightModifier(height: $heightForMainImages, alignment: .center))
+                                    .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                                 Text(addressesAndPorts.destination.port)
                                     .font(.system(size: 8))
                             }
