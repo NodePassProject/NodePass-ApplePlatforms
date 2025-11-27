@@ -22,6 +22,8 @@ struct AddTunnelForwardServiceView: View {
     @State private var isExternalTarget: Bool = false
     @State private var externalTargetAddress: String = ""
     @State private var servicePort: String = ""
+    @State private var isLoadBalancing: Bool = false
+    @State private var externalTargets: [ExternalTarget] = []
     @State private var tunnelPort: String = ""
     @State private var isTLS: Bool = false
     @State private var npServerLogLevel: LogLevel = .info
@@ -94,13 +96,53 @@ struct AddTunnelForwardServiceView: View {
                     }
                     Toggle("External Target", isOn: $isExternalTarget)
                     if isExternalTarget {
-                        LabeledTextField("Target Address", prompt: "17.253.144.10", text: $externalTargetAddress)
-                            .autocorrectionDisabled()
+                        if isLoadBalancing {
+                            ForEach(externalTargets) { externalTarget in
+                                LabeledTextField(
+                                    "Target Address \(externalTarget.position + 1)",
+                                    prompt: "17.253.144.10",
+                                    text: Binding(get: {
+                                        externalTargets[externalTarget.position].address
+                                    }, set: {
+                                        externalTargets[externalTarget.position].address = $0
+                                    })
+                                )
+                                .autocorrectionDisabled()
 #if os(iOS)
-                            .textInputAutocapitalization(.never)
-                            .keyboardType(.URL)
+                                .textInputAutocapitalization(.never)
+                                .keyboardType(.URL)
 #endif
-                        LabeledTextField("Target Port", prompt: "1080", text: $servicePort, isNumberOnly: true)
+                                LabeledTextField(
+                                    "Target Port \(externalTarget.position + 1)",
+                                    prompt: "1080",
+                                    text: Binding(get: {
+                                        externalTargets[externalTarget.position].port
+                                    }, set: {
+                                        externalTargets[externalTarget.position].port = $0
+                                    }),
+                                    isNumberOnly: true
+                                )
+                            }
+                        }
+                        else {
+                            LabeledTextField("Target Address", prompt: "17.253.144.10", text: $externalTargetAddress)
+                                .autocorrectionDisabled()
+#if os(iOS)
+                                .textInputAutocapitalization(.never)
+                                .keyboardType(.URL)
+#endif
+                            LabeledTextField("Target Port", prompt: "1080", text: $servicePort, isNumberOnly: true)
+                        }
+                        Button("Add Target", systemImage: "plus") {
+                            if externalTargets.isEmpty {
+                                externalTargets.append(ExternalTarget(position: 0, address: externalTargetAddress, port: servicePort))
+                                externalTargets.append(ExternalTarget(position: 1))
+                                isLoadBalancing = true
+                            }
+                            else {
+                                externalTargets.append(ExternalTarget(position: externalTargets.count))
+                            }
+                        }
                     }
                     else {
                         LabeledTextField("Service Port", prompt: "1080", text: $servicePort, isNumberOnly: true)
@@ -130,10 +172,12 @@ struct AddTunnelForwardServiceView: View {
                 } footer: {
                     VStack(alignment: .leading) {
                         Text("Destination Server: Server you want your traffic to relay to.")
-                        Text("Service Port: Port on which your service like Socks5(1080) is running.")
                         if isExternalTarget {
                             Text("Target Address: Address of your external target server.")
                             Text("Target Port: Port on which your service like Socks5(1080) is running on your external target server.")
+                        }
+                        else {
+                            Text("Service Port: Port on which your service like Socks5(1080) is running.")
                         }
                         Text("Tunnel Port: Any available port.")
                     }
@@ -252,7 +296,13 @@ struct AddTunnelForwardServiceView: View {
         var destinationServerCommand: String
         // URL Base
         if isExternalTarget {
-            destinationServerCommand = "server://:\(tunnelPort)/\(externalTargetAddress):\(servicePort)"
+            if isLoadBalancing {
+                let externalTargetAddressesAndPorts = externalTargets.map { "\($0.address):\($0.port)" }.joined(separator: ",")
+                destinationServerCommand = "server://:\(tunnelPort)/\(externalTargetAddressesAndPorts)"
+            }
+            else {
+                destinationServerCommand = "server://:\(tunnelPort)/\(externalTargetAddress):\(servicePort)"
+            }
         }
         else {
             destinationServerCommand = "server://:\(tunnelPort)/127.0.0.1:\(servicePort)"

@@ -87,33 +87,38 @@ struct DirectForwardDetailView: View {
                 }
                 
                 Section("Destination Server") {
-                    HStack {
-                        LabeledContent("Address") {
-                            Text(addressesAndPorts.destination.address)
-                                .minimumScaleFactor(0.5)
-                        }
-                        if server != nil {
-                            Button {
-                                isShowEditDestinationAddressAlert = true
-                            } label: {
-                                Image(systemName: "pencil")
+                    if implementation.isMultipleDestination {
+                        
+                    }
+                    else {
+                        HStack {
+                            LabeledContent("Address") {
+                                Text(addressesAndPorts.destination.address)
+                                    .minimumScaleFactor(0.5)
+                            }
+                            if server != nil {
+                                Button {
+                                    isShowEditDestinationAddressAlert = true
+                                } label: {
+                                    Image(systemName: "pencil")
+                                }
                             }
                         }
-                    }
-                    .copiable(addressesAndPorts.destination.address)
-                    HStack {
-                        LabeledContent("Port") {
-                            Text(addressesAndPorts.destination.port)
-                        }
-                        if server != nil {
-                            Button {
-                                isShowEditDestinationPortAlert = true
-                            } label: {
-                                Image(systemName: "pencil")
+                        .copiable(addressesAndPorts.destination.address)
+                        HStack {
+                            LabeledContent("Port") {
+                                Text(addressesAndPorts.destination.port)
+                            }
+                            if server != nil {
+                                Button {
+                                    isShowEditDestinationPortAlert = true
+                                } label: {
+                                    Image(systemName: "pencil")
+                                }
                             }
                         }
+                        .copiable(addressesAndPorts.destination.port)
                     }
-                    .copiable(addressesAndPorts.destination.port)
                 }
             }
             .formStyle(.grouped)

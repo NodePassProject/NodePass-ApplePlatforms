@@ -28,7 +28,7 @@ struct NATPassthroughDetailView: View {
         NPCore.parseAddressesAndPorts(urlString: implementation0.command)
     }
     var queryParameters0: [String: String] {
-        NPCore.parseQueryParameters(urlString: implementation0.fullCommand, isFull: true)
+        NPCore.parseQueryParameters(urlString: implementation0.fullCommand)
     }
     var implementation1: Implementation {
         service.implementations!.first(where: { $0.position == 1 })!
@@ -181,34 +181,39 @@ struct NATPassthroughDetailView: View {
                         .copiable(addressesAndPorts.destination.port)
                     }
                     else {
-                        HStack {
-                            LabeledContent("Target Address") {
-                                Text(addressesAndPorts.destination.address)
-                            }
-                            if server != nil {
-                                Button {
-                                    isShowEditAddressAlert = true
-                                } label: {
-                                    Image(systemName: "pencil")
+                        if implementation.isMultipleDestination {
+                            
+                        }
+                        else {
+                            HStack {
+                                LabeledContent("Target Address") {
+                                    Text(addressesAndPorts.destination.address)
+                                }
+                                if server != nil {
+                                    Button {
+                                        isShowEditAddressAlert = true
+                                    } label: {
+                                        Image(systemName: "pencil")
+                                    }
                                 }
                             }
-                        }
-                        .copiable(addressesAndPorts.destination.address)
-                        HStack {
-                            LabeledContent("Target Port") {
-                                Text(addressesAndPorts.destination.port)
-                            }
-                            if server != nil {
-                                Button {
-                                    editPortOption = .destination
-                                    implementationToEdit = implementation1
-                                    isShowEditPortAlert = true
-                                } label: {
-                                    Image(systemName: "pencil")
+                            .copiable(addressesAndPorts.destination.address)
+                            HStack {
+                                LabeledContent("Target Port") {
+                                    Text(addressesAndPorts.destination.port)
+                                }
+                                if server != nil {
+                                    Button {
+                                        editPortOption = .destination
+                                        implementationToEdit = implementation1
+                                        isShowEditPortAlert = true
+                                    } label: {
+                                        Image(systemName: "pencil")
+                                    }
                                 }
                             }
+                            .copiable(addressesAndPorts.destination.port)
                         }
-                        .copiable(addressesAndPorts.destination.port)
                     }
                     HStack {
                         LabeledContent("Tunnel Port") {

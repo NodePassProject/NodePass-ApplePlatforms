@@ -487,7 +487,7 @@ struct ServiceListView: View {
                     if let serviceId = instance.metadata?.peer.serviceId, serviceId != "", !examinedServiceIds.contains(serviceId) {
                         let serverId0 = serverId
                         let instance0 = instance
-                        if instance0.metadata!.peer.serviceType == "0" && !services.map({ $0.id.uuidString }).contains(serviceId) {
+                        if ["0", "5"].contains(instance0.metadata!.peer.serviceType) && !services.map({ $0.id.uuidString }).contains(serviceId) {
                             // Direct Forward
                             let clientId = serverId0
                             let clientInstance = instance0
@@ -521,7 +521,7 @@ struct ServiceListView: View {
                                         let instance1 = instance
                                         
                                         switch(instance.metadata!.peer.serviceType) {
-                                        case "1", "3":
+                                        case "1", "3", "6":
                                             // NAT Passthrough
                                             let schemeOfInstance0 = NPCore.parseScheme(urlString: instance0.url)
                                             let schemeOfInstance1 = NPCore.parseScheme(urlString: instance1.url)
@@ -574,7 +574,7 @@ struct ServiceListView: View {
                                             
                                             examinedServiceIds.append(serverId)
                                             continue
-                                        case "2", "4":
+                                        case "2", "4", "7":
                                             // Tunnel Forward
                                             let schemeOfInstance0 = NPCore.parseScheme(urlString: instance0.url)
                                             let modeOfInstance0 = NPCore.parseQueryParameters(urlString: instance0.url)["mode"]

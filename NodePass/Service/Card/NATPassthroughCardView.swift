@@ -119,17 +119,23 @@ struct NATPassthroughCardView: View {
                                 d[.bottom] - 7
                             }
                         Spacer()
-                        VStack(spacing: 3) {
-                            Text(addressesAndPorts.destination.address)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.5)
-                                .font(.system(size: 8))
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: 60)
-                            Image(systemName: "house.fill")
+                        if implementation1.isMultipleDestination {
+                            Image(systemName: "point.3.filled.connected.trianglepath.dotted")
                                 .font(.title)
-                            Text(addressesAndPorts.destination.port)
-                                .font(.system(size: 8))
+                        }
+                        else {
+                            VStack(spacing: 3) {
+                                Text(addressesAndPorts.destination.address)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.5)
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(.secondary)
+                                    .frame(maxWidth: 60)
+                                Image(systemName: "house.fill")
+                                    .font(.title)
+                                Text(addressesAndPorts.destination.port)
+                                    .font(.system(size: 8))
+                            }
                         }
                     }
                 }

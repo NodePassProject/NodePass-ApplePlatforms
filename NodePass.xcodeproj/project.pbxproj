@@ -108,6 +108,8 @@
 		CBAC5A1F2EA485860062FBC6 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAC5A1D2EA485820062FBC6 /* LogLevel.swift */; };
 		CBAC5A212EA48E140062FBC6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAC5A202EA48E0C0062FBC6 /* SettingsView.swift */; };
 		CBAE7F622E88D12700864A74 /* Drops in Frameworks */ = {isa = PBXBuildFile; productRef = CBAE7F612E88D12700864A74 /* Drops */; };
+		CBC6F5FC2ED7FDD20024F670 /* ExternalTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6F5FB2ED7FDCA0024F670 /* ExternalTarget.swift */; };
+		CBC6F5FD2ED7FDD20024F670 /* ExternalTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6F5FB2ED7FDCA0024F670 /* ExternalTarget.swift */; };
 		CBD4335F2E10FA4C002B153F /* NodePassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD4335E2E10FA4C002B153F /* NodePassApp.swift */; };
 		CBD433612E10FA4C002B153F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433602E10FA4C002B153F /* ContentView.swift */; };
 		CBD433632E10FA4D002B153F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CBD433622E10FA4D002B153F /* Assets.xcassets */; };
@@ -210,6 +212,7 @@
 		CB9142EB2E9F5D5E00A030D1 /* SyncErrorReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncErrorReportView.swift; sourceTree = "<group>"; };
 		CBAC5A1D2EA485820062FBC6 /* LogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevel.swift; sourceTree = "<group>"; };
 		CBAC5A202EA48E0C0062FBC6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		CBC6F5FB2ED7FDCA0024F670 /* ExternalTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalTarget.swift; sourceTree = "<group>"; };
 		CBD4335B2E10FA4C002B153F /* NodePass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NodePass.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBD4335E2E10FA4C002B153F /* NodePassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodePassApp.swift; sourceTree = "<group>"; };
 		CBD433602E10FA4C002B153F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -494,6 +497,7 @@
 				CBD433702E111275002B153F /* Server.swift */,
 				CB62C0822E2BDB5000919507 /* ServerMetadata.swift */,
 				CBD4336D2E11119E002B153F /* Instance.swift */,
+				CBC6F5FB2ED7FDCA0024F670 /* ExternalTarget.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -625,6 +629,7 @@
 				CB5E13692E80E17D00870962 /* ServerDetailWidget.swift in Sources */,
 				CB5E137D2E80E7C300870962 /* UpdateInstanceStatusAction.swift in Sources */,
 				CB5E13652E80DEF200870962 /* NPData.swift in Sources */,
+				CBC6F5FD2ED7FDD20024F670 /* ExternalTarget.swift in Sources */,
 				CB5E13702E80E4D100870962 /* EmptyResponse.swift in Sources */,
 				CB5E136C2E80E4C200870962 /* HTTPMethod.swift in Sources */,
 				CB5E13812E80F20400870962 /* DoubleMatrixGaugeStyle.swift in Sources */,
@@ -691,6 +696,7 @@
 				CB6682B02E17348400A27696 /* AddTunnelForwardServiceView.swift in Sources */,
 				CB66828B2E12DB9800A27696 /* EditServerView.swift in Sources */,
 				CB9142EC2E9F5D6900A030D1 /* SyncErrorReportView.swift in Sources */,
+				CBC6F5FC2ED7FDD20024F670 /* ExternalTarget.swift in Sources */,
 				CB66828F2E12E22B00A27696 /* Service.swift in Sources */,
 				CB66827B2E1181D600A27696 /* HTTPMethod.swift in Sources */,
 				CB1E98032E226C2D00A175FD /* TunnelForwardDetailView.swift in Sources */,
@@ -740,7 +746,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 47;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -782,7 +788,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 47;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -945,7 +951,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 46;
+				CURRENT_PROJECT_VERSION = 47;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1000,7 +1006,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 46;
+				CURRENT_PROJECT_VERSION = 47;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;

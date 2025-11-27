@@ -20,6 +20,8 @@ struct AddDirectForwardServiceView: View {
     @State private var clientConnectPort: String = ""
     @State private var clientDestinationAddress: String = ""
     @State private var clientDestinationPort: String = ""
+    @State private var isLoadBalancing: Bool = false
+    @State private var externalTargets: [ExternalTarget] = []
     @State private var logLevel: LogLevel = .info
     
     @State private var isShowErrorAlert: Bool = false
@@ -73,13 +75,53 @@ struct AddDirectForwardServiceView: View {
                 }
                 
                 Section {
-                    LabeledTextField("Address", prompt: "17.253.144.10", text: $clientDestinationAddress)
-                        .autocorrectionDisabled()
+                    if isLoadBalancing {
+                        ForEach(externalTargets) { externalTarget in
+                            LabeledTextField(
+                                "Address \(externalTarget.position + 1)",
+                                prompt: "17.253.144.10",
+                                text: Binding(get: {
+                                    externalTargets[externalTarget.position].address
+                                }, set: {
+                                    externalTargets[externalTarget.position].address = $0
+                                })
+                            )
+                            .autocorrectionDisabled()
 #if os(iOS)
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.URL)
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.URL)
 #endif
-                    LabeledTextField("Port", prompt: "1080", text: $clientDestinationPort, isNumberOnly: true)
+                            LabeledTextField(
+                                "Port \(externalTarget.position + 1)",
+                                prompt: "1080",
+                                text: Binding(get: {
+                                    externalTargets[externalTarget.position].port
+                                }, set: {
+                                    externalTargets[externalTarget.position].port = $0
+                                }),
+                                isNumberOnly: true
+                            )
+                        }
+                    }
+                    else {
+                        LabeledTextField("Address", prompt: "17.253.144.10", text: $clientDestinationAddress)
+                            .autocorrectionDisabled()
+#if os(iOS)
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.URL)
+#endif
+                        LabeledTextField("Port", prompt: "1080", text: $clientDestinationPort, isNumberOnly: true)
+                    }
+                    Button("Add Target", systemImage: "plus") {
+                        if externalTargets.isEmpty {
+                            externalTargets.append(ExternalTarget(position: 0, address: clientDestinationAddress, port: clientDestinationPort))
+                            externalTargets.append(ExternalTarget(position: 1))
+                            isLoadBalancing = true
+                        }
+                        else {
+                            externalTargets.append(ExternalTarget(position: externalTargets.count))
+                        }
+                    }
                 } header: {
                     Text("Destination Server")
                 } footer: {
@@ -91,11 +133,7 @@ struct AddDirectForwardServiceView: View {
                 
                 if #available(iOS 18.0, *) {
                     Section("Preview") {
-                        let clientConnectPort = Int(clientConnectPort) ?? 1080
-                        let clientDestinationAddress = clientDestinationAddress == "" ? "17.253.144.10" : clientDestinationAddress
-                        let clientDestinationPort = Int(clientDestinationPort) ?? 1080
-                        
-                        let command = "client://:\(clientConnectPort)/\(clientDestinationAddress):\(clientDestinationPort)?log=warn"
+                        let command = generateCommand()
                         
                         let name = NPCore.noEmptyName(name)
                         let previewService = Service(
@@ -169,20 +207,32 @@ struct AddDirectForwardServiceView: View {
         }
     }
     
-    private func execute() {
-        let client = client!
-        
+    private func generateCommand() -> String {
         let clientConnectPort = Int(clientConnectPort) ?? 1080
         let clientDestinationAddress = clientDestinationAddress == "" ? "17.253.144.10" : clientDestinationAddress
         let clientDestinationPort = Int(clientDestinationPort) ?? 1080
         
         var command: String
         // URL Base
-        command = "client://:\(clientConnectPort)/\(clientDestinationAddress):\(clientDestinationPort)"
+        if isLoadBalancing {
+            let externalTargetAddressesAndPorts = externalTargets.map { "\($0.address):\($0.port)" }.joined(separator: ",")
+            command = "client://:\(clientConnectPort)/\(externalTargetAddressesAndPorts)"
+        }
+        else {
+            command = "client://:\(clientConnectPort)/\(clientDestinationAddress):\(clientDestinationPort)"
+        }
         // Advanced Confugurations
         if isAdvancedModeEnabled {
             command += "?log=\(logLevel.rawValue)"
         }
+        
+        return command
+    }
+    
+    private func execute() {
+        let client = client!
+        
+        let command = generateCommand()
         
         Task {
             let instanceService = InstanceService()

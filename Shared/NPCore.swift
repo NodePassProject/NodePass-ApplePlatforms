@@ -98,8 +98,8 @@ class NPCore {
         )
     }
     
-    static func parseQueryParameters(urlString: String, isFull: Bool = false) -> [String: String] {
-        let queryString = extractQueryParameterString(urlString: urlString, isFull: isFull)
+    static func parseQueryParameters(urlString: String) -> [String: String] {
+        let queryString = extractQueryParameterString(urlString: urlString)
         let keyValuePairs = queryString.components(separatedBy: "&")
         var parameters = [String: String]()
         for pair in keyValuePairs {
@@ -126,11 +126,11 @@ class NPCore {
         fatalError()
     }
     
-    static func extractQueryParameterString(urlString: String, isFull: Bool = false) -> String {
+    static func extractQueryParameterString(urlString: String, withQuestionMark: Bool = false) -> String {
         guard let questionMarkIndex = urlString.firstIndex(of: "?") else {
             return ""
         }
-        return String(urlString[urlString.index(after: questionMarkIndex)...])
+        return (withQuestionMark ? "?" : "") + String(urlString[urlString.index(after: questionMarkIndex)...])
     }
     
     // MARK: - Utilities

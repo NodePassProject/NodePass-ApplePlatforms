@@ -18,6 +18,9 @@ class Implementation {
     var instanceID: String = ""
     var command: String = ""
     var fullCommand: String = ""
+    var isMultipleDestination: Bool {
+        command.contains(",")
+    }
     
     var service: Service?
     
@@ -34,21 +37,23 @@ class Implementation {
     
     func dryModifyTunnelAddress(address: String, isReturnFullCommand: Bool = false) -> String {
         let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: command)
-        return NPCore.extractSchemePrefix(urlString: command) + address + ":" + addressesAndPorts.tunnel.port + "/" + addressesAndPorts.destination.address + ":" + addressesAndPorts.destination.port + "?" + NPCore.extractQueryParameterString(urlString: command, isFull: isReturnFullCommand)
+        return NPCore.extractSchemePrefix(urlString: command) + address + ":" + addressesAndPorts.tunnel.port + "/" + addressesAndPorts.destination.address + ":" + addressesAndPorts.destination.port + "?" + NPCore.extractQueryParameterString(urlString: command)
     }
     
     func dryModifyTunnelPort(port: String, isReturnFullCommand: Bool = false) -> String {
         let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: command)
-        return NPCore.extractSchemePrefix(urlString: command) + addressesAndPorts.tunnel.address + ":" + port + "/" + addressesAndPorts.destination.address + ":" + addressesAndPorts.destination.port + "?" + NPCore.extractQueryParameterString(urlString: command, isFull: isReturnFullCommand)
+        return NPCore.extractSchemePrefix(urlString: command) + addressesAndPorts.tunnel.address + ":" + port + "/" + addressesAndPorts.destination.address + ":" + addressesAndPorts.destination.port + "?" + NPCore.extractQueryParameterString(urlString: command)
     }
     
     func dryModifyDestinationAddress(address: String, isReturnFullCommand: Bool = false) -> String {
+        guard isMultipleDestination == false else { return command }
         let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: command)
-        return NPCore.extractSchemePrefix(urlString: command) + addressesAndPorts.tunnel.address + ":" + addressesAndPorts.tunnel.port + "/" + address + ":" + addressesAndPorts.destination.port + "?" + NPCore.extractQueryParameterString(urlString: command, isFull: isReturnFullCommand)
+        return NPCore.extractSchemePrefix(urlString: command) + addressesAndPorts.tunnel.address + ":" + addressesAndPorts.tunnel.port + "/" + address + ":" + addressesAndPorts.destination.port + NPCore.extractQueryParameterString(urlString: isReturnFullCommand ? fullCommand : command, withQuestionMark: true)
     }
     
     func dryModifyDestinationPort(port: String, isReturnFullCommand: Bool = false) -> String {
+        guard isMultipleDestination == false else { return command }
         let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: command)
-        return NPCore.extractSchemePrefix(urlString: command) + addressesAndPorts.tunnel.address + ":" + addressesAndPorts.tunnel.port + "/" + addressesAndPorts.destination.address + ":" + port + "?" + NPCore.extractQueryParameterString(urlString: command, isFull: isReturnFullCommand)
+        return NPCore.extractSchemePrefix(urlString: command) + addressesAndPorts.tunnel.address + ":" + addressesAndPorts.tunnel.port + "/" + addressesAndPorts.destination.address + ":" + port + NPCore.extractQueryParameterString(urlString: isReturnFullCommand ? fullCommand : command, withQuestionMark: true)
     }
 }

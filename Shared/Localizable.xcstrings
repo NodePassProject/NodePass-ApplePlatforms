@@ -301,6 +301,16 @@
         }
       }
     },
+    "Add Target" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加目标"
+          }
+        }
+      }
+    },
     "Add Tunnel Forward" : {
       "localizations" : {
         "zh-Hans" : {
@@ -317,6 +327,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "地址"
+          }
+        }
+      }
+    },
+    "Address %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "地址%lld"
           }
         }
       }
@@ -357,39 +377,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "发生错误"
-          }
-        }
-      }
-    },
-    "As NodePass Server" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "作为NodePass Server"
-          }
-        }
-      }
-    },
-    "As NodePass Server: If on, destination server receives tunnel requests from relay server." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "作为NodePass Server：如果启用，目标服务器接收来自中转服务器的隧道请求。"
-          }
-        }
-      }
-    },
-    "As NodePass Server: If on, relay server receives tunnel requests from destination server." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "作为NodePass Server：如果启用，中转服务器接收来自目标服务器的隧道请求。"
           }
         }
       }
@@ -1160,6 +1147,16 @@
         }
       }
     },
+    "Port %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "端口%lld"
+          }
+        }
+      }
+    },
     "Port: Port on which your service like Socks5(1080) is running." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1567,6 +1564,26 @@
         }
       }
     },
+    "Target Address %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目标地址%lld"
+          }
+        }
+      }
+    },
+    "Target Address: Address of your external target like devices in your home." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目标地址：你的外部目标（如家里的设备）的地址。"
+          }
+        }
+      }
+    },
     "Target Address: Address of your external target server." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1587,12 +1604,32 @@
         }
       }
     },
+    "Target Port %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目标端口%lld"
+          }
+        }
+      }
+    },
     "Target Port: Port on which your service like Socks5(1080) is running on your external target server." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "目标端口：你的服务（如1080端口的Socks5）在你的外部目标服务器上所运行于的端口。"
+          }
+        }
+      }
+    },
+    "Target Port: Port on which your service like SSH(22) is running on your external target." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目标端口：你的服务（如22端口的SSH）在你的外部目标上所运行于的端口。"
           }
         }
       }

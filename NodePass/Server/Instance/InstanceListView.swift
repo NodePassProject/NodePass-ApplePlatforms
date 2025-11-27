@@ -58,6 +58,11 @@ struct InstanceListView: View {
         }
         .alert("Add Instance", isPresented: $isShowAddInstanceAlert) {
             TextField("URL", text: $commandOfNewInstance)
+                .autocorrectionDisabled()
+#if os(iOS)
+                .textInputAutocapitalization(.never)
+                .keyboardType(.URL)
+#endif
             Button("Add") {
                 addInstance()
             }
