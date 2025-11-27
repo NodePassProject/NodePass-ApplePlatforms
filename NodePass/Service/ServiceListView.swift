@@ -213,15 +213,15 @@ struct ServiceListView: View {
     private var addServiceMenu: some View {
         Menu("Add Service", systemImage: "plus") {
             Button {
-                isShowAddNATPassthroughSheet = true
-            } label: {
-                Label("NAT Passthrough", systemImage: "firewall")
-            }
-            
-            Button {
                 isShowAddDirectForwardSheet = true
             } label: {
                 Label("Direct Forward", systemImage: "arrow.right.circle")
+            }
+            
+            Button {
+                isShowAddNATPassthroughSheet = true
+            } label: {
+                Label("NAT Passthrough", systemImage: "firewall")
             }
             
             Button {

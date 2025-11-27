@@ -108,6 +108,7 @@ struct ServerListView: View {
 #if os(macOS)
             ScrollView {
                 serverList
+                    .padding(.vertical)
             }
 #else
             if servers.isEmpty {

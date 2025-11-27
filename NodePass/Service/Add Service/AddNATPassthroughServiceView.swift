@@ -182,6 +182,9 @@ struct AddNATPassthroughServiceView: View {
 #endif
                         }
                     }
+                    else {
+                        LabeledTextField("Service Port", prompt: "1080", text: $servicePort, isNumberOnly: true)
+                    }
                     if isAdvancedModeEnabled {
                         Picker("Log Level", selection: $npClientLogLevel) {
                             ForEach(LogLevel.allCases, id: \.self) {

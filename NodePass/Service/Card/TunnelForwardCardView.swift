@@ -85,7 +85,7 @@ struct TunnelForwardCardView: View {
                 }
                 Spacer()
                 VStack(spacing: 3) {
-                    let queryParameters = NPCore.parseQueryParameters(urlString: implementation0.command)
+                    let queryParameters = NPCore.parseQueryParameters(urlString: implementation1.command)
                     if ["1", "2"].contains(queryParameters["tls"]) {
                         Image(systemName: "lock")
                             .font(.caption)

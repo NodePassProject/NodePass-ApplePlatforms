@@ -258,8 +258,8 @@
 		CB1E97FD2E2262DA00A175FD /* Detail */ = {
 			isa = PBXGroup;
 			children = (
-				CB1E97FE2E2262E700A175FD /* NATPassthroughDetailView.swift */,
 				CB1E98002E226C0F00A175FD /* DirectForwardDetailView.swift */,
+				CB1E97FE2E2262E700A175FD /* NATPassthroughDetailView.swift */,
 				CB1E98022E226C2300A175FD /* TunnelForwardDetailView.swift */,
 			);
 			path = Detail;
@@ -380,8 +380,8 @@
 		CB6682A92E17340900A27696 /* Add Service */ = {
 			isa = PBXGroup;
 			children = (
-				CB66829D2E154FD200A27696 /* AddNATPassthroughServiceView.swift */,
 				CB6682AD2E17345200A27696 /* AddDirectForwardServiceView.swift */,
+				CB66829D2E154FD200A27696 /* AddNATPassthroughServiceView.swift */,
 				CB6682AF2E17348300A27696 /* AddTunnelForwardServiceView.swift */,
 			);
 			path = "Add Service";
@@ -403,8 +403,8 @@
 			isa = PBXGroup;
 			children = (
 				CB6682972E13FD5000A27696 /* ServiceCardView.swift */,
-				CB6682B62E17461300A27696 /* NATPassthroughCardView.swift */,
 				CB6682B82E17465A00A27696 /* DirectForwardCardView.swift */,
+				CB6682B62E17461300A27696 /* NATPassthroughCardView.swift */,
 				CB6682BA2E1746A100A27696 /* TunnelForwardCardView.swift */,
 			);
 			path = Card;
@@ -766,7 +766,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 48;
+				CURRENT_PROJECT_VERSION = 49;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -808,7 +808,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 48;
+				CURRENT_PROJECT_VERSION = 49;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -971,7 +971,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 48;
+				CURRENT_PROJECT_VERSION = 49;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1026,7 +1026,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 48;
+				CURRENT_PROJECT_VERSION = 49;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
