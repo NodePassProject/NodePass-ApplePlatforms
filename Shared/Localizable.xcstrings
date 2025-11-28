@@ -157,8 +157,39 @@
         }
       }
     },
-    "%lld Targets" : {
-
+    "%lld target(s)" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld target"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld targets"
+                }
+              }
+            }
+          }
+        },
+        "zh-Hans" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld个目标"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "%lld%@" : {
       "comment" : "Short format: 5d",
@@ -300,17 +331,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "添加服务"
-          }
-        }
-      }
-    },
-    "Add Target" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加目标"
           }
         }
       }

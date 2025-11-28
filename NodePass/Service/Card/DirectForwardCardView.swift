@@ -74,7 +74,7 @@ struct DirectForwardCardView: View {
                 Spacer()
                 if implementation.isMultipleDestination {
                     VStack(spacing: 3) {
-                        Text("\(implementation.destinationCount) Targets")
+                        Text("\(implementation.destinationCount) target(s)")
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                             .font(.system(size: 8))

@@ -134,7 +134,7 @@ struct TunnelForwardCardView: View {
                         Spacer()
                         if implementation1.isMultipleDestination {
                             VStack(spacing: 3) {
-                                Text("\(implementation1.destinationCount) Targets")
+                                Text("\(implementation1.destinationCount) target(s)")
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.5)
                                     .font(.system(size: 8))
