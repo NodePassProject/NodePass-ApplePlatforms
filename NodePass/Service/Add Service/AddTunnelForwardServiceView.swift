@@ -25,11 +25,14 @@ struct AddTunnelForwardServiceView: View {
     @State private var isLoadBalancing: Bool = false
     @State private var externalTargets: [ExternalTarget] = []
     @State private var tunnelPort: String = ""
+    @State private var transport: Instance.Transport = .tcp
     @State private var isTLS: Bool = false
     @State private var npServerLogLevel: LogLevel = .info
     @State private var npClientLogLevel: LogLevel = .info
     @State private var maximumPoolConnection: String = ""
     @State private var minimumPoolConnection: String = ""
+    @State private var isTCPDisabled: Bool = false
+    @State private var isUDPDisabled: Bool = false
     
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
@@ -214,9 +217,23 @@ struct AddTunnelForwardServiceView: View {
                 }
                 
                 Section {
+                    Picker("Protocol", selection: $transport) {
+                        ForEach(Instance.Transport.allCases, id: \.self) {
+                            Text($0.localizedName)
+                                .tag($0)
+                        }
+                    }
+                    .onChange(of: transport) { oldValue, newValue in
+                        if transport == .quic {
+                            isTLS = true
+                        }
+                    }
                     Toggle("TLS", isOn: $isTLS)
-                } footer: {
-                    Text("Use TLS encryption for tunnel communication.")
+                        .disabled(transport == .quic)
+                    if isAdvancedModeEnabled {
+                        Toggle("Disable TCP", isOn: $isTCPDisabled)
+                        Toggle("Disable UDP", isOn: $isUDPDisabled)
+                    }
                 }
                 
                 if #available(iOS 18.0, *) {
@@ -339,7 +356,10 @@ struct AddTunnelForwardServiceView: View {
         }
         // Core Confugurations
         destinationServerCommand += "?mode=2"
+        destinationServerCommand += "&type=\(transport.rawValue)"
         destinationServerCommand += isTLS ? "&tls=1" : "&tls=0"
+        destinationServerCommand += isTCPDisabled ? "&notcp=1" : ""
+        destinationServerCommand += isUDPDisabled ? "&noudp=1" : ""
         
         if isAdvancedModeEnabled {
             let maximumPoolConnection = Int(maximumPoolConnection) ?? 1024

@@ -8,26 +8,9 @@
 import Foundation
 
 struct Instance: Identifiable, Codable, Equatable {
-    struct Metadata: Codable, Hashable {
-        let peer: Peer
-        let tags: Dictionary<String, String>
-    }
-    
-    struct Peer: Codable, Hashable {
-        let alias: String
-        let serviceId: String
-        let serviceType: String
-        
-        enum CodingKeys: String, CodingKey {
-            case alias
-            case serviceId = "sid"
-            case serviceType = "type"
-        }
-    }
-    
     let id: String
-    let type: InstanceType
-    let status: InstanceStatus
+    let type: Scheme
+    let status: Status
     let url: String
     let config: String?
     let tcp: Int?

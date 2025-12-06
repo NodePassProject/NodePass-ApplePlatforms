@@ -595,6 +595,26 @@
         }
       }
     },
+    "Disable TCP" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "禁用TCP"
+          }
+        }
+      }
+    },
+    "Disable UDP" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "禁用UDP"
+          }
+        }
+      }
+    },
     "Done" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1197,6 +1217,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "预览"
+          }
+        }
+      }
+    },
+    "Protocol" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "协议"
           }
         }
       }
@@ -1960,16 +1990,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "URL：你的主控API URL。"
-          }
-        }
-      }
-    },
-    "Use TLS encryption for tunnel communication." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "使用TLS加密隧道连接。"
           }
         }
       }

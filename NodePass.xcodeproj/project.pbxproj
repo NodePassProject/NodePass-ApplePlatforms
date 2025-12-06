@@ -42,8 +42,6 @@
 		CB5E13782E80E7B000870962 /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682A72E172FFE00A27696 /* LoadingState.swift */; };
 		CB5E13792E80E7B400870962 /* ServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682992E1402D000A27696 /* ServiceType.swift */; };
 		CB5E137A2E80E7B800870962 /* ImplementationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682942E135C5900A27696 /* ImplementationType.swift */; };
-		CB5E137B2E80E7BC00870962 /* InstanceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682922E135B3C00A27696 /* InstanceType.swift */; };
-		CB5E137C2E80E7BF00870962 /* InstanceStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB66829B2E140CD900A27696 /* InstanceStatus.swift */; };
 		CB5E137D2E80E7C300870962 /* UpdateInstanceStatusAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682CF2E1DD9BD00A27696 /* UpdateInstanceStatusAction.swift */; };
 		CB5E13802E80F20100870962 /* SingleMatrixGaugeStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5E133E2E7BF80C00870962 /* SingleMatrixGaugeStyle.swift */; };
 		CB5E13812E80F20400870962 /* DoubleMatrixGaugeStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5E13402E7C006D00870962 /* DoubleMatrixGaugeStyle.swift */; };
@@ -77,11 +75,9 @@
 		CB66828D2E12E1F900A27696 /* ServiceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB66828C2E12E1F100A27696 /* ServiceListView.swift */; };
 		CB66828F2E12E22B00A27696 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB66828E2E12E22900A27696 /* Service.swift */; };
 		CB6682912E135A4400A27696 /* Implementation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682902E135A3100A27696 /* Implementation.swift */; };
-		CB6682932E135B4500A27696 /* InstanceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682922E135B3C00A27696 /* InstanceType.swift */; };
 		CB6682952E135C5B00A27696 /* ImplementationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682942E135C5900A27696 /* ImplementationType.swift */; };
 		CB6682982E13FD5500A27696 /* ServiceCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682972E13FD5000A27696 /* ServiceCardView.swift */; };
 		CB66829A2E1402D600A27696 /* ServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682992E1402D000A27696 /* ServiceType.swift */; };
-		CB66829C2E140CDE00A27696 /* InstanceStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB66829B2E140CD900A27696 /* InstanceStatus.swift */; };
 		CB66829E2E154FDA00A27696 /* AddNATPassthroughServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB66829D2E154FD200A27696 /* AddNATPassthroughServiceView.swift */; };
 		CB6682A02E172D3200A27696 /* LabeledTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB66829F2E172D2700A27696 /* LabeledTextField.swift */; };
 		CB6682A32E172F3C00A27696 /* LoadingStateModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682A22E172F3800A27696 /* LoadingStateModifier.swift */; };
@@ -119,6 +115,14 @@
 		CBD433632E10FA4D002B153F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CBD433622E10FA4D002B153F /* Assets.xcassets */; };
 		CBE71A522EB4DE53002D4EF8 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = CBE71A512EB4DE53002D4EF8 /* RevenueCat */; };
 		CBE71A542EB4DE53002D4EF8 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = CBE71A532EB4DE53002D4EF8 /* RevenueCatUI */; };
+		CBED2F8B2EE3D1A300384732 /* Instance+Scheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBED2F8A2EE3D19D00384732 /* Instance+Scheme.swift */; };
+		CBED2F8C2EE3D1A300384732 /* Instance+Scheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBED2F8A2EE3D19D00384732 /* Instance+Scheme.swift */; };
+		CBED2F8E2EE3D1C600384732 /* Instance+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBED2F8D2EE3D1C000384732 /* Instance+Status.swift */; };
+		CBED2F8F2EE3D1C600384732 /* Instance+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBED2F8D2EE3D1C000384732 /* Instance+Status.swift */; };
+		CBED2F912EE3D1EB00384732 /* Instance+Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBED2F902EE3D1E300384732 /* Instance+Metadata.swift */; };
+		CBED2F922EE3D1EB00384732 /* Instance+Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBED2F902EE3D1E300384732 /* Instance+Metadata.swift */; };
+		CBED2F942EE3D20500384732 /* Instance+Transport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBED2F932EE3D20000384732 /* Instance+Transport.swift */; };
+		CBED2F952EE3D20500384732 /* Instance+Transport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBED2F932EE3D20000384732 /* Instance+Transport.swift */; };
 		CBFD0E4E2EAA475800223AD1 /* ServerCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFD0E4D2EAA475200223AD1 /* ServerCardView.swift */; };
 /* End PBXBuildFile section */
 
@@ -185,11 +189,9 @@
 		CB66828C2E12E1F100A27696 /* ServiceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceListView.swift; sourceTree = "<group>"; };
 		CB66828E2E12E22900A27696 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		CB6682902E135A3100A27696 /* Implementation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Implementation.swift; sourceTree = "<group>"; };
-		CB6682922E135B3C00A27696 /* InstanceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceType.swift; sourceTree = "<group>"; };
 		CB6682942E135C5900A27696 /* ImplementationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImplementationType.swift; sourceTree = "<group>"; };
 		CB6682972E13FD5000A27696 /* ServiceCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceCardView.swift; sourceTree = "<group>"; };
 		CB6682992E1402D000A27696 /* ServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceType.swift; sourceTree = "<group>"; };
-		CB66829B2E140CD900A27696 /* InstanceStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceStatus.swift; sourceTree = "<group>"; };
 		CB66829D2E154FD200A27696 /* AddNATPassthroughServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNATPassthroughServiceView.swift; sourceTree = "<group>"; };
 		CB66829F2E172D2700A27696 /* LabeledTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledTextField.swift; sourceTree = "<group>"; };
 		CB6682A22E172F3800A27696 /* LoadingStateModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingStateModifier.swift; sourceTree = "<group>"; };
@@ -227,6 +229,10 @@
 		CBD433702E111275002B153F /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		CBD433712E111527002B153F /* NPCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPCore.swift; sourceTree = "<group>"; };
 		CBD433722E11157B002B153F /* NPState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPState.swift; sourceTree = "<group>"; };
+		CBED2F8A2EE3D19D00384732 /* Instance+Scheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Instance+Scheme.swift"; sourceTree = "<group>"; };
+		CBED2F8D2EE3D1C000384732 /* Instance+Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Instance+Status.swift"; sourceTree = "<group>"; };
+		CBED2F902EE3D1E300384732 /* Instance+Metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Instance+Metadata.swift"; sourceTree = "<group>"; };
+		CBED2F932EE3D20000384732 /* Instance+Transport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Instance+Transport.swift"; sourceTree = "<group>"; };
 		CBFD0E4D2EAA475200223AD1 /* ServerCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerCardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -350,8 +356,6 @@
 				CB6682A72E172FFE00A27696 /* LoadingState.swift */,
 				CB6682992E1402D000A27696 /* ServiceType.swift */,
 				CB6682942E135C5900A27696 /* ImplementationType.swift */,
-				CB6682922E135B3C00A27696 /* InstanceType.swift */,
-				CB66829B2E140CD900A27696 /* InstanceStatus.swift */,
 				CB6682CF2E1DD9BD00A27696 /* UpdateInstanceStatusAction.swift */,
 				CBAC5A1D2EA485820062FBC6 /* LogLevel.swift */,
 			);
@@ -513,6 +517,10 @@
 				CBD433702E111275002B153F /* Server.swift */,
 				CB62C0822E2BDB5000919507 /* ServerMetadata.swift */,
 				CBD4336D2E11119E002B153F /* Instance.swift */,
+				CBED2F8A2EE3D19D00384732 /* Instance+Scheme.swift */,
+				CBED2F8D2EE3D1C000384732 /* Instance+Status.swift */,
+				CBED2F902EE3D1E300384732 /* Instance+Metadata.swift */,
+				CBED2F932EE3D20000384732 /* Instance+Transport.swift */,
 				CBC6F5FB2ED7FDCA0024F670 /* ExternalTarget.swift */,
 			);
 			path = Models;
@@ -641,6 +649,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB5E13792E80E7B400870962 /* ServiceType.swift in Sources */,
+				CBED2F912EE3D1EB00384732 /* Instance+Metadata.swift in Sources */,
+				CBED2F8B2EE3D1A300384732 /* Instance+Scheme.swift in Sources */,
 				CB5E13672E80DF5300870962 /* ServerMetadata.swift in Sources */,
 				CB5E13692E80E17D00870962 /* ServerDetailWidget.swift in Sources */,
 				CB5E137D2E80E7C300870962 /* UpdateInstanceStatusAction.swift in Sources */,
@@ -658,12 +668,13 @@
 				CB5E13802E80F20100870962 /* SingleMatrixGaugeStyle.swift in Sources */,
 				CB5E137A2E80E7B800870962 /* ImplementationType.swift in Sources */,
 				CB5E13912E81243500870962 /* EqualWidthModifier.swift in Sources */,
-				CB5E137C2E80E7BF00870962 /* InstanceStatus.swift in Sources */,
 				CBAC5A1F2EA485860062FBC6 /* LogLevel.swift in Sources */,
 				CB5E13782E80E7B000870962 /* LoadingState.swift in Sources */,
 				CB5E13772E80E7AB00870962 /* Implementation.swift in Sources */,
 				CB5E13762E80E7A600870962 /* Instance.swift in Sources */,
+				CBED2F952EE3D20500384732 /* Instance+Transport.swift in Sources */,
 				CB5E13752E80E79900870962 /* Service.swift in Sources */,
+				CBED2F8F2EE3D1C600384732 /* Instance+Status.swift in Sources */,
 				CBC6F6032ED816720024F670 /* EqualHeightModifier.swift in Sources */,
 				CB5E136E2E80E4C900870962 /* APIResponse.swift in Sources */,
 				CB5E138C2E81240A00870962 /* InstanceCardView.swift in Sources */,
@@ -677,7 +688,6 @@
 				CB5E136A2E80E4B600870962 /* ServerService.swift in Sources */,
 				CB5E136B2E80E4BF00870962 /* APIEndpoint.swift in Sources */,
 				CB5E136F2E80E4CC00870962 /* ErrorResponse.swift in Sources */,
-				CB5E137B2E80E7BC00870962 /* InstanceType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -698,7 +708,6 @@
 				CB6682782E1181CA00A27696 /* Server.swift in Sources */,
 				CB6682AE2E17345D00A27696 /* AddDirectForwardServiceView.swift in Sources */,
 				CB5E13642E80DD7A00870962 /* NPData.swift in Sources */,
-				CB6682932E135B4500A27696 /* InstanceType.swift in Sources */,
 				CBD433612E10FA4C002B153F /* ContentView.swift in Sources */,
 				CB6682912E135A4400A27696 /* Implementation.swift in Sources */,
 				CBC6F6042ED816720024F670 /* EqualHeightModifier.swift in Sources */,
@@ -718,9 +727,11 @@
 				CB9142EC2E9F5D6900A030D1 /* SyncErrorReportView.swift in Sources */,
 				CBC6F5FC2ED7FDD20024F670 /* ExternalTarget.swift in Sources */,
 				CB66828F2E12E22B00A27696 /* Service.swift in Sources */,
+				CBED2F8C2EE3D1A300384732 /* Instance+Scheme.swift in Sources */,
 				CB66827B2E1181D600A27696 /* HTTPMethod.swift in Sources */,
 				CB1E98032E226C2D00A175FD /* TunnelForwardDetailView.swift in Sources */,
 				CB66829E2E154FDA00A27696 /* AddNATPassthroughServiceView.swift in Sources */,
+				CBED2F8E2EE3D1C600384732 /* Instance+Status.swift in Sources */,
 				CBFD0E4E2EAA475800223AD1 /* ServerCardView.swift in Sources */,
 				CBD4335F2E10FA4C002B153F /* NodePassApp.swift in Sources */,
 				CB66827C2E1181DA00A27696 /* NetworkError.swift in Sources */,
@@ -736,11 +747,12 @@
 				CB6682B92E17466000A27696 /* DirectForwardCardView.swift in Sources */,
 				CB62C0832E2BDB5500919507 /* ServerMetadata.swift in Sources */,
 				CB6682832E1183EB00A27696 /* ErrorResponse.swift in Sources */,
+				CBED2F942EE3D20500384732 /* Instance+Transport.swift in Sources */,
 				CB6682D72E1E990D00A27696 /* QRCodeScannerView.swift in Sources */,
 				CBAC5A1E2EA485860062FBC6 /* LogLevel.swift in Sources */,
 				CBAC5A212EA48E140062FBC6 /* SettingsView.swift in Sources */,
 				CB6682952E135C5B00A27696 /* ImplementationType.swift in Sources */,
-				CB66829C2E140CDE00A27696 /* InstanceStatus.swift in Sources */,
+				CBED2F922EE3D1EB00384732 /* Instance+Metadata.swift in Sources */,
 				CB6682982E13FD5500A27696 /* ServiceCardView.swift in Sources */,
 				CB6682BF2E17F54500A27696 /* EqualWidthModifier.swift in Sources */,
 				CB66829A2E1402D600A27696 /* ServiceType.swift in Sources */,
@@ -766,7 +778,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 51;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -808,7 +820,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 51;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -971,7 +983,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 51;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1026,7 +1038,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 51;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
