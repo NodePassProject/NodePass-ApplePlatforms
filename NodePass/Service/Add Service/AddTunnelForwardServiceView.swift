@@ -16,6 +16,7 @@ struct AddTunnelForwardServiceView: View {
     @State private var isAdvancedModeEnabled: Bool = NPCore.isAdvancedModeEnabled
     
     @State private var name: String = ""
+    @State private var isTunnelThroughCDN: Bool = false
     @State private var relayServer: Server?
     @State private var listenPort: String = ""
     @State private var destinationServer: Server?
@@ -27,6 +28,7 @@ struct AddTunnelForwardServiceView: View {
     @State private var tunnelPort: String = ""
     @State private var transport: Instance.Transport = .tcp
     @State private var isTLS: Bool = false
+    @State private var domain: String = ""
     @State private var npServerLogLevel: LogLevel = .info
     @State private var npClientLogLevel: LogLevel = .info
     @State private var maximumPoolConnection: String = ""
@@ -48,6 +50,24 @@ struct AddTunnelForwardServiceView: View {
             Form {
                 Section {
                     TextField("Name", text: $name)
+                }
+                
+                Section {
+                    Toggle(isOn: $isTunnelThroughCDN) {
+                        HStack {
+                            Image("CDN")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 30)
+                            Text("Tunnel Through CDN")
+                        }
+                    }
+                    .onChange(of: isTunnelThroughCDN) {
+                        if isTunnelThroughCDN {
+                            transport = .websocket
+                            isTLS = false
+                        }
+                    }
                 }
                 
                 Section {
@@ -180,7 +200,9 @@ struct AddTunnelForwardServiceView: View {
                     else {
                         LabeledTextField("Service Port", prompt: "1080", text: $servicePort, isNumberOnly: true)
                     }
-                    LabeledTextField("Tunnel Port", prompt: "10101", text: $tunnelPort, isNumberOnly: true)
+                    if !isTunnelThroughCDN {
+                        LabeledTextField("Tunnel Port", prompt: "10101", text: $tunnelPort, isNumberOnly: true)
+                    }
                     if isAdvancedModeEnabled {
                         Picker("Log Level", selection: $npServerLogLevel) {
                             ForEach(LogLevel.allCases, id: \.self) {
@@ -212,24 +234,37 @@ struct AddTunnelForwardServiceView: View {
                         else {
                             Text("Service Port: Port on which your service like Socks5(1080) is running.")
                         }
-                        Text("Tunnel Port: Any available port.")
+                        if !isTunnelThroughCDN {
+                            Text("Tunnel Port: Any available port.")
+                        }
                     }
                 }
                 
-                Section {
+                Section("Transport") {
                     Picker("Protocol", selection: $transport) {
                         ForEach(Instance.Transport.allCases, id: \.self) {
                             Text($0.localizedName)
                                 .tag($0)
                         }
                     }
+                    .disabled(isTunnelThroughCDN)
                     .onChange(of: transport) { oldValue, newValue in
                         if transport == .quic {
                             isTLS = true
                         }
                     }
                     Toggle("TLS", isOn: $isTLS)
-                        .disabled(transport == .quic)
+                        .disabled(transport == .quic || isTunnelThroughCDN)
+                    if isTunnelThroughCDN {
+                        Section {
+                            LabeledTextField("Domain", prompt: "example.com", text: $domain)
+                                .autocorrectionDisabled()
+#if os(iOS)
+                                .textInputAutocapitalization(.never)
+                                .keyboardType(.URL)
+#endif
+                        }
+                    }
                     if isAdvancedModeEnabled {
                         Toggle("Disable TCP", isOn: $isTCPDisabled)
                         Toggle("Disable UDP", isOn: $isUDPDisabled)
@@ -332,11 +367,13 @@ struct AddTunnelForwardServiceView: View {
         let listenPort = Int(listenPort) ?? 10022
         let externalTargetAddress = externalTargetAddress == "" ? "17.253.144.10" : externalTargetAddress
         let servicePort = Int(servicePort) ?? 1080
-        let tunnelPort = Int(tunnelPort) ?? 10101
+        let tunnelAddress = isTunnelThroughCDN ? domain : destinationServer?.getHost() ?? ""
+        let serverTunnelPort = isTunnelThroughCDN ? 80 : Int(tunnelPort) ?? 10101
+        let clientTunnelPort = isTunnelThroughCDN ? 443 : Int(tunnelPort) ?? 10101
         
         var relayServerCommand: String
         // URL Base
-        relayServerCommand = "client://\(destinationServer?.getHost() ?? ""):\(tunnelPort)/:\(listenPort)"
+        relayServerCommand = "client://\(tunnelAddress):\(clientTunnelPort)/:\(listenPort)"
         // Core Confugurations
         relayServerCommand += "?mode=2"
         
@@ -345,14 +382,14 @@ struct AddTunnelForwardServiceView: View {
         if isExternalTarget {
             if isLoadBalancing {
                 let externalTargetAddressesAndPorts = externalTargets.map { "\($0.address):\($0.port)" }.joined(separator: ",")
-                destinationServerCommand = "server://:\(tunnelPort)/\(externalTargetAddressesAndPorts)"
+                destinationServerCommand = "server://:\(serverTunnelPort)/\(externalTargetAddressesAndPorts)"
             }
             else {
-                destinationServerCommand = "server://:\(tunnelPort)/\(externalTargetAddress):\(servicePort)"
+                destinationServerCommand = "server://:\(serverTunnelPort)/\(externalTargetAddress):\(servicePort)"
             }
         }
         else {
-            destinationServerCommand = "server://:\(tunnelPort)/127.0.0.1:\(servicePort)"
+            destinationServerCommand = "server://:\(serverTunnelPort)/127.0.0.1:\(servicePort)"
         }
         // Core Confugurations
         destinationServerCommand += "?mode=2"

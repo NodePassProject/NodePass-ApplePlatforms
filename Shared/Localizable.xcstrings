@@ -615,6 +615,16 @@
         }
       }
     },
+    "Domain" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "域名"
+          }
+        }
+      }
+    },
     "Done" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1872,6 +1882,16 @@
         }
       }
     },
+    "Transport" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "传输"
+          }
+        }
+      }
+    },
     "Trusted Certificates" : {
       "comment" : "TLS Level: Trusted Certificates",
       "localizations" : {
@@ -1909,6 +1929,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "隧道端口：任意可用端口。"
+          }
+        }
+      }
+    },
+    "Tunnel Through CDN" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隧道过CDN"
           }
         }
       }
