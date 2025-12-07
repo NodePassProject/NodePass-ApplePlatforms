@@ -20,7 +20,8 @@ final class NPData: Sendable {
             cloudKitDatabase: ModelConfiguration.CloudKitDatabase.automatic)
         
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            return modelContainer
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }

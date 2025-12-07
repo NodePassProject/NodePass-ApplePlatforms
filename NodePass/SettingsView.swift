@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RevenueCat
 import RevenueCatUI
 
 struct SettingsView: View {
@@ -14,6 +15,8 @@ struct SettingsView: View {
     @State private var isAdvancedModeEnabled: Bool = NPCore.isAdvancedModeEnabled
     @State private var serverMetadataUpdatingRate: Double = NPCore.serverMetadataUpdatingRate
     
+    @State private var isUserSupporter: Bool = false
+    
 #if os(macOS)
     @State private var isShowPaywallView: Bool = false
 #endif
@@ -21,6 +24,16 @@ struct SettingsView: View {
     var body: some View {
 #if os(iOS)
         Form {
+            if isUserSupporter {
+                Section {
+                    HStack {
+                        Image(systemName: "star.fill")
+                            .foregroundStyle(.accent)
+                        Text("NodePass Supporter")
+                    }
+                }
+            }
+            
             Section {
                 advancedModeButton
             }
@@ -42,6 +55,13 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
+        .onAppear {
+            Purchases.shared.getCustomerInfo { (customerInfo, _) in
+                if customerInfo?.nonSubscriptions.count != 0 {
+                    isUserSupporter = true
+                }
+            }
+        }
 #endif
         
 #if os(macOS)

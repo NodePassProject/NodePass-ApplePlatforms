@@ -1141,6 +1141,16 @@
         }
       }
     },
+    "NodePass Supporter" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NodePass支持者"
+          }
+        }
+      }
+    },
     "Not on this device" : {
       "localizations" : {
         "zh-Hans" : {

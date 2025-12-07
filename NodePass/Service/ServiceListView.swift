@@ -93,7 +93,8 @@ struct ServiceListView: View {
             return sortedServices
         }
         else {
-            return sortedServices.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+            return sortedServices
+                .filter { $0.name.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
@@ -208,6 +209,9 @@ struct ServiceListView: View {
             SyncErrorReportView(syncErrorStore: $syncErrorStore)
         }
         .sensoryFeedback(.success, trigger: isSensoryFeedbackTriggered)
+        .onAppear {
+            removeDuplicates()
+        }
     }
     
     private var addServiceMenu: some View {
@@ -340,6 +344,25 @@ struct ServiceListView: View {
         .padding(.horizontal, 15)
     }
     
+    private func removeDuplicates() {
+        var seenIDs = Set<UUID>()
+        var duplicates: [Service] = []
+        
+        for sercive in services {
+            if seenIDs.contains(sercive.id) {
+                duplicates.append(sercive)
+            } else {
+                seenIDs.insert(sercive.id)
+            }
+        }
+        
+        for duplicate in duplicates {
+            context.delete(duplicate)
+        }
+        
+        try? context.save()
+    }
+    
     private func deleteService(service: Service, isForce: Bool = false) {
         func showGeneralizedErrorMessage(error: Error, instanceID: String) {
             errorMessage = String(localized: "Error Deleting Instance \(instanceID):\(error.localizedDescription)")
@@ -388,6 +411,7 @@ struct ServiceListView: View {
                 guard let client = servers.first(where: { $0.id == clientID }) else {
                     if isForce {
                         context.delete(service)
+                        try? context.save()
                     }
                     else {
                         errorMessage = String(localized: "Error Deleting Instance \(clientInstanceID): Server not found.")
@@ -402,9 +426,11 @@ struct ServiceListView: View {
                     switch(deleteClientInstanceResult) {
                     case .success:
                         context.delete(service)
+                        try? context.save()
                     case .failure(let error):
                         if isForce {
                             context.delete(service)
+                            try? context.save()
                         }
                         else {
                             showGeneralizedErrorMessage(error: error, instanceID: serverInstanceID)
@@ -413,6 +439,7 @@ struct ServiceListView: View {
                 case .failure(let error):
                     if isForce {
                         context.delete(service)
+                        try? context.save()
                     }
                     else {
                         showGeneralizedErrorMessage(error: error, instanceID: serverInstanceID)
@@ -424,6 +451,7 @@ struct ServiceListView: View {
                 guard let client = servers.first(where: { $0.id == clientID }) else {
                     if isForce {
                         context.delete(service)
+                        try? context.save()
                     }
                     else {
                         errorMessage = String(localized: "Error Deleting Instance \(clientInstanceID): Server not found.")
@@ -435,9 +463,11 @@ struct ServiceListView: View {
                 switch(deleteClientInstanceResult) {
                 case .success:
                     context.delete(service)
+                    try? context.save()
                 case .failure(let error):
                     if isForce {
                         context.delete(service)
+                        try? context.save()
                     }
                     else {
                         showGeneralizedErrorMessage(error: error, instanceID: clientInstanceID)
