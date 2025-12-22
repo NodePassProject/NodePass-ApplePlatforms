@@ -249,12 +249,12 @@ struct AddTunnelForwardServiceView: View {
                     }
                     .disabled(isTunnelThroughCDN)
                     .onChange(of: transport) { oldValue, newValue in
-                        if transport == .quic {
+                        if transport.isRequireTLS {
                             isTLS = true
                         }
                     }
                     Toggle("TLS", isOn: $isTLS)
-                        .disabled(transport == .quic || isTunnelThroughCDN)
+                        .disabled(transport.isRequireTLS || isTunnelThroughCDN)
                     if isTunnelThroughCDN {
                         Section {
                             LabeledTextField("Domain", prompt: "example.com", text: $domain)

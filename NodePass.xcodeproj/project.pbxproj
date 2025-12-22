@@ -123,6 +123,7 @@
 		CBED2F922EE3D1EB00384732 /* Instance+Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBED2F902EE3D1E300384732 /* Instance+Metadata.swift */; };
 		CBED2F942EE3D20500384732 /* Instance+Transport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBED2F932EE3D20000384732 /* Instance+Transport.swift */; };
 		CBED2F952EE3D20500384732 /* Instance+Transport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBED2F932EE3D20000384732 /* Instance+Transport.swift */; };
+		CBED30322EF9029100384732 /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = CBED30312EF9029100384732 /* TelemetryDeck */; };
 		CBFD0E4E2EAA475800223AD1 /* ServerCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFD0E4D2EAA475200223AD1 /* ServerCardView.swift */; };
 /* End PBXBuildFile section */
 
@@ -255,6 +256,7 @@
 				CB6682D52E1E90EA00A27696 /* CodeScanner in Frameworks */,
 				CBE71A542EB4DE53002D4EF8 /* RevenueCatUI in Frameworks */,
 				CB5E13972E825F1500870962 /* ColorfulX in Frameworks */,
+				CBED30322EF9029100384732 /* TelemetryDeck in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -569,6 +571,7 @@
 				CBAE7F612E88D12700864A74 /* Drops */,
 				CBE71A512EB4DE53002D4EF8 /* RevenueCat */,
 				CBE71A532EB4DE53002D4EF8 /* RevenueCatUI */,
+				CBED30312EF9029100384732 /* TelemetryDeck */,
 			);
 			productName = NodePass;
 			productReference = CBD4335B2E10FA4C002B153F /* NodePass.app */;
@@ -607,6 +610,7 @@
 				CB5E13952E825F1500870962 /* XCRemoteSwiftPackageReference "ColorfulX" */,
 				CBAE7F602E88D12700864A74 /* XCRemoteSwiftPackageReference "Drops" */,
 				CBE71A502EB4DE53002D4EF8 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+				CBED30302EF9029100384732 /* XCRemoteSwiftPackageReference "SwiftSDK" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CBD4335C2E10FA4C002B153F /* Products */;
@@ -778,7 +782,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 54;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -794,7 +798,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.5;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -820,7 +824,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 54;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -836,7 +840,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.5;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -983,7 +987,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 54;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1010,7 +1014,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.5;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1038,7 +1042,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 54;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1065,7 +1069,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.5;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1149,6 +1153,14 @@
 				minimumVersion = 5.45.1;
 			};
 		};
+		CBED30302EF9029100384732 /* XCRemoteSwiftPackageReference "SwiftSDK" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TelemetryDeck/SwiftSDK";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.11.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1176,6 +1188,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CBE71A502EB4DE53002D4EF8 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
 			productName = RevenueCatUI;
+		};
+		CBED30312EF9029100384732 /* TelemetryDeck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CBED30302EF9029100384732 /* XCRemoteSwiftPackageReference "SwiftSDK" */;
+			productName = TelemetryDeck;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

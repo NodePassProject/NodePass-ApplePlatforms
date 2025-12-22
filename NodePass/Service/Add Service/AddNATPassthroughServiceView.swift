@@ -222,7 +222,7 @@ struct AddNATPassthroughServiceView: View {
                     }
                 }
                 
-                Section {
+                Section("Transport") {
                     Picker("Protocol", selection: $transport) {
                         ForEach(Instance.Transport.allCases, id: \.self) {
                             Text($0.localizedName)
@@ -230,12 +230,12 @@ struct AddNATPassthroughServiceView: View {
                         }
                     }
                     .onChange(of: transport) { oldValue, newValue in
-                        if transport == .quic {
+                        if transport.isRequireTLS {
                             isTLS = true
                         }
                     }
                     Toggle("TLS", isOn: $isTLS)
-                        .disabled(transport == .quic)
+                        .disabled(transport.isRequireTLS)
                     if isAdvancedModeEnabled {
                         Toggle("Disable TCP", isOn: $isTCPDisabled)
                         Toggle("Disable UDP", isOn: $isUDPDisabled)

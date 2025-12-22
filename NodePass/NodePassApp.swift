@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import TelemetryDeck
 import RevenueCat
 
 @main
@@ -15,10 +16,14 @@ struct NodePassApp: App {
     
     init() {
         NPCore.registerUserDefaults()
+        
+        TelemetryDeck.initialize(config: TelemetryDeck.Config(appID: "041ED631-4E1A-4B17-B701-F378A17BD3D7"))
+        
         guard let revenueCatAPIKey = Bundle.main.object(forInfoDictionaryKey: "RevenueCatAPIKey") as? String else {
             fatalError("RevenueCatAPIKey not found in Info.plist")
         }
         Purchases.configure(withAPIKey: revenueCatAPIKey)
+        
         state.startContinuousUpdatingServerMetadatas()
     }
     

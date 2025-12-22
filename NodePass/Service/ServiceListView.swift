@@ -545,7 +545,7 @@ struct ServiceListView: View {
                         }
                         for serverId in store.keys {
                             for instance in store[serverId]! {
-                                if instance.metadata?.peer.serviceId == serviceId {
+                                if instance.metadata?.peer.serviceId == serviceId && instance.id != instance0.id {
                                     if !services.map({ $0.id.uuidString }).contains(serviceId) {
                                         let serverId1 = serverId
                                         let instance1 = instance
