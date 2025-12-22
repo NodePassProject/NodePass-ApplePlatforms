@@ -105,12 +105,6 @@ struct ServerListView: View {
         ZStack {
             BackgroundColorfulView.shared
             
-#if os(macOS)
-            ScrollView {
-                serverList
-                    .padding(.vertical)
-            }
-#else
             if servers.isEmpty {
                 ContentUnavailableView("No Server", systemImage: "square.stack.3d.up.fill", description: Text("To add a server, tap the add server icon in the toolbar.").font(.caption))
             }
@@ -119,8 +113,6 @@ struct ServerListView: View {
                     serverList
                 }
             }
-#endif
-            
         }
         .navigationTitle("Servers")
         .navigationDestination(for: Server.self) { server in

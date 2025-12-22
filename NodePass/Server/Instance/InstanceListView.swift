@@ -101,7 +101,6 @@ struct InstanceListView: View {
     private func instanceCard(instance: Instance) -> some View {
         InstanceCardView(instance: instance)
             .contextMenu {
-#if os(iOS)
                 ControlGroup {
                     Button {
                         updateInstanceStatus(instance: instance, action: .start)
@@ -119,26 +118,6 @@ struct InstanceListView: View {
                         Label("Restart", systemImage: "restart")
                     }
                 }
-#endif
-#if os(macOS)
-                ControlGroup("Actions") {
-                    Button {
-                        updateInstanceStatus(instance: instance, action: .start)
-                    } label: {
-                        Label("Start", systemImage: "play")
-                    }
-                    Button {
-                        updateInstanceStatus(instance: instance, action: .stop)
-                    } label: {
-                        Label("Stop", systemImage: "stop")
-                    }
-                    Button {
-                        updateInstanceStatus(instance: instance, action: .restart)
-                    } label: {
-                        Label("Restart", systemImage: "restart")
-                    }
-                }
-#endif
                 Divider()
                 Button {
                     NPUI.copyToClipboard(instance.url)

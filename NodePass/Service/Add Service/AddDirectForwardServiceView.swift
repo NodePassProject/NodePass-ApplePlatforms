@@ -161,29 +161,27 @@ struct AddDirectForwardServiceView: View {
                     }
                 }
                 
-                if #available(iOS 18.0, *) {
-                    Section("Preview") {
-                        let command = generateCommand()
-                        
-                        let name = NPCore.noEmptyName(name)
-                        let previewService = Service(
-                            name: name,
-                            type: .directForward,
-                            implementations: [
-                                Implementation(
-                                    name: String(localized: "\(name) Relay"),
-                                    type: .directForwardClient,
-                                    position: 0,
-                                    serverID: client?.id ?? "",
-                                    instanceID: "",
-                                    command: command,
-                                    fullCommand: command
-                                )
-                            ]
-                        )
-                        
-                        DirectForwardCardView(service: previewService, isPreview: true)
-                    }
+                Section("Preview") {
+                    let command = generateCommand()
+                    
+                    let name = NPCore.noEmptyName(name)
+                    let previewService = Service(
+                        name: name,
+                        type: .directForward,
+                        implementations: [
+                            Implementation(
+                                name: String(localized: "\(name) Relay"),
+                                type: .directForwardClient,
+                                position: 0,
+                                serverID: client?.id ?? "",
+                                instanceID: "",
+                                command: command,
+                                fullCommand: command
+                            )
+                        ]
+                    )
+                    
+                    DirectForwardCardView(service: previewService, isPreview: true)
                 }
             }
             .formStyle(.grouped)

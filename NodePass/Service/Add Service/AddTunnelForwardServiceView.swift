@@ -271,40 +271,38 @@ struct AddTunnelForwardServiceView: View {
                     }
                 }
                 
-                if #available(iOS 18.0, *) {
-                    Section("Preview") {
-                        let commands = generateCommands()
-                        let relayServerCommand = commands.relayServerCommand
-                        let destinationServerCommand = commands.destinationServerCommand
-                        
-                        let name = NPCore.noEmptyName(name)
-                        let previewService = Service(
-                            name: name,
-                            type: .tunnelForward,
-                            implementations: [
-                                Implementation(
-                                    name: String(localized: "\(name) Relay"),
-                                    type: .tunnelForwardRelay,
-                                    position: 0,
-                                    serverID: relayServer?.id ?? "",
-                                    instanceID: "",
-                                    command: relayServerCommand,
-                                    fullCommand: relayServerCommand
-                                ),
-                                Implementation(
-                                    name: String(localized: "\(name) Destination"),
-                                    type: .tunnelForwardDestination,
-                                    position: 1,
-                                    serverID: destinationServer?.id ?? "",
-                                    instanceID: "",
-                                    command: destinationServerCommand,
-                                    fullCommand: destinationServerCommand
-                                )
-                            ]
-                        )
-                        
-                        TunnelForwardCardView(service: previewService, isPreview: true)
-                    }
+                Section("Preview") {
+                    let commands = generateCommands()
+                    let relayServerCommand = commands.relayServerCommand
+                    let destinationServerCommand = commands.destinationServerCommand
+                    
+                    let name = NPCore.noEmptyName(name)
+                    let previewService = Service(
+                        name: name,
+                        type: .tunnelForward,
+                        implementations: [
+                            Implementation(
+                                name: String(localized: "\(name) Relay"),
+                                type: .tunnelForwardRelay,
+                                position: 0,
+                                serverID: relayServer?.id ?? "",
+                                instanceID: "",
+                                command: relayServerCommand,
+                                fullCommand: relayServerCommand
+                            ),
+                            Implementation(
+                                name: String(localized: "\(name) Destination"),
+                                type: .tunnelForwardDestination,
+                                position: 1,
+                                serverID: destinationServer?.id ?? "",
+                                instanceID: "",
+                                command: destinationServerCommand,
+                                fullCommand: destinationServerCommand
+                            )
+                        ]
+                    )
+                    
+                    TunnelForwardCardView(service: previewService, isPreview: true)
                 }
             }
             .formStyle(.grouped)

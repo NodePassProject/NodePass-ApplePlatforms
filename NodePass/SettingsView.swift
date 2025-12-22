@@ -17,12 +17,7 @@ struct SettingsView: View {
     
     @State private var isUserSupporter: Bool = false
     
-#if os(macOS)
-    @State private var isShowPaywallView: Bool = false
-#endif
-    
     var body: some View {
-#if os(iOS)
         Form {
             if isUserSupporter {
                 Section {
@@ -62,35 +57,6 @@ struct SettingsView: View {
                 }
             }
         }
-#endif
-        
-#if os(macOS)
-        NavigationStack {
-            Form {
-                advancedModeButton
-                if isAdvancedModeEnabled {
-                    serverMetadataUpdatingRateSlider
-                }
-                
-                Button("Support Us") {
-                    isShowPaywallView = true
-                }
-            }
-            .sheet(isPresented: $isShowPaywallView) {
-                PaywallView()
-                    .frame(minHeight: 600)
-                    .overlay(alignment: .topTrailing) {
-                        Button {
-                            isShowPaywallView = false
-                        } label: {
-                            Image(systemName: "xmark")
-                                .foregroundStyle(.white)
-                                .padding()
-                        }
-                    }
-            }
-        }
-#endif
     }
     
     private var advancedModeButton: some View {

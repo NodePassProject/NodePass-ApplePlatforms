@@ -125,9 +125,6 @@ struct ServiceListView: View {
         ZStack {
             BackgroundColorfulView.shared
             
-#if os(macOS)
-            scrollView
-#else
             if services.isEmpty {
                 if isShowSyncProgressView {
                     progressView
@@ -139,7 +136,6 @@ struct ServiceListView: View {
             else {
                 scrollView
             }
-#endif
         }
         .navigationTitle("Services")
         .navigationDestination(for: Service.self) { service in

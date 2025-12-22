@@ -33,64 +33,31 @@ struct ContentView: View {
     @Environment(NPState.self) var state
     
     var body: some View {
-        if #available(iOS 18.0, macOS 15.0, *) {
-            TabView(selection: Bindable(state).tab) {
-                Tab(value: MainTab.services) {
-                    NavigationStack(path: Bindable(state).pathServices) {
-                        ServiceListView()
-                    }
-                } label: {
-                    Label(MainTab.services.title, systemImage: MainTab.services.systemName)
-                }
-                
-                Tab(value: MainTab.servers) {
-                    NavigationStack(path: Bindable(state).pathServers) {
-                        ServerListView()
-                    }
-                } label: {
-                    Label(MainTab.servers.title, systemImage: MainTab.servers.systemName)
-                }
-                
-#if !os(macOS)
-                Tab(value: MainTab.settings) {
-                    NavigationStack {
-                        SettingsView()
-                    }
-                } label: {
-                    Label(MainTab.settings.title, systemImage: MainTab.settings.systemName)
-                }
-#endif
-            }
-            .tabViewStyle(.sidebarAdaptable)
-        }
-        else {
-            TabView(selection: Bindable(state).tab) {
+        TabView(selection: Bindable(state).tab) {
+            Tab(value: MainTab.services) {
                 NavigationStack(path: Bindable(state).pathServices) {
                     ServiceListView()
                 }
-                .tag(MainTab.services)
-                .tabItem {
-                    Label(MainTab.services.title, systemImage: MainTab.services.systemName)
-                }
-                
+            } label: {
+                Label(MainTab.services.title, systemImage: MainTab.services.systemName)
+            }
+            
+            Tab(value: MainTab.servers) {
                 NavigationStack(path: Bindable(state).pathServers) {
                     ServerListView()
                 }
-                .tag(MainTab.servers)
-                .tabItem {
-                    Label(MainTab.servers.title, systemImage: MainTab.servers.systemName)
-                }
-                
-#if !os(macOS)
+            } label: {
+                Label(MainTab.servers.title, systemImage: MainTab.servers.systemName)
+            }
+            
+            Tab(value: MainTab.settings) {
                 NavigationStack {
                     SettingsView()
                 }
-                .tag(MainTab.settings)
-                .tabItem {
-                    Label(MainTab.settings.title, systemImage: MainTab.settings.systemName)
-                }
-#endif
+            } label: {
+                Label(MainTab.settings.title, systemImage: MainTab.settings.systemName)
             }
         }
+        .tabViewStyle(.sidebarAdaptable)
     }
 }
