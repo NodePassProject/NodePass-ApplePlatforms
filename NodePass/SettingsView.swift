@@ -14,6 +14,7 @@ struct SettingsView: View {
     
     @State private var isAdvancedModeEnabled: Bool = NPCore.isAdvancedModeEnabled
     @State private var serverMetadataUpdatingRate: Double = NPCore.serverMetadataUpdatingRate
+    @State private var selectedTheme: NPCore.AppTheme = NPCore.appTheme
     
     @State private var isUserSupporter: Bool = false
     
@@ -26,6 +27,17 @@ struct SettingsView: View {
                             .foregroundStyle(.accent)
                         Text("NodePass Supporter")
                     }
+                }
+            }
+            
+            Section {
+                Picker(String(localized: "Theme"), selection: $selectedTheme) {
+                    ForEach(NPCore.AppTheme.allCases, id: \.self) { theme in
+                        Text(theme.displayName).tag(theme)
+                    }
+                }
+                .onChange(of: selectedTheme) {
+                    NPCore.appTheme = selectedTheme
                 }
             }
             

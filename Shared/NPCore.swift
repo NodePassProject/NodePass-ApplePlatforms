@@ -16,6 +16,7 @@ class NPCore {
         static let NPServerSortOrder = "NPServerSortOrder"
         static let NPAdvancedMode = "NPAdvancedMode"
         static let NPServerMetadataUpdatingRate = "NPServerMetadataUpdatingRate"
+        static let NPAppTheme = "NPAppTheme"
     }
     
     class Defaults {
@@ -32,7 +33,8 @@ class NPCore {
             Strings.NPServerSortIndicator: "date",
             Strings.NPServerSortOrder: "ascending",
             Strings.NPAdvancedMode: false,
-            Strings.NPServerMetadataUpdatingRate: Defaults.serverMetadataUpdatingRate
+            Strings.NPServerMetadataUpdatingRate: Defaults.serverMetadataUpdatingRate,
+            Strings.NPAppTheme: AppTheme.automatic.rawValue
         ]
         userDefaults.register(defaults: defaultValues)
     }
@@ -43,6 +45,29 @@ class NPCore {
     
     static var serverMetadataUpdatingRate: Double {
         userDefaults.double(forKey: Strings.NPServerMetadataUpdatingRate)
+    }
+    
+    // MARK: - App Theme
+    enum AppTheme: String, CaseIterable {
+        case automatic, light, dark
+        
+        var displayName: String {
+            switch self {
+            case .automatic: return String(localized: "Automatic")
+            case .light: return String(localized: "Light")
+            case .dark: return String(localized: "Dark")
+            }
+        }
+    }
+    
+    static var appTheme: AppTheme {
+        get {
+            let rawValue = userDefaults.string(forKey: Strings.NPAppTheme) ?? AppTheme.automatic.rawValue
+            return AppTheme(rawValue: rawValue) ?? .automatic
+        }
+        set {
+            userDefaults.set(newValue.rawValue, forKey: Strings.NPAppTheme)
+        }
     }
     
     // MARK: Command URL Process
