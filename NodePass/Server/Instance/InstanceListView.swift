@@ -9,6 +9,7 @@ import SwiftUI
 
 struct InstanceListView: View {
     @State private var loadingState: LoadingState = .idle
+    @State private var searchText: String = ""
     
     var server: Server
     @State var instances: [Instance] = []
@@ -29,16 +30,20 @@ struct InstanceListView: View {
     var body: some View {
         Form {
             let validInstances = instances.filter({ [.running, .stopped, .error].contains($0.status) })
-            ForEach(validInstances) { instance in
+            let filteredInstances = validInstances.filter { instance in
+                searchText.isEmpty || instance.url.localizedCaseInsensitiveContains(searchText)
+            }
+            ForEach(filteredInstances) { instance in
                 instanceCard(instance: instance)
             }
-            .animation(.default, value: validInstances)
+            .animation(.default, value: filteredInstances)
         }
         .formStyle(.grouped)
 #if os(iOS)
         .listRowSpacing(5)
 #endif
         .navigationTitle(server.name)
+        .searchable(text: $searchText, placement: .toolbar)
         .toolbar {
             ToolbarItem {
                 Button {
