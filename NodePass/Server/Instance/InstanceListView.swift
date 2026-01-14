@@ -43,7 +43,7 @@ struct InstanceListView: View {
         .listRowSpacing(5)
 #endif
         .navigationTitle(server.name)
-        .searchable(text: $searchText, prompt: String(localized: "Search URL"))
+        .searchable(text: $searchText, placement: .toolbar)
         .toolbar {
             ToolbarItem {
                 Button {
