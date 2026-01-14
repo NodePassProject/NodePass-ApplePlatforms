@@ -1383,6 +1383,16 @@
         }
       }
     },
+    "Search URL" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索 URL"
+          }
+        }
+      }
+    },
     "Select" : {
       "localizations" : {
         "zh-Hans" : {
