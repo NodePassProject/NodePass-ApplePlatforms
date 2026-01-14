@@ -14,6 +14,18 @@ import RevenueCat
 struct NodePassApp: App {
     let state: NPState = .init()
     
+    @AppStorage(NPCore.Strings.NPAppTheme, store: NPCore.userDefaults)
+    private var appThemeRawValue: String = NPCore.AppTheme.automatic.rawValue
+    
+    private var preferredColorScheme: ColorScheme? {
+        let theme = NPCore.AppTheme(rawValue: appThemeRawValue) ?? .automatic
+        switch theme {
+        case .automatic: return nil
+        case .light: return .light
+        case .dark: return .dark
+        }
+    }
+    
     init() {
         NPCore.registerUserDefaults()
         
@@ -30,6 +42,7 @@ struct NodePassApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .preferredColorScheme(preferredColorScheme)
                 .environment(state)
                 .modelContainer(for: [
                     Service.self,
