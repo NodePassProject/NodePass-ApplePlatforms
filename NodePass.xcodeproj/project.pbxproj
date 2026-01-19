@@ -46,8 +46,6 @@
 		CB5E13802E80F20100870962 /* SingleMatrixGaugeStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5E133E2E7BF80C00870962 /* SingleMatrixGaugeStyle.swift */; };
 		CB5E13812E80F20400870962 /* DoubleMatrixGaugeStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5E13402E7C006D00870962 /* DoubleMatrixGaugeStyle.swift */; };
 		CB5E13822E80F21200870962 /* NPCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD433712E111527002B153F /* NPCore.swift */; };
-		CB5E13832E80F4ED00870962 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CB6682CB2E189FAC00A27696 /* Localizable.xcstrings */; };
-		CB5E13842E80F4F200870962 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CB6682D82E1E9DA300A27696 /* InfoPlist.xcstrings */; };
 		CB5E13852E811B1900870962 /* InstanceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682712E117D9200A27696 /* InstanceService.swift */; };
 		CB5E138B2E8120EE00870962 /* Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682C02E17F91A00A27696 /* Badge.swift */; };
 		CB5E138C2E81240A00870962 /* InstanceCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682C42E17FAA200A27696 /* InstanceCardView.swift */; };
@@ -94,11 +92,9 @@
 		CB6682C52E17FAA800A27696 /* InstanceCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682C42E17FAA200A27696 /* InstanceCardView.swift */; };
 		CB6682C72E17FD0400A27696 /* EmptyResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682C62E17FCF900A27696 /* EmptyResponse.swift */; };
 		CB6682CA2E1899A100A27696 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CB6682C92E1899A100A27696 /* AppIcon.icon */; };
-		CB6682CC2E189FAC00A27696 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CB6682CB2E189FAC00A27696 /* Localizable.xcstrings */; };
 		CB6682D02E1DD9C700A27696 /* UpdateInstanceStatusAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682CF2E1DD9BD00A27696 /* UpdateInstanceStatusAction.swift */; };
 		CB6682D52E1E90EA00A27696 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = CB6682D42E1E90EA00A27696 /* CodeScanner */; };
 		CB6682D72E1E990D00A27696 /* QRCodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6682D62E1E990300A27696 /* QRCodeScannerView.swift */; };
-		CB6682D92E1E9DA300A27696 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CB6682D82E1E9DA300A27696 /* InfoPlist.xcstrings */; };
 		CB9142EC2E9F5D6900A030D1 /* SyncErrorReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB9142EB2E9F5D5E00A030D1 /* SyncErrorReportView.swift */; };
 		CBAC5A1E2EA485860062FBC6 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAC5A1D2EA485820062FBC6 /* LogLevel.swift */; };
 		CBAC5A1F2EA485860062FBC6 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAC5A1D2EA485820062FBC6 /* LogLevel.swift */; };
@@ -210,12 +206,10 @@
 		CB6682C62E17FCF900A27696 /* EmptyResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyResponse.swift; sourceTree = "<group>"; };
 		CB6682C82E188F6300A27696 /* NodePass.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NodePass.entitlements; sourceTree = "<group>"; };
 		CB6682C92E1899A100A27696 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
-		CB6682CB2E189FAC00A27696 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		CB6682CD2E1D4BE300A27696 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		CB6682CE2E1D4C6300A27696 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		CB6682CF2E1DD9BD00A27696 /* UpdateInstanceStatusAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateInstanceStatusAction.swift; sourceTree = "<group>"; };
 		CB6682D62E1E990300A27696 /* QRCodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScannerView.swift; sourceTree = "<group>"; };
-		CB6682D82E1E9DA300A27696 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		CB9142EB2E9F5D5E00A030D1 /* SyncErrorReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncErrorReportView.swift; sourceTree = "<group>"; };
 		CBAC5A1D2EA485820062FBC6 /* LogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevel.swift; sourceTree = "<group>"; };
 		CBAC5A202EA48E0C0062FBC6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -497,8 +491,6 @@
 		CBD4336B2E111155002B153F /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				CB6682CB2E189FAC00A27696 /* Localizable.xcstrings */,
-				CB6682D82E1E9DA300A27696 /* InfoPlist.xcstrings */,
 				CBD433712E111527002B153F /* NPCore.swift */,
 				CBD433722E11157B002B153F /* NPState.swift */,
 				CB62C0802E2B90B800919507 /* NPUI.swift */,
@@ -601,7 +593,6 @@
 			knownRegions = (
 				en,
 				Base,
-				"zh-Hans",
 			);
 			mainGroup = CBD433522E10FA4C002B153F;
 			minimizedProjectReferenceProxies = 1;
@@ -628,8 +619,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CB5E13842E80F4F200870962 /* InfoPlist.xcstrings in Resources */,
-				CB5E13832E80F4ED00870962 /* Localizable.xcstrings in Resources */,
 				CB5E13542E7D42DC00870962 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -640,8 +629,6 @@
 			files = (
 				CB6682CA2E1899A100A27696 /* AppIcon.icon in Resources */,
 				CBD433632E10FA4D002B153F /* Assets.xcassets in Resources */,
-				CB6682D92E1E9DA300A27696 /* InfoPlist.xcstrings in Resources */,
-				CB6682CC2E189FAC00A27696 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -783,7 +770,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -825,7 +812,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -988,7 +975,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1043,7 +1030,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
