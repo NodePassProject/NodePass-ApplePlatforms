@@ -5,7 +5,7 @@
 //  Created by Junhui Lou on 6/29/25.
 //
 
-import Foundation
+@preconcurrency import Foundation
 
 final class NetworkService {
     private let session: URLSession
@@ -53,7 +53,7 @@ final class NetworkService {
             }
             
             guard (200...299).contains(httpResponse.statusCode) else {
-                let message = data.flatMap { try? JSONDecoder().decode(ErrorResponse.self, from: $0) }?.message
+                let message = data.flatMap { ErrorResponse.decode(from: $0) }
                 completion(.failure(.serverError(statusCode: httpResponse.statusCode, message: message)))
                 return
             }
@@ -86,6 +86,7 @@ final class NetworkService {
             request.httpBody = try? JSONSerialization.data(withJSONObject: parameters)
         }
         
+        nonisolated(unsafe) let capturedType = type
         let task = session.dataTask(with: request) { [weak self] data, response, error in
             guard let self = self else { return }
             
@@ -105,7 +106,7 @@ final class NetworkService {
             }
             
             guard (200...299).contains(httpResponse.statusCode) else {
-                let message = data.flatMap { try? JSONDecoder().decode(ErrorResponse.self, from: $0) }?.message
+                let message = data.flatMap { ErrorResponse.decode(from: $0) }
                 completion(.failure(.serverError(statusCode: httpResponse.statusCode, message: message)))
                 return
             }
@@ -117,7 +118,7 @@ final class NetworkService {
             
             do {
                 let decoder = JSONDecoder()
-                let decoded = try decoder.decode(type, from: data)
+                let decoded = try decoder.decode(capturedType, from: data)
                 let apiResponse = APIResponse(value: decoded, response: httpResponse)
                 completion(.success(apiResponse))
             } catch let decodingError as DecodingError {

@@ -483,27 +483,30 @@ struct ServiceListView: View {
             withAnimation {
                 isShowSyncProgressView = true
             }
-            try await withThrowingTaskGroup(of: (server: Server, result: Result<[Instance], Error>).self) { group in
+            try await withThrowingTaskGroup(of: (serverId: String, url: String, key: String, result: Result<[Instance], Error>).self) { group in
                 for server in servers {
+                    let serverId = server.id
+                    let url = server.url
+                    let key = server.key
                     group.addTask {
                         do {
                             let instances = try await instanceService.listInstances(
-                                baseURLString: server.url,
-                                apiKey: server.key
+                                baseURLString: url,
+                                apiKey: key
                             )
-                            return (server, .success(instances))
+                            return (serverId, url, key, .success(instances))
                         } catch {
-                            return (server, .failure(error))
+                            return (serverId, url, key, .failure(error))
                         }
                     }
                 }
                 
-                for try await (server, result) in group {
+                for try await (serverId, _, _, result) in group {
                     switch result {
                     case .success(let instances):
-                        store[server.id] = instances
+                        store[serverId] = instances
                     case .failure(let error):
-                        errorStore[server.id] = error.localizedDescription
+                        errorStore[serverId] = error.localizedDescription
                     }
                     syncProgress = (syncProgress.0 + 1, syncProgress.1)
                 }
