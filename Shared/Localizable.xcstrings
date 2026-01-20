@@ -1,0 +1,693 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%.0f%%" : {
+
+    },
+    "%@" : {
+
+    },
+    "%@ Destination" : {
+
+    },
+    "%@ Local" : {
+
+    },
+    "%@ New Server" : {
+
+    },
+    "%@ Relay" : {
+
+    },
+    "%@ Remote" : {
+
+    },
+    "%@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@"
+          }
+        }
+      }
+    },
+    "%lld error(s)" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld error"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld errors"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld target(s)" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld target"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld targets"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld%@" : {
+      "comment" : "Short format: 5d",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld%2$@"
+          }
+        }
+      }
+    },
+    "%lld%@%lld%@" : {
+      "comment" : "Long format: 5d 3h",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld%2$@ %3$lld%4$@"
+          }
+        }
+      }
+    },
+    "↑" : {
+
+    },
+    "↑ %@" : {
+
+    },
+    "↓" : {
+
+    },
+    "↓ %@" : {
+
+    },
+    "Add" : {
+
+    },
+    "Add Direct Forward" : {
+
+    },
+    "Add Instance" : {
+
+    },
+    "Add NAT Passthrough" : {
+
+    },
+    "Add Server" : {
+
+    },
+    "Add Service" : {
+
+    },
+    "Add Tunnel Forward" : {
+
+    },
+    "Address" : {
+
+    },
+    "Address %lld" : {
+
+    },
+    "Address: Domain/IP of the destination server." : {
+
+    },
+    "Adjust the updating rate of server metadata." : {
+
+    },
+    "Advanced Mode" : {
+
+    },
+    "An error occurred" : {
+
+    },
+    "Ascending" : {
+
+    },
+    "Automatic" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Changes are now effective" : {
+
+    },
+    "Command URL" : {
+
+    },
+    "Configure Server Detail Widget" : {
+
+    },
+    "Configure Widget" : {
+
+    },
+    "Copy" : {
+
+    },
+    "Copy URL" : {
+
+    },
+    "CPU" : {
+
+    },
+    "Dark" : {
+
+    },
+    "Date" : {
+
+    },
+    "Decoding Failed: %@" : {
+
+    },
+    "Delete" : {
+
+    },
+    "Delete Instance" : {
+
+    },
+    "Delete Server" : {
+
+    },
+    "Delete Service" : {
+
+    },
+    "Descending" : {
+
+    },
+    "Destination Server" : {
+
+    },
+    "Destination Server: Server you want your traffic to relay to." : {
+
+    },
+    "Direct Forward" : {
+
+    },
+    "Disable TCP" : {
+
+    },
+    "Disable UDP" : {
+
+    },
+    "Domain" : {
+
+    },
+    "Done" : {
+
+    },
+    "Edit" : {
+
+    },
+    "Edit Address" : {
+
+    },
+    "Edit Instance" : {
+
+    },
+    "Edit Listen Port" : {
+
+    },
+    "Edit Port" : {
+
+    },
+    "Edit Server" : {
+
+    },
+    "Edit Service Port" : {
+
+    },
+    "Edit Tunnel Port" : {
+
+    },
+    "Enter a new address." : {
+
+    },
+    "Enter a new name for the service." : {
+
+    },
+    "Enter a new port." : {
+
+    },
+    "Enter a new URL for this instance." : {
+
+    },
+    "Enter URL for the new instance." : {
+
+    },
+    "Error" : {
+
+    },
+    "Error Deleting Instance %@: Server not found." : {
+
+    },
+    "Error Deleting Instance %@:%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Error Deleting Instance %1$@:%2$@"
+          }
+        }
+      }
+    },
+    "External Target" : {
+
+    },
+    "Force Delete" : {
+
+    },
+    "Force Delete Service" : {
+
+    },
+    "Get up-to-date information in your Widget." : {
+
+    },
+    "Invalid Response" : {
+
+    },
+    "Invalid URL" : {
+
+    },
+    "Key" : {
+
+    },
+    "Key Example: da101e32c7b8c296c8b0d08fca480edc" : {
+
+    },
+    "Key: API Key of your master API." : {
+
+    },
+    "Light" : {
+
+    },
+    "Listen Port" : {
+
+    },
+    "Listen Port: Port you use to connect to the relay server." : {
+
+    },
+    "Listen Port: Port you use to connect to the remote server." : {
+
+    },
+    "Loading..." : {
+
+    },
+    "Local Server" : {
+
+    },
+    "Local Server: Server without a public IP." : {
+
+    },
+    "Log Level" : {
+
+    },
+    "Matrix Unavailable" : {
+
+    },
+    "Maximum Pool Connection" : {
+
+    },
+    "Memory" : {
+
+    },
+    "Metadata Unavailable" : {
+
+    },
+    "Minimum Pool Connection" : {
+
+    },
+    "More" : {
+
+    },
+    "Name" : {
+
+    },
+    "NAT Passthrough" : {
+
+    },
+    "Network" : {
+
+    },
+    "Newest to Oldest" : {
+
+    },
+    "No Server" : {
+
+    },
+    "No Service" : {
+
+    },
+    "NodePass Supporter" : {
+
+    },
+    "Not on this device" : {
+
+    },
+    "OK" : {
+
+    },
+    "Oldest to Newest" : {
+
+    },
+    "Pool" : {
+
+    },
+    "Port" : {
+
+    },
+    "Port %lld" : {
+
+    },
+    "Port: Port on which your service like Socks5(1080) is running." : {
+
+    },
+    "Preview" : {
+
+    },
+    "Protocol" : {
+
+    },
+    "Refresh Widget" : {
+
+    },
+    "Relay Server" : {
+
+    },
+    "Relay Server: Server you want to use as a relay." : {
+
+    },
+    "Reload" : {
+
+    },
+    "Remote Server" : {
+
+    },
+    "Remote Server: Server with a public IP." : {
+
+    },
+    "Rename" : {
+
+    },
+    "Rename Service" : {
+
+    },
+    "Request Failed: %@" : {
+
+    },
+    "Restart" : {
+
+    },
+    "Retry" : {
+
+    },
+    "Scan QR Code" : {
+
+    },
+    "Select" : {
+
+    },
+    "Self-signed Certificates" : {
+      "comment" : "TLS Level: Self-signed Certificates"
+    },
+    "Server" : {
+
+    },
+    "Server Details" : {
+
+    },
+    "Server Error(%lld): %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Server Error(%1$lld): %2$@"
+          }
+        }
+      }
+    },
+    "Server Metadata Updating Rate" : {
+
+    },
+    "Servers" : {
+
+    },
+    "Service Port" : {
+
+    },
+    "Service Port: Port on which your service like Socks5(1080) is running." : {
+
+    },
+    "Service Port: Port on which your service like SSH(22) is running." : {
+
+    },
+    "Services" : {
+
+    },
+    "Settings" : {
+
+    },
+    "Share" : {
+
+    },
+    "Sort" : {
+
+    },
+    "Start" : {
+
+    },
+    "Stop" : {
+
+    },
+    "Success" : {
+
+    },
+    "Support Us" : {
+
+    },
+    "Swap" : {
+
+    },
+    "Sync" : {
+
+    },
+    "Sync completed" : {
+
+    },
+    "Sync Error Report" : {
+
+    },
+    "Syncing" : {
+
+    },
+    "Target Address" : {
+
+    },
+    "Target Address %lld" : {
+
+    },
+    "Target Address: Address of your external target like devices in your home." : {
+
+    },
+    "Target Address: Address of your external target server." : {
+
+    },
+    "Target Port" : {
+
+    },
+    "Target Port %lld" : {
+
+    },
+    "Target Port: Port on which your service like Socks5(1080) is running on your external target server." : {
+
+    },
+    "Target Port: Port on which your service like SSH(22) is running on your external target." : {
+
+    },
+    "TCP" : {
+
+    },
+    "Theme" : {
+
+    },
+    "timeUnitShortened.d" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "d"
+          }
+        }
+      }
+    },
+    "timeUnitShortened.h" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "h"
+          }
+        }
+      }
+    },
+    "timeUnitShortened.m" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "m"
+          }
+        }
+      }
+    },
+    "timeUnitShortened.s" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "s"
+          }
+        }
+      }
+    },
+    "TLS" : {
+
+    },
+    "TLS Level" : {
+
+    },
+    "To add a server, tap the add server icon in the toolbar." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "device" : {
+              "mac" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "To add a server, click the add server icon in the toolbar."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "To add a server, tap the add server icon in the toolbar."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "To add a service, tap the add service icon in the toolbar." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "device" : {
+              "mac" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "To add a service, click the add service icon in the toolbar."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "To add a service, tap the add service icon in the toolbar."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Transport" : {
+
+    },
+    "Trusted Certificates" : {
+      "comment" : "TLS Level: Trusted Certificates"
+    },
+    "Tunnel Forward" : {
+
+    },
+    "Tunnel Port" : {
+
+    },
+    "Tunnel Port: Any available port." : {
+
+    },
+    "Tunnel Through CDN" : {
+
+    },
+    "UDP" : {
+
+    },
+    "Unauthorized" : {
+
+    },
+    "Unencrypted" : {
+      "comment" : "TLS Level: Unencrypted"
+    },
+    "Unknown" : {
+
+    },
+    "Unsupported family" : {
+
+    },
+    "Untitled" : {
+
+    },
+    "URL" : {
+
+    },
+    "URL Example: https://17.253.144.10:1000/api/v1" : {
+
+    },
+    "URL: URL of your master API." : {
+
+    },
+    "View details of your servers at a glance." : {
+
+    },
+    "You are about to delete this server. Are you sure?" : {
+
+    },
+    "You are about to delete this service. This action is irreversible. Are you sure?" : {
+
+    },
+    "You are about to force delete this service. This action is irreversible and any error will be ignored. Are you sure?" : {
+
+    },
+    "You Should Connect To" : {
+
+    }
+  },
+  "version" : "1.1"
+}
