@@ -14,11 +14,8 @@ struct InstanceListView: View {
     var server: Server
     @State var instances: [Instance] = []
     
-    @State private var isShowAddInstanceAlert: Bool = false
-    @State private var commandOfNewInstance: String = ""
-    
-    @State private var isShowEditInstanceAlert: Bool = false
-    @State private var commandOfEditedInstance: String = ""
+    @State private var isShowAddInstanceSheet: Bool = false
+    @State private var isShowEditInstanceSheet: Bool = false
     @State private var instanceToEdit: Instance?
     
     @State private var isShowDeleteInstanceAlert: Bool = false
@@ -47,7 +44,7 @@ struct InstanceListView: View {
         .toolbar {
             ToolbarItem {
                 Button {
-                    isShowAddInstanceAlert = true
+                    isShowAddInstanceSheet = true
                 } label: {
                     Label("Add Instance", systemImage: "plus")
                 }
@@ -61,28 +58,17 @@ struct InstanceListView: View {
             loadingState = .loading
             listInstances()
         }
-        .alert("Add Instance", isPresented: $isShowAddInstanceAlert) {
-            TextField("URL", text: $commandOfNewInstance)
-                .autocorrectionDisabled()
-#if os(iOS)
-                .textInputAutocapitalization(.never)
-                .keyboardType(.URL)
-#endif
-            Button("Add") {
-                addInstance()
+        .sheet(isPresented: $isShowAddInstanceSheet) {
+            AddInstanceView(server: server) {
+                listInstances()
             }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Enter URL for the new instance.")
         }
-        .alert("Edit Instance", isPresented: $isShowEditInstanceAlert) {
-            TextField("URL", text: $commandOfEditedInstance)
-            Button("OK") {
-                updateInstance(instance: instanceToEdit!)
+        .sheet(isPresented: $isShowEditInstanceSheet) {
+            if let instance = instanceToEdit {
+                EditInstanceView(server: server, instance: instance) {
+                    listInstances()
+                }
             }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Enter a new URL for this instance.")
         }
         .alert("Delete Instance", isPresented: $isShowDeleteInstanceAlert) {
             Button("Delete", role: .destructive) {
@@ -131,8 +117,7 @@ struct InstanceListView: View {
                 }
                 Button {
                     instanceToEdit = instance
-                    commandOfEditedInstance = instance.url
-                    isShowEditInstanceAlert = true
+                    isShowEditInstanceSheet = true
                 } label: {
                     Label("Edit", systemImage: "pencil")
                 }
@@ -163,27 +148,6 @@ struct InstanceListView: View {
         }
     }
     
-    private func addInstance() {
-        Task {
-            let instanceService = InstanceService()
-            do {
-                _ = try await instanceService.createInstance(
-                    baseURLString: server.url,
-                    apiKey: server.key,
-                    url: commandOfNewInstance
-                )
-                listInstances()
-            } catch {
-#if DEBUG
-                print("Error Creating Instances: \(error.localizedDescription)")
-                loadingState = .error(error.localizedDescription)
-#endif
-                errorMessage = error.localizedDescription
-                isShowErrorAlert = true
-            }
-        }
-    }
-    
     private func deleteInstance(instance: Instance) {
         Task {
             let instanceService = InstanceService()
@@ -194,24 +158,6 @@ struct InstanceListView: View {
             catch {
 #if DEBUG
                 print("Error Deleting Instances: \(error.localizedDescription)")
-                loadingState = .error(error.localizedDescription)
-#endif
-                errorMessage = error.localizedDescription
-                isShowErrorAlert = true
-            }
-        }
-    }
-    
-    private func updateInstance(instance: Instance) {
-        Task {
-            let instanceService = InstanceService()
-            do {
-                _ = try await instanceService.updateInstance(baseURLString: server.url, apiKey: server.key, id: instance.id, url: commandOfEditedInstance)
-                listInstances()
-            }
-            catch {
-#if DEBUG
-                print("Error Updating Instances: \(error.localizedDescription)")
                 loadingState = .error(error.localizedDescription)
 #endif
                 errorMessage = error.localizedDescription
