@@ -22,7 +22,7 @@ struct InstanceFormView: View {
     @State private var tunnelPort: String = ""
     @State private var targetAddress: String = ""
     @State private var targetPort: String = ""
-    @State private var parameters: [Instance+Parameter] = []
+    @State private var parameters: [InstanceParameter] = []
     @State private var logLevel: LogLevel = .info
     @State private var urlString: String = ""
     @State private var isShowErrorAlert: Bool = false
@@ -225,7 +225,6 @@ struct InstanceFormView: View {
                     Button(role: .destructive) {
                         withAnimation {
                             parameters.removeAll { $0.id == parameter.id }
-                            // Reindex positions
                             for (index, _) in parameters.enumerated() {
                                 parameters[index].position = index
                             }
@@ -240,7 +239,7 @@ struct InstanceFormView: View {
             
             Button {
                 withAnimation {
-                    parameters.append(Instance+Parameter(position: parameters.count))
+                    parameters.append(InstanceParameter(position: parameters.count))
                 }
             } label: {
                 HStack {
@@ -252,7 +251,7 @@ struct InstanceFormView: View {
             Text("Additional Parameters")
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Add custom URL query parameters (e.g., tls, mode, rate, etc.)")
+                Text("Add custom URL query parameters")
                     .foregroundStyle(.secondary)
             }
         }
@@ -284,7 +283,7 @@ struct InstanceFormView: View {
             Text("Instance URL")
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Visit https://github.com/NodePassProject for documentation on instance URL format and parameters.")
+                Text("Visit https://github.com/NodePassProject for documentation on instance URL parameters.")
                     .foregroundStyle(.secondary)
             }
         }
@@ -307,7 +306,7 @@ struct InstanceFormView: View {
         }
         
         if let queryItems = urlComponents.queryItems {
-            var parsedParams: [Instance+Parameter] = []
+            var parsedParams: [InstanceParameter] = []
             var position = 0
             
             for item in queryItems {
@@ -319,7 +318,7 @@ struct InstanceFormView: View {
                         logLevel = level
                     }
                 } else {
-                    parsedParams.append(Instance+Parameter(position: position, key: key, value: value))
+                    parsedParams.append(InstanceParameter(position: position, key: key, value: value))
                     position += 1
                 }
             }
@@ -329,9 +328,9 @@ struct InstanceFormView: View {
     }
     
     private func generateURL() -> String {
-        let tunnelAddr = tunnelAddress.isEmpty ? (instanceType == .server ? "0.0.0.0" : "server.example.com") : tunnelAddress
+        let tunnelAddr = tunnelAddress.isEmpty ? (instanceType == .server ? "" : "") : tunnelAddress
         let tunnelPt = tunnelPort.isEmpty ? "10101" : tunnelPort
-        let targetAddr = targetAddress.isEmpty ? (instanceType == .server ? "0.0.0.0" : "127.0.0.1") : targetAddress
+        let targetAddr = targetAddress.isEmpty ? (instanceType == .server ? "" : "") : targetAddress
         let targetPt = targetPort.isEmpty ? "8080" : targetPort
         
         var url: String
@@ -360,7 +359,6 @@ struct InstanceFormView: View {
     }
     
     private func saveInstance() {
-        // Validate required fields in form mode
         if inputMode == .form {
             if tunnelPort.isEmpty || targetPort.isEmpty {
                 errorMessage = "Tunnel and target ports are required"
