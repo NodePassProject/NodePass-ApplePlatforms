@@ -11,6 +11,9 @@
 		57D967542F239AF600AE3CCB /* AddInstanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D967502F239AF600AE3CCB /* AddInstanceView.swift */; };
 		57D967552F239AF600AE3CCB /* EditInstanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D967512F239AF600AE3CCB /* EditInstanceView.swift */; };
 		57D967572F239B0700AE3CCB /* Instance+Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D967562F239B0700AE3CCB /* Instance+Parameter.swift */; };
+		57D9675B2F23B08C00AE3CCB /* ConnectionMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D967582F23B08C00AE3CCB /* ConnectionMode.swift */; };
+		57D9675C2F23B08C00AE3CCB /* LoadBalancingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D967592F23B08C00AE3CCB /* LoadBalancingStrategy.swift */; };
+		57D9675D2F23B08C00AE3CCB /* TLSMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D9675A2F23B08C00AE3CCB /* TLSMode.swift */; };
 		CB1E97FF2E2262F600A175FD /* NATPassthroughDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E97FE2E2262E700A175FD /* NATPassthroughDetailView.swift */; };
 		CB1E98012E226C1E00A175FD /* DirectForwardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E98002E226C0F00A175FD /* DirectForwardDetailView.swift */; };
 		CB1E98032E226C2D00A175FD /* TunnelForwardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E98022E226C2300A175FD /* TunnelForwardDetailView.swift */; };
@@ -158,6 +161,9 @@
 		57D967512F239AF600AE3CCB /* EditInstanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditInstanceView.swift; sourceTree = "<group>"; };
 		57D967522F239AF600AE3CCB /* InstanceFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceFormView.swift; sourceTree = "<group>"; };
 		57D967562F239B0700AE3CCB /* Instance+Parameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Instance+Parameter.swift"; sourceTree = "<group>"; };
+		57D967582F23B08C00AE3CCB /* ConnectionMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionMode.swift; sourceTree = "<group>"; };
+		57D967592F23B08C00AE3CCB /* LoadBalancingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadBalancingStrategy.swift; sourceTree = "<group>"; };
+		57D9675A2F23B08C00AE3CCB /* TLSMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLSMode.swift; sourceTree = "<group>"; };
 		CB1E97FE2E2262E700A175FD /* NATPassthroughDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NATPassthroughDetailView.swift; sourceTree = "<group>"; };
 		CB1E98002E226C0F00A175FD /* DirectForwardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectForwardDetailView.swift; sourceTree = "<group>"; };
 		CB1E98022E226C2300A175FD /* TunnelForwardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelForwardDetailView.swift; sourceTree = "<group>"; };
@@ -360,6 +366,9 @@
 		CB6682962E135DAA00A27696 /* enums */ = {
 			isa = PBXGroup;
 			children = (
+				57D967582F23B08C00AE3CCB /* ConnectionMode.swift */,
+				57D967592F23B08C00AE3CCB /* LoadBalancingStrategy.swift */,
+				57D9675A2F23B08C00AE3CCB /* TLSMode.swift */,
 				CB6682A72E172FFE00A27696 /* LoadingState.swift */,
 				CB6682992E1402D000A27696 /* ServiceType.swift */,
 				CB6682942E135C5900A27696 /* ImplementationType.swift */,
@@ -520,7 +529,6 @@
 		CBD4336E2E1111DF002B153F /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				57D967562F239B0700AE3CCB /* Instance+Parameter.swift */,
 				CB6682962E135DAA00A27696 /* enums */,
 				CB66828E2E12E22900A27696 /* Service.swift */,
 				CB6682902E135A3100A27696 /* Implementation.swift */,
@@ -531,6 +539,7 @@
 				CBED2F8D2EE3D1C000384732 /* Instance+Status.swift */,
 				CBED2F902EE3D1E300384732 /* Instance+Metadata.swift */,
 				CBED2F932EE3D20000384732 /* Instance+Transport.swift */,
+				57D967562F239B0700AE3CCB /* Instance+Parameter.swift */,
 				CBC6F5FB2ED7FDCA0024F670 /* ExternalTarget.swift */,
 			);
 			path = Models;
@@ -750,6 +759,9 @@
 				CB6682C72E17FD0400A27696 /* EmptyResponse.swift in Sources */,
 				CB1E98052E2273E500A175FD /* CopiableModifier.swift in Sources */,
 				CB5E139A2E8262E900870962 /* BackgroundColorfulView.swift in Sources */,
+				57D9675B2F23B08C00AE3CCB /* ConnectionMode.swift in Sources */,
+				57D9675C2F23B08C00AE3CCB /* LoadBalancingStrategy.swift in Sources */,
+				57D9675D2F23B08C00AE3CCB /* TLSMode.swift in Sources */,
 				CB62C0812E2B90BA00919507 /* NPUI.swift in Sources */,
 				CB6682792E1181CE00A27696 /* Instance.swift in Sources */,
 				CB6682892E12B74100A27696 /* ServerListView.swift in Sources */,

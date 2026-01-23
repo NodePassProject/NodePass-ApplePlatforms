@@ -22,8 +22,30 @@ struct InstanceFormView: View {
     @State private var tunnelPort: String = ""
     @State private var targetAddress: String = ""
     @State private var targetPort: String = ""
+    @State private var isMultipleTargets: Bool = false
+    @State private var externalTargets: [ExternalTarget] = []
     @State private var parameters: [InstanceParameter] = []
     @State private var logLevel: LogLevel = .info
+    @State private var tlsMode: TLSMode = .none
+    @State private var crtPath: String = ""
+    @State private var keyPath: String = ""
+    @State private var sni: String = ""
+    @State private var connectionMode: ConnectionMode = .auto
+    @State private var connectionType: Instance.Transport = .tcp
+    @State private var minConnections: String = ""
+    @State private var maxConnections: String = ""
+    @State private var dnsCache: String = ""
+    @State private var dialAddress: String = ""
+    @State private var readTimeout: String = ""
+    @State private var rateLimit: String = ""
+    @State private var maxSlots: String = ""
+    @State private var disableTCP: Bool = false
+    @State private var disableUDP: Bool = false
+    @State private var enableProxy: Bool = false
+    @State private var blockSOCKS: Bool = false
+    @State private var blockHTTP: Bool = false
+    @State private var blockTLS: Bool = false
+    @State private var lbsStrategy: LoadBalancingStrategy = .roundRobin
     @State private var urlString: String = ""
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
@@ -89,7 +111,7 @@ struct InstanceFormView: View {
             }
             .formStyle(.grouped)
 #if os(iOS)
-            .listRowSpacing(5)
+            .listRowSpacing(0)
 #endif
             .navigationTitle(title)
             .toolbar {
@@ -156,7 +178,7 @@ struct InstanceFormView: View {
         }
         
         Section {
-            LabeledTextField("Address", prompt: instanceType == .server ? "" : "", text: $tunnelAddress)
+            LabeledTextField("IP", prompt: instanceType == .server ? "" : "", text: $tunnelAddress)
                 .autocorrectionDisabled()
 #if os(iOS)
                 .textInputAutocapitalization(.never)
@@ -168,28 +190,275 @@ struct InstanceFormView: View {
         } footer: {
             VStack(alignment: .leading) {
                 if instanceType == .server {
-                    Text("Address to bind (blank for all interfaces)")
+                    Text("Tunnel address to bind, empty IP for all interfaces")
                         .foregroundStyle(.secondary)
                 } else {
-                    Text("Server address to connect or to bind")
+                    Text("Server address to connect or Client address to bind")
                         .foregroundStyle(.secondary)
                 }
             }
         }
         
         Section {
-            LabeledTextField("Address", prompt: instanceType == .server ? "" : "", text: $targetAddress)
-                .autocorrectionDisabled()
+            Toggle("Multiple Target Addresses", isOn: $isMultipleTargets)
+                .onChange(of: isMultipleTargets) {
+                    if isMultipleTargets {
+                        if externalTargets.isEmpty {
+                            externalTargets.append(ExternalTarget(position: 0, address: targetAddress, port: targetPort))
+                            externalTargets.append(ExternalTarget(position: 1))
+                        }
+                    } else {
+                        if !externalTargets.isEmpty {
+                            targetAddress = externalTargets[0].address
+                            targetPort = externalTargets[0].port
+                            externalTargets.removeAll()
+                        }
+                    }
+                }
+            
+            if isMultipleTargets {
+                Picker("Load Balancing Strategy", selection: $lbsStrategy) {
+                    ForEach(LoadBalancingStrategy.allCases, id: \.self) { strategy in
+                        Text(strategy.displayName).tag(strategy)
+                    }
+                }
+                
+                ForEach(externalTargets) { externalTarget in
+                    LabeledTextField(
+                        "IP \(externalTarget.position + 1)",
+                        prompt: instanceType == .server ? "" : "",
+                        text: Binding(get: {
+                            externalTargets[externalTarget.position].address
+                        }, set: {
+                            externalTargets[externalTarget.position].address = $0
+                        })
+                    )
+                    .autocorrectionDisabled()
 #if os(iOS)
-                .textInputAutocapitalization(.never)
-                .keyboardType(.URL)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.URL)
 #endif
-            LabeledTextField("Port", prompt: "8080", text: $targetPort, isNumberOnly: true)
+                    
+                    LabeledTextField(
+                        "Port \(externalTarget.position + 1)",
+                        prompt: "8080",
+                        text: Binding(get: {
+                            externalTargets[externalTarget.position].port
+                        }, set: {
+                            externalTargets[externalTarget.position].port = $0
+                        }),
+                        isNumberOnly: true
+                    )
+                }
+                
+                HStack(spacing: 5) {
+                    Button {
+                        externalTargets.append(ExternalTarget(position: externalTargets.count))
+                    } label: {
+                        Image(systemName: "plus")
+                            .frame(width: 20, height: 20)
+                    }
+#if os(iOS)
+                    .buttonBorderShape(.circle)
+                    .buttonStyle(.borderedProminent)
+#else
+                    .buttonStyle(.borderless)
+#endif
+                    
+                    Button(role: .destructive) {
+                        if externalTargets.count == 2 {
+                            targetAddress = externalTargets[0].address
+                            targetPort = externalTargets[0].port
+                            externalTargets.removeAll()
+                            isMultipleTargets = false
+                        } else {
+                            externalTargets.remove(at: externalTargets.endIndex - 1)
+                        }
+                    } label: {
+                        Image(systemName: "minus")
+                            .frame(width: 20, height: 20)
+                    }
+                    .disabled(externalTargets.count < 2)
+#if os(iOS)
+                    .buttonBorderShape(.circle)
+                    .buttonStyle(.borderedProminent)
+#else
+                    .buttonStyle(.borderless)
+#endif
+                }
+            } else {
+                LabeledTextField("IP", prompt: instanceType == .server ? "" : "", text: $targetAddress)
+                    .autocorrectionDisabled()
+#if os(iOS)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.URL)
+#endif
+                LabeledTextField("Port", prompt: "8080", text: $targetPort, isNumberOnly: true)
+            }
         } header: {
             Text("Target Address")
         } footer: {
-            VStack(alignment: .leading) {
-                Text("Service address to connect or to bind")
+            VStack(alignment: .leading, spacing: 4) {
+                if isMultipleTargets {
+                    Text("Configure multiple target addresses for load balancing")
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("Single target address to connect or to bind")
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        
+        Section {
+            if instanceType == .server {
+                Picker("TLS Mode", selection: $tlsMode) {
+                    ForEach(TLSMode.allCases, id: \.self) { mode in
+                        Text(mode.displayName).tag(mode)
+                    }
+                }
+            }
+            
+            if tlsMode == .custom && instanceType == .server {
+                LabeledTextField("Certificate Path", prompt: "path/to/cert.pem", text: $crtPath)
+                    .autocorrectionDisabled()
+#if os(iOS)
+                    .textInputAutocapitalization(.never)
+#endif
+                
+                LabeledTextField("Key Path", prompt: "path/to/key.pem", text: $keyPath)
+                    .autocorrectionDisabled()
+#if os(iOS)
+                    .textInputAutocapitalization(.never)
+#endif
+            }
+            
+            if instanceType == .client {
+                LabeledTextField("SNI Hostname", prompt: "example.com", text: $sni)
+                    .autocorrectionDisabled()
+#if os(iOS)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.URL)
+#endif
+            }
+        } header: {
+            Text("Security & Encryption")
+        } footer: {
+            VStack(alignment: .leading, spacing: 4) {
+                if instanceType == .server {
+                    Text("TLS encryption settings")
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("SNI hostname for TLS connections")
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        
+        Section {
+            Picker("Connection Mode", selection: $connectionMode) {
+                ForEach(ConnectionMode.allCases, id: \.self) { mode in
+                    Text(mode.displayName(forServer: instanceType == .server)).tag(mode)
+                }
+            }
+            
+            if instanceType == .server {
+                Picker("Connection Type", selection: $connectionType) {
+                    ForEach(Instance.Transport.allCases, id: \.self) { type in
+                        Text(type.localizedName).tag(type)
+                    }
+                }
+                
+                LabeledTextField("Maximum Connections", prompt: "1024", text: $maxConnections, isNumberOnly: true)
+            }
+            
+            if instanceType == .client && (connectionMode == .auto || connectionMode == .dualEnd) {
+                LabeledTextField("Minimum Connections", prompt: "64", text: $minConnections, isNumberOnly: true)
+            }
+        } header: {
+            Text("Connection Pool")
+        } footer: {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Configure connection pool behavior and limits")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        
+        Section {
+            LabeledTextField("DNS Cache Duration", prompt: "5m", text: $dnsCache)
+                .autocorrectionDisabled()
+#if os(iOS)
+                .textInputAutocapitalization(.never)
+#endif
+            
+            LabeledTextField("Dial Address", prompt: "auto", text: $dialAddress)
+                .autocorrectionDisabled()
+#if os(iOS)
+                .textInputAutocapitalization(.never)
+#endif
+            
+            LabeledTextField("Read Timeout", prompt: "0", text: $readTimeout)
+                .autocorrectionDisabled()
+#if os(iOS)
+                .textInputAutocapitalization(.never)
+#endif
+            
+            LabeledTextField("Rate Limit (Mbps)", prompt: "0", text: $rateLimit, isNumberOnly: true)
+            
+            LabeledTextField("Max Connections", prompt: "65536", text: $maxSlots, isNumberOnly: true)
+        } header: {
+            Text("Network Tuning")
+        } footer: {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("DNS: Cache TTL duration in '30s, 5m, 1h'")
+                    .foregroundStyle(.secondary)
+                Text("Dial: Specific source IP or 'auto' by OS")
+                    .foregroundStyle(.secondary)
+                Text("Read: Timeout duration or 0 to disable")
+                    .foregroundStyle(.secondary)
+                Text("Rate: Bandwidth limit or 0 for unlimited")
+                    .foregroundStyle(.secondary)
+                Text("Slot: Max concurrent connections allowed")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        
+        Section {
+            Toggle("Disable TCP", isOn: $disableTCP)
+            Toggle("Disable UDP", isOn: $disableUDP)
+            Toggle("Enable PROXY Protocol", isOn: $enableProxy)
+        } header: {
+            Text("Protocol Control")
+        } footer: {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Control protocol availability and PROXY protocol v1 support")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        
+        Section {
+            Toggle("Block SOCKS", isOn: $blockSOCKS)
+            Toggle("Block HTTP", isOn: $blockHTTP)
+            Toggle("Block TLS", isOn: $blockTLS)
+        } header: {
+            Text("Protocol Blocking")
+        } footer: {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Block specific protocols from being tunneled")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        
+        Section {
+            Picker("Log Level", selection: $logLevel) {
+                ForEach(LogLevel.allCases, id: \.self) { level in
+                    Text(level.rawValue).tag(level)
+                }
+            }
+        } header: {
+            Text("Logging")
+        } footer: {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Set logging verbosity level")
                     .foregroundStyle(.secondary)
             }
         }
@@ -251,20 +520,8 @@ struct InstanceFormView: View {
             Text("Additional Parameters")
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Add custom URL query parameters")
+                Text("Add custom URL query parameters not covered above")
                     .foregroundStyle(.secondary)
-            }
-        }
-        
-        if isAdvancedModeEnabled {
-            Section {
-                Picker("Log Level", selection: $logLevel) {
-                    ForEach(LogLevel.allCases, id: \.self) { level in
-                        Text(level.rawValue).tag(level)
-                    }
-                }
-            } header: {
-                Text("Advanced Options")
             }
         }
     }
@@ -301,8 +558,23 @@ struct InstanceFormView: View {
         
         let pathComponents = urlComponents.path.components(separatedBy: ":")
         if pathComponents.count >= 2 {
-            targetAddress = pathComponents[0].trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            let targetAddressString = pathComponents[0].trimmingCharacters(in: CharacterSet(charactersIn: "/"))
             targetPort = pathComponents[1]
+            
+            if targetAddressString.contains(",") {
+                let addresses = targetAddressString.components(separatedBy: ",")
+                isMultipleTargets = true
+                externalTargets = addresses.enumerated().map { index, address in
+                    ExternalTarget(position: index, address: address.trimmingCharacters(in: .whitespaces), port: targetPort)
+                }
+                if !externalTargets.isEmpty {
+                    targetAddress = externalTargets[0].address
+                }
+            } else {
+                targetAddress = targetAddressString
+                isMultipleTargets = false
+                externalTargets = []
+            }
         }
         
         if let queryItems = urlComponents.queryItems {
@@ -313,11 +585,90 @@ struct InstanceFormView: View {
                 let key = item.name
                 let value = item.value ?? ""
                 
-                if key == "log", isAdvancedModeEnabled {
+                var isRecognized = false
+                
+                if key == "tls" {
+                    if let mode = TLSMode(rawValue: value) {
+                        tlsMode = mode
+                        isRecognized = true
+                    }
+                } else if key == "crt" {
+                    crtPath = value
+                    isRecognized = true
+                } else if key == "key" {
+                    keyPath = value
+                    isRecognized = true
+                } else if key == "sni" {
+                    sni = value
+                    isRecognized = true
+                }
+                
+                else if key == "mode" {
+                    if let mode = ConnectionMode(rawValue: value) {
+                        connectionMode = mode
+                        isRecognized = true
+                    }
+                } else if key == "type" {
+                    if let type = Instance.Transport(rawValue: value) {
+                        connectionType = type
+                        isRecognized = true
+                    }
+                } else if key == "min" {
+                    minConnections = value
+                    isRecognized = true
+                } else if key == "max" {
+                    maxConnections = value
+                    isRecognized = true
+                }
+                
+                else if key == "dns" {
+                    dnsCache = value
+                    isRecognized = true
+                } else if key == "dial" {
+                    dialAddress = value
+                    isRecognized = true
+                } else if key == "read" {
+                    readTimeout = value
+                    isRecognized = true
+                } else if key == "rate" {
+                    rateLimit = value
+                    isRecognized = true
+                } else if key == "slot" {
+                    maxSlots = value
+                    isRecognized = true
+                }
+                
+                else if key == "notcp" {
+                    disableTCP = value == "1"
+                    isRecognized = true
+                } else if key == "noudp" {
+                    disableUDP = value == "1"
+                    isRecognized = true
+                } else if key == "proxy" {
+                    enableProxy = value == "1"
+                    isRecognized = true
+                } else if key == "block" {
+                    blockSOCKS = value.contains("1")
+                    blockHTTP = value.contains("2")
+                    blockTLS = value.contains("3")
+                    isRecognized = true
+                }
+                
+                else if key == "lbs" {
+                    if let strategy = LoadBalancingStrategy(rawValue: value) {
+                        lbsStrategy = strategy
+                        isRecognized = true
+                    }
+                }
+                
+                else if key == "log" {
                     if let level = LogLevel(rawValue: value) {
                         logLevel = level
+                        isRecognized = true
                     }
-                } else {
+                }
+                
+                if !isRecognized {
                     parsedParams.append(InstanceParameter(position: position, key: key, value: value))
                     position += 1
                 }
@@ -330,8 +681,18 @@ struct InstanceFormView: View {
     private func generateURL() -> String {
         let tunnelAddr = tunnelAddress.isEmpty ? (instanceType == .server ? "" : "") : tunnelAddress
         let tunnelPt = tunnelPort.isEmpty ? "10101" : tunnelPort
-        let targetAddr = targetAddress.isEmpty ? (instanceType == .server ? "" : "") : targetAddress
-        let targetPt = targetPort.isEmpty ? "8080" : targetPort
+        
+        let targetAddr: String
+        let targetPt: String
+        
+        if isMultipleTargets && !externalTargets.isEmpty {
+            let addresses = externalTargets.map { $0.address.isEmpty ? "" : $0.address }.joined(separator: ",")
+            targetAddr = addresses
+            targetPt = externalTargets[0].port.isEmpty ? "8080" : externalTargets[0].port
+        } else {
+            targetAddr = targetAddress.isEmpty ? (instanceType == .server ? "" : "") : targetAddress
+            targetPt = targetPort.isEmpty ? "8080" : targetPort
+        }
         
         var url: String
         if instanceType == .server {
@@ -342,7 +703,75 @@ struct InstanceFormView: View {
         
         var queryParams: [String] = []
         
-        if isAdvancedModeEnabled {
+        if instanceType == .server && tlsMode != .none {
+            queryParams.append("tls=\(tlsMode.rawValue)")
+            if tlsMode == .custom {
+                if !crtPath.isEmpty {
+                    queryParams.append("crt=\(crtPath)")
+                }
+                if !keyPath.isEmpty {
+                    queryParams.append("key=\(keyPath)")
+                }
+            }
+        }
+        if instanceType == .client && !sni.isEmpty {
+            queryParams.append("sni=\(sni)")
+        }
+        
+        if connectionMode != .auto {
+            queryParams.append("mode=\(connectionMode.rawValue)")
+        }
+        if connectionMode == .dualEnd {
+            if instanceType == .server && connectionType != .tcp {
+                queryParams.append("type=\(connectionType.rawValue)")
+            }
+            if instanceType == .client && !minConnections.isEmpty {
+                queryParams.append("min=\(minConnections)")
+            }
+            if instanceType == .server && !maxConnections.isEmpty {
+                queryParams.append("max=\(maxConnections)")
+            }
+        }
+        
+        if !dnsCache.isEmpty {
+            queryParams.append("dns=\(dnsCache)")
+        }
+        if !dialAddress.isEmpty {
+            queryParams.append("dial=\(dialAddress)")
+        }
+        if !readTimeout.isEmpty {
+            queryParams.append("read=\(readTimeout)")
+        }
+        if !rateLimit.isEmpty {
+            queryParams.append("rate=\(rateLimit)")
+        }
+        if !maxSlots.isEmpty {
+            queryParams.append("slot=\(maxSlots)")
+        }
+        
+        if disableTCP {
+            queryParams.append("notcp=1")
+        }
+        if disableUDP {
+            queryParams.append("noudp=1")
+        }
+        if enableProxy {
+            queryParams.append("proxy=1")
+        }
+        
+        var blockValue = ""
+        if blockSOCKS { blockValue += "1" }
+        if blockHTTP { blockValue += "2" }
+        if blockTLS { blockValue += "3" }
+        if !blockValue.isEmpty {
+            queryParams.append("block=\(blockValue)")
+        }
+        
+        if isMultipleTargets && lbsStrategy != .roundRobin {
+            queryParams.append("lbs=\(lbsStrategy.rawValue)")
+        }
+        
+        if isAdvancedModeEnabled && logLevel != .info {
             queryParams.append("log=\(logLevel.rawValue)")
         }
         
@@ -361,7 +790,7 @@ struct InstanceFormView: View {
     private func saveInstance() {
         if inputMode == .form {
             if tunnelPort.isEmpty || targetPort.isEmpty {
-                errorMessage = "Tunnel and target ports are required"
+                errorMessage = "Both tunnel port and target port must be specified."
                 isShowErrorAlert = true
                 return
             }
