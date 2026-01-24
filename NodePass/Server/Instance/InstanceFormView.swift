@@ -556,22 +556,27 @@ struct InstanceFormView: View {
         tunnelAddress = urlComponents.host ?? ""
         tunnelPort = urlComponents.port.map { String($0) } ?? ""
         
-        let pathComponents = urlComponents.path.components(separatedBy: ":")
-        if pathComponents.count >= 2 {
-            let targetAddressString = pathComponents[0].trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-            targetPort = pathComponents[1]
-            
-            if targetAddressString.contains(",") {
-                let addresses = targetAddressString.components(separatedBy: ",")
-                isMultipleTargets = true
-                externalTargets = addresses.enumerated().map { index, address in
-                    ExternalTarget(position: index, address: address.trimmingCharacters(in: .whitespaces), port: targetPort)
-                }
-                if !externalTargets.isEmpty {
-                    targetAddress = externalTargets[0].address
-                }
-            } else {
-                targetAddress = targetAddressString
+        let pathString = urlComponents.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        
+        if pathString.contains(",") {
+            let addressPairs = pathString.components(separatedBy: ",")
+            isMultipleTargets = true
+            externalTargets = addressPairs.enumerated().compactMap { index, pair in
+                let components = pair.components(separatedBy: ":")
+                guard components.count >= 2 else { return nil }
+                let address = components[0].trimmingCharacters(in: .whitespaces)
+                let port = components[1].trimmingCharacters(in: .whitespaces)
+                return ExternalTarget(position: index, address: address, port: port)
+            }
+            if !externalTargets.isEmpty {
+                targetAddress = externalTargets[0].address
+                targetPort = externalTargets[0].port
+            }
+        } else {
+            let pathComponents = pathString.components(separatedBy: ":")
+            if pathComponents.count >= 2 {
+                targetAddress = pathComponents[0]
+                targetPort = pathComponents[1]
                 isMultipleTargets = false
                 externalTargets = []
             }
@@ -682,23 +687,26 @@ struct InstanceFormView: View {
         let tunnelAddr = tunnelAddress.isEmpty ? (instanceType == .server ? "" : "") : tunnelAddress
         let tunnelPt = tunnelPort.isEmpty ? "10101" : tunnelPort
         
-        let targetAddr: String
-        let targetPt: String
+        let targetPath: String
         
         if isMultipleTargets && !externalTargets.isEmpty {
-            let addresses = externalTargets.map { $0.address.isEmpty ? "" : $0.address }.joined(separator: ",")
-            targetAddr = addresses
-            targetPt = externalTargets[0].port.isEmpty ? "8080" : externalTargets[0].port
+            let addressPairs = externalTargets.map { target -> String in
+                let addr = target.address.isEmpty ? "" : target.address
+                let port = target.port.isEmpty ? "8080" : target.port
+                return "\(addr):\(port)"
+            }.joined(separator: ",")
+            targetPath = addressPairs
         } else {
-            targetAddr = targetAddress.isEmpty ? (instanceType == .server ? "" : "") : targetAddress
-            targetPt = targetPort.isEmpty ? "8080" : targetPort
+            let targetAddr = targetAddress.isEmpty ? (instanceType == .server ? "" : "") : targetAddress
+            let targetPt = targetPort.isEmpty ? "8080" : targetPort
+            targetPath = "\(targetAddr):\(targetPt)"
         }
         
         var url: String
         if instanceType == .server {
-            url = "server://\(tunnelAddr):\(tunnelPt)/\(targetAddr):\(targetPt)"
+            url = "server://\(tunnelAddr):\(tunnelPt)/\(targetPath)"
         } else {
-            url = "client://\(tunnelAddr):\(tunnelPt)/\(targetAddr):\(targetPt)"
+            url = "client://\(tunnelAddr):\(tunnelPt)/\(targetPath)"
         }
         
         var queryParams: [String] = []
