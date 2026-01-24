@@ -42,11 +42,9 @@ struct InstanceFormView: View {
     @State private var disableTCP: Bool = false
     @State private var disableUDP: Bool = false
     @State private var enableProxy: Bool = false
-    
     @State private var blockHTTP: Bool = false
     @State private var blockTLS: Bool = false
     @State private var blockSOCKS: Bool = false
-    
     @State private var lbsStrategy: LoadBalancingStrategy = .roundRobin
     @State private var urlString: String = ""
     @State private var isShowErrorAlert: Bool = false
@@ -66,6 +64,24 @@ struct InstanceFormView: View {
             return "None"
         }
         return blockedTrafficStrings.joined(separator: ", ")
+    }
+    
+    private var networkTuningSummary: String {
+        var settings: [String] = []
+        if !dnsCache.isEmpty { settings.append("DNS: \(dnsCache)") }
+        if !dialAddress.isEmpty { settings.append("Dial: \(dialAddress)") }
+        if !readTimeout.isEmpty { settings.append("Read: \(readTimeout)") }
+        if !rateLimit.isEmpty { settings.append("Rate: \(rateLimit)") }
+        if !maxSlots.isEmpty { settings.append("Slot: \(maxSlots)") }
+        return settings.isEmpty ? "Default" : settings.joined(separator: ", ")
+    }
+    
+    private var protocolControlSummary: String {
+        var settings: [String] = []
+        if disableTCP { settings.append("TCP Off") }
+        if disableUDP { settings.append("UDP Off") }
+        if enableProxy { settings.append("PROXY On") }
+        return settings.isEmpty ? "Default" : settings.joined(separator: ", ")
     }
     
     enum InputMode: String, CaseIterable {
@@ -98,10 +114,10 @@ struct InstanceFormView: View {
                     Text("Input Method")
                 } footer: {
                     if inputMode == .form {
-                        Text("Configure instance using form fields")
+                        Text("Configure instance using form fields.")
                             .foregroundStyle(.secondary)
                     } else {
-                        Text("Enter instance URL directly")
+                        Text("Enter instance URL directly.")
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -182,10 +198,10 @@ struct InstanceFormView: View {
             Text("Instance Type")
         } footer: {
             if instanceType == .server {
-                Text("Listen on tunnel address and forward to/from target")
+                Text("Listen on tunnel address and forward to/from target.")
                     .foregroundStyle(.secondary)
             } else {
-                Text("Connect to tunnel address and forward from/to target")
+                Text("Connect to tunnel address and forward from/to target.")
                     .foregroundStyle(.secondary)
             }
         }
@@ -203,10 +219,10 @@ struct InstanceFormView: View {
         } footer: {
             VStack(alignment: .leading) {
                 if instanceType == .server {
-                    Text("Tunnel address to bind, empty IP for all interfaces")
+                    Text("Tunnel address to bind, empty IP for all interfaces.")
                         .foregroundStyle(.secondary)
                 } else {
-                    Text("Server address to connect or Client address to bind")
+                    Text("Server address to connect or Client address to bind.")
                         .foregroundStyle(.secondary)
                 }
             }
@@ -313,10 +329,10 @@ struct InstanceFormView: View {
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
                 if isMultipleTargets {
-                    Text("Configure multiple target addresses for load balancing")
+                    Text("Configure multiple target addresses for load balancing.")
                         .foregroundStyle(.secondary)
                 } else {
-                    Text("Single target address to connect or to bind")
+                    Text("Single target address to connect or to bind.")
                         .foregroundStyle(.secondary)
                 }
             }
@@ -358,10 +374,10 @@ struct InstanceFormView: View {
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
                 if instanceType == .server {
-                    Text("TLS encryption settings")
+                    Text("TLS encryption settings.")
                         .foregroundStyle(.secondary)
                 } else {
-                    Text("SNI hostname for TLS connections")
+                    Text("SNI hostname for TLS connections.")
                         .foregroundStyle(.secondary)
                 }
             }
@@ -391,64 +407,52 @@ struct InstanceFormView: View {
             Text("Connection Pool")
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Configure connection pool behavior and limits")
+                Text("Configure connection pool behavior and limits.")
                     .foregroundStyle(.secondary)
             }
         }
         
         Section {
-            LabeledTextField("DNS Cache Duration", prompt: "5m", text: $dnsCache)
-                .autocorrectionDisabled()
-#if os(iOS)
-                .textInputAutocapitalization(.never)
-#endif
-            
-            LabeledTextField("Dial Address", prompt: "auto", text: $dialAddress)
-                .autocorrectionDisabled()
-#if os(iOS)
-                .textInputAutocapitalization(.never)
-#endif
-            
-            LabeledTextField("Read Timeout", prompt: "0", text: $readTimeout)
-                .autocorrectionDisabled()
-#if os(iOS)
-                .textInputAutocapitalization(.never)
-#endif
-            
-            LabeledTextField("Rate Limit (Mbps)", prompt: "0", text: $rateLimit, isNumberOnly: true)
-            
-            LabeledTextField("Max Connections", prompt: "65536", text: $maxSlots, isNumberOnly: true)
-        } header: {
-            Text("Network Tuning")
-        } footer: {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("DNS: Cache TTL duration in '30s, 5m, 1h'")
-                    .foregroundStyle(.secondary)
-                Text("Dial: Specific source IP or 'auto' by OS")
-                    .foregroundStyle(.secondary)
-                Text("Read: Timeout duration or 0 to disable")
-                    .foregroundStyle(.secondary)
-                Text("Rate: Bandwidth limit or 0 for unlimited")
-                    .foregroundStyle(.secondary)
-                Text("Slot: Max concurrent connections allowed")
-                    .foregroundStyle(.secondary)
+            Picker("Logging Level", selection: $logLevel) {
+                ForEach(LogLevel.allCases, id: \.self) { level in
+                    Text(level.rawValue).tag(level)
+                }
             }
-        }
-        
-        Section {
-            Toggle("Disable TCP", isOn: $disableTCP)
-            Toggle("Disable UDP", isOn: $disableUDP)
-            Toggle("Enable PROXY Protocol", isOn: $enableProxy)
-        } header: {
-            Text("Protocol Control")
-        } footer: {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Control protocol availability and PROXY protocol v1 support")
-                    .foregroundStyle(.secondary)
+            
+            NavigationLink {
+                NetworkTuningView(
+                    dnsCache: $dnsCache,
+                    dialAddress: $dialAddress,
+                    readTimeout: $readTimeout,
+                    rateLimit: $rateLimit,
+                    maxSlots: $maxSlots
+                )
+            } label: {
+                HStack {
+                    Text("Network Tuning")
+                    Spacer()
+                    Text(networkTuningSummary)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
             }
-        }
-        
-        Section {
+            
+            NavigationLink {
+                ProtocolControlView(
+                    disableTCP: $disableTCP,
+                    disableUDP: $disableUDP,
+                    enableProxy: $enableProxy
+                )
+            } label: {
+                HStack {
+                    Text("Protocol Control")
+                    Spacer()
+                    Text(protocolControlSummary)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
+            
             NavigationLink {
                 TrafficBlockingView(blockHTTP: $blockHTTP, blockTLS: $blockTLS, blockSOCKS: $blockSOCKS)
             } label: {
@@ -457,23 +461,14 @@ struct InstanceFormView: View {
                     Spacer()
                     Text(blockedTrafficString)
                         .foregroundStyle(.secondary)
-                }
-            }
-        }
-        
-        Section {
-            Picker("Log Level", selection: $logLevel) {
-                ForEach(LogLevel.allCases, id: \.self) { level in
-                    Text(level.rawValue).tag(level)
+                        .lineLimit(1)
                 }
             }
         } header: {
-            Text("Logging")
+            Text("Advanced Settings")
         } footer: {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Set logging verbosity level")
-                    .foregroundStyle(.secondary)
-            }
+            Text("Configure advanced settings and tuning parameters.")
+                .foregroundStyle(.secondary)
         }
         
         Section {
@@ -517,6 +512,7 @@ struct InstanceFormView: View {
                     }
                     .buttonStyle(.borderless)
                 }
+                .listRowSeparator(.hidden)
             }
             
             Button {
@@ -533,7 +529,7 @@ struct InstanceFormView: View {
             Text("Additional Parameters")
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Add custom URL query parameters not covered above")
+                Text("Add custom URL query parameters not covered above.")
                     .foregroundStyle(.secondary)
             }
         }

@@ -14,6 +14,8 @@
 		57D9675B2F23B08C00AE3CCB /* ConnectionMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D967582F23B08C00AE3CCB /* ConnectionMode.swift */; };
 		57D9675C2F23B08C00AE3CCB /* LoadBalancingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D967592F23B08C00AE3CCB /* LoadBalancingStrategy.swift */; };
 		57D9675D2F23B08C00AE3CCB /* TLSMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D9675A2F23B08C00AE3CCB /* TLSMode.swift */; };
+		57D967602F24B72B00AE3CCB /* NetworkTuningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D9675E2F24B72B00AE3CCB /* NetworkTuningView.swift */; };
+		57D967612F24B72B00AE3CCB /* ProtocolControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D9675F2F24B72B00AE3CCB /* ProtocolControlView.swift */; };
 		CB1C10DF2F2495ED00B74CD8 /* TrafficBlockingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1C10DE2F2495ED00B74CD8 /* TrafficBlockingView.swift */; };
 		CB1E97FF2E2262F600A175FD /* NATPassthroughDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E97FE2E2262E700A175FD /* NATPassthroughDetailView.swift */; };
 		CB1E98012E226C1E00A175FD /* DirectForwardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E98002E226C0F00A175FD /* DirectForwardDetailView.swift */; };
@@ -165,6 +167,8 @@
 		57D967582F23B08C00AE3CCB /* ConnectionMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionMode.swift; sourceTree = "<group>"; };
 		57D967592F23B08C00AE3CCB /* LoadBalancingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadBalancingStrategy.swift; sourceTree = "<group>"; };
 		57D9675A2F23B08C00AE3CCB /* TLSMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLSMode.swift; sourceTree = "<group>"; };
+		57D9675E2F24B72B00AE3CCB /* NetworkTuningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTuningView.swift; sourceTree = "<group>"; };
+		57D9675F2F24B72B00AE3CCB /* ProtocolControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolControlView.swift; sourceTree = "<group>"; };
 		CB1C10DE2F2495ED00B74CD8 /* TrafficBlockingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrafficBlockingView.swift; sourceTree = "<group>"; };
 		CB1E97FE2E2262E700A175FD /* NATPassthroughDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NATPassthroughDetailView.swift; sourceTree = "<group>"; };
 		CB1E98002E226C0F00A175FD /* DirectForwardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectForwardDetailView.swift; sourceTree = "<group>"; };
@@ -446,6 +450,8 @@
 		CB6682BD2E174F9200A27696 /* Instance */ = {
 			isa = PBXGroup;
 			children = (
+				57D9675E2F24B72B00AE3CCB /* NetworkTuningView.swift */,
+				57D9675F2F24B72B00AE3CCB /* ProtocolControlView.swift */,
 				57D967502F239AF600AE3CCB /* AddInstanceView.swift */,
 				57D967512F239AF600AE3CCB /* EditInstanceView.swift */,
 				57D967522F239AF600AE3CCB /* InstanceFormView.swift */,
@@ -726,6 +732,8 @@
 				CB6682A32E172F3C00A27696 /* LoadingStateModifier.swift in Sources */,
 				CBC6F6012ED815D20024F670 /* ImageAlignment.swift in Sources */,
 				CB6682D02E1DD9C700A27696 /* UpdateInstanceStatusAction.swift in Sources */,
+				57D967602F24B72B00AE3CCB /* NetworkTuningView.swift in Sources */,
+				57D967612F24B72B00AE3CCB /* ProtocolControlView.swift in Sources */,
 				CB1E98012E226C1E00A175FD /* DirectForwardDetailView.swift in Sources */,
 				CB6682782E1181CA00A27696 /* Server.swift in Sources */,
 				CB6682AE2E17345D00A27696 /* AddDirectForwardServiceView.swift in Sources */,

@@ -19,9 +19,12 @@ struct TrafficBlockingView: View {
                 Toggle("Block TLS", isOn: $blockTLS)
                 Toggle("Block SOCKS", isOn: $blockSOCKS)
             } footer: {
-                Text("Block certain traffic from being tunneled")
+                Text("Block certain traffic from being tunneled.")
             }
         }
         .navigationTitle("Traffic Blocking")
+#if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+#endif
     }
 }
