@@ -42,9 +42,11 @@ struct InstanceFormView: View {
     @State private var disableTCP: Bool = false
     @State private var disableUDP: Bool = false
     @State private var enableProxy: Bool = false
+    
     @State private var blockSOCKS: Bool = false
     @State private var blockHTTP: Bool = false
     @State private var blockTLS: Bool = false
+    
     @State private var lbsStrategy: LoadBalancingStrategy = .roundRobin
     @State private var urlString: String = ""
     @State private var isShowErrorAlert: Bool = false
@@ -436,15 +438,12 @@ struct InstanceFormView: View {
         }
         
         Section {
-            Toggle("Block SOCKS", isOn: $blockSOCKS)
-            Toggle("Block HTTP", isOn: $blockHTTP)
-            Toggle("Block TLS", isOn: $blockTLS)
-        } header: {
-            Text("Protocol Blocking")
-        } footer: {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Block specific protocols from being tunneled")
-                    .foregroundStyle(.secondary)
+            NavigationLink {
+                TrafficBlockingView(blockSOCKS: $blockSOCKS, blockHTTP: $blockHTTP, blockTLS: $blockTLS)
+            } label: {
+                HStack {
+                    Text("Traffic Blocking")
+                }
             }
         }
         

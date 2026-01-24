@@ -110,7 +110,13 @@
     "↓ %@" : {
 
     },
+    "=" : {
+
+    },
     "Add" : {
+
+    },
+    "Add custom URL query parameters not covered above" : {
 
     },
     "Add Direct Forward" : {
@@ -122,6 +128,9 @@
     "Add NAT Passthrough" : {
 
     },
+    "Add Parameter" : {
+
+    },
     "Add Server" : {
 
     },
@@ -129,6 +138,9 @@
 
     },
     "Add Tunnel Forward" : {
+
+    },
+    "Additional Parameters" : {
 
     },
     "Address" : {
@@ -155,7 +167,22 @@
     "Automatic" : {
 
     },
+    "Block certain traffic from being tunneled" : {
+
+    },
+    "Block HTTP" : {
+
+    },
+    "Block SOCKS" : {
+
+    },
+    "Block TLS" : {
+
+    },
     "Cancel" : {
+
+    },
+    "Certificate Path" : {
 
     },
     "Changes are now effective" : {
@@ -164,10 +191,34 @@
     "Command URL" : {
 
     },
+    "Configure connection pool behavior and limits" : {
+
+    },
+    "Configure instance using form fields" : {
+
+    },
+    "Configure multiple target addresses for load balancing" : {
+
+    },
     "Configure Server Detail Widget" : {
 
     },
     "Configure Widget" : {
+
+    },
+    "Connect to tunnel address and forward from/to target" : {
+
+    },
+    "Connection Mode" : {
+
+    },
+    "Connection Pool" : {
+
+    },
+    "Connection Type" : {
+
+    },
+    "Control protocol availability and PROXY protocol v1 support" : {
 
     },
     "Copy" : {
@@ -209,6 +260,12 @@
     "Destination Server: Server you want your traffic to relay to." : {
 
     },
+    "Dial Address" : {
+
+    },
+    "Dial: Specific source IP or 'auto' by OS" : {
+
+    },
     "Direct Forward" : {
 
     },
@@ -216,6 +273,12 @@
 
     },
     "Disable UDP" : {
+
+    },
+    "DNS Cache Duration" : {
+
+    },
+    "DNS: Cache TTL duration in '30s, 5m, 1h'" : {
 
     },
     "Domain" : {
@@ -248,6 +311,9 @@
     "Edit Tunnel Port" : {
 
     },
+    "Enable PROXY Protocol" : {
+
+    },
     "Enter a new address." : {
 
     },
@@ -257,10 +323,7 @@
     "Enter a new port." : {
 
     },
-    "Enter a new URL for this instance." : {
-
-    },
-    "Enter URL for the new instance." : {
+    "Enter instance URL directly" : {
 
     },
     "Error" : {
@@ -291,10 +354,31 @@
     "Get up-to-date information in your Widget." : {
 
     },
+    "Input Method" : {
+
+    },
+    "Input Mode" : {
+
+    },
+    "Instance Type" : {
+
+    },
+    "Instance URL" : {
+
+    },
     "Invalid Response" : {
 
     },
     "Invalid URL" : {
+
+    },
+    "IP" : {
+
+    },
+    "IP %lld" : {
+
+    },
+    "key" : {
 
     },
     "Key" : {
@@ -303,10 +387,16 @@
     "Key Example: da101e32c7b8c296c8b0d08fca480edc" : {
 
     },
+    "Key Path" : {
+
+    },
     "Key: API Key of your master API." : {
 
     },
     "Light" : {
+
+    },
+    "Listen on tunnel address and forward to/from target" : {
 
     },
     "Listen Port" : {
@@ -316,6 +406,9 @@
 
     },
     "Listen Port: Port you use to connect to the remote server." : {
+
+    },
+    "Load Balancing Strategy" : {
 
     },
     "Loading..." : {
@@ -330,7 +423,16 @@
     "Log Level" : {
 
     },
+    "Logging" : {
+
+    },
     "Matrix Unavailable" : {
+
+    },
+    "Max Connections" : {
+
+    },
+    "Maximum Connections" : {
 
     },
     "Maximum Pool Connection" : {
@@ -342,10 +444,16 @@
     "Metadata Unavailable" : {
 
     },
+    "Minimum Connections" : {
+
+    },
     "Minimum Pool Connection" : {
 
     },
     "More" : {
+
+    },
+    "Multiple Target Addresses" : {
 
     },
     "Name" : {
@@ -355,6 +463,9 @@
 
     },
     "Network" : {
+
+    },
+    "Network Tuning" : {
 
     },
     "Newest to Oldest" : {
@@ -396,6 +507,21 @@
     "Protocol" : {
 
     },
+    "Protocol Control" : {
+
+    },
+    "Rate Limit (Mbps)" : {
+
+    },
+    "Rate: Bandwidth limit or 0 for unlimited" : {
+
+    },
+    "Read Timeout" : {
+
+    },
+    "Read: Timeout duration or 0 to disable" : {
+
+    },
     "Refresh Widget" : {
 
     },
@@ -432,6 +558,9 @@
     "Scan QR Code" : {
 
     },
+    "Security & Encryption" : {
+
+    },
     "Select" : {
 
     },
@@ -439,6 +568,9 @@
       "comment" : "TLS Level: Self-signed Certificates"
     },
     "Server" : {
+
+    },
+    "Server address to connect or Client address to bind" : {
 
     },
     "Server Details" : {
@@ -472,10 +604,25 @@
     "Services" : {
 
     },
+    "Set logging verbosity level" : {
+
+    },
     "Settings" : {
 
     },
     "Share" : {
+
+    },
+    "Single target address to connect or to bind" : {
+
+    },
+    "Slot: Max concurrent connections allowed" : {
+
+    },
+    "SNI Hostname" : {
+
+    },
+    "SNI hostname for TLS connections" : {
 
     },
     "Sort" : {
@@ -581,7 +728,13 @@
     "TLS" : {
 
     },
+    "TLS encryption settings" : {
+
+    },
     "TLS Level" : {
+
+    },
+    "TLS Mode" : {
 
     },
     "To add a server, tap the add server icon in the toolbar." : {
@@ -628,11 +781,20 @@
         }
       }
     },
+    "Traffic Blocking" : {
+
+    },
     "Transport" : {
 
     },
     "Trusted Certificates" : {
       "comment" : "TLS Level: Trusted Certificates"
+    },
+    "Tunnel %@ Address" : {
+
+    },
+    "Tunnel address to bind, empty IP for all interfaces" : {
+
     },
     "Tunnel Forward" : {
 
@@ -673,7 +835,13 @@
     "URL: URL of your master API." : {
 
     },
+    "value" : {
+
+    },
     "View details of your servers at a glance." : {
+
+    },
+    "Visit https://github.com/NodePassProject for documentation on instance URL parameters." : {
 
     },
     "You are about to delete this server. Are you sure?" : {
