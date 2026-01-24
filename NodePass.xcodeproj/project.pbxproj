@@ -14,7 +14,7 @@
 		57D9675B2F23B08C00AE3CCB /* ConnectionMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D967582F23B08C00AE3CCB /* ConnectionMode.swift */; };
 		57D9675C2F23B08C00AE3CCB /* LoadBalancingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D967592F23B08C00AE3CCB /* LoadBalancingStrategy.swift */; };
 		57D9675D2F23B08C00AE3CCB /* TLSMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D9675A2F23B08C00AE3CCB /* TLSMode.swift */; };
-		CB1C10DF2F2495ED00B74CD8 /* BlockCertainTrafficView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1C10DE2F2495ED00B74CD8 /* BlockCertainTrafficView.swift */; };
+		CB1C10DF2F2495ED00B74CD8 /* TrafficBlockingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1C10DE2F2495ED00B74CD8 /* TrafficBlockingView.swift */; };
 		CB1E97FF2E2262F600A175FD /* NATPassthroughDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E97FE2E2262E700A175FD /* NATPassthroughDetailView.swift */; };
 		CB1E98012E226C1E00A175FD /* DirectForwardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E98002E226C0F00A175FD /* DirectForwardDetailView.swift */; };
 		CB1E98032E226C2D00A175FD /* TunnelForwardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E98022E226C2300A175FD /* TunnelForwardDetailView.swift */; };
@@ -165,7 +165,7 @@
 		57D967582F23B08C00AE3CCB /* ConnectionMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionMode.swift; sourceTree = "<group>"; };
 		57D967592F23B08C00AE3CCB /* LoadBalancingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadBalancingStrategy.swift; sourceTree = "<group>"; };
 		57D9675A2F23B08C00AE3CCB /* TLSMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLSMode.swift; sourceTree = "<group>"; };
-		CB1C10DE2F2495ED00B74CD8 /* BlockCertainTrafficView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockCertainTrafficView.swift; sourceTree = "<group>"; };
+		CB1C10DE2F2495ED00B74CD8 /* TrafficBlockingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrafficBlockingView.swift; sourceTree = "<group>"; };
 		CB1E97FE2E2262E700A175FD /* NATPassthroughDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NATPassthroughDetailView.swift; sourceTree = "<group>"; };
 		CB1E98002E226C0F00A175FD /* DirectForwardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectForwardDetailView.swift; sourceTree = "<group>"; };
 		CB1E98022E226C2300A175FD /* TunnelForwardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TunnelForwardDetailView.swift; sourceTree = "<group>"; };
@@ -449,7 +449,7 @@
 				57D967502F239AF600AE3CCB /* AddInstanceView.swift */,
 				57D967512F239AF600AE3CCB /* EditInstanceView.swift */,
 				57D967522F239AF600AE3CCB /* InstanceFormView.swift */,
-				CB1C10DE2F2495ED00B74CD8 /* BlockCertainTrafficView.swift */,
+				CB1C10DE2F2495ED00B74CD8 /* TrafficBlockingView.swift */,
 				CB6682862E12B60400A27696 /* InstanceListView.swift */,
 				CB6682C42E17FAA200A27696 /* InstanceCardView.swift */,
 			);
@@ -721,7 +721,7 @@
 				CB5E133F2E7BF81300870962 /* SingleMatrixGaugeStyle.swift in Sources */,
 				CB62C0852E2CA09800919507 /* ServerService.swift in Sources */,
 				CB66827D2E1181DF00A27696 /* NetworkService.swift in Sources */,
-				CB1C10DF2F2495ED00B74CD8 /* BlockCertainTrafficView.swift in Sources */,
+				CB1C10DF2F2495ED00B74CD8 /* TrafficBlockingView.swift in Sources */,
 				CB66827A2E1181D200A27696 /* APIEndpoint.swift in Sources */,
 				CB6682A32E172F3C00A27696 /* LoadingStateModifier.swift in Sources */,
 				CBC6F6012ED815D20024F670 /* ImageAlignment.swift in Sources */,

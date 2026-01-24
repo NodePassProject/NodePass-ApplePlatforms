@@ -43,9 +43,9 @@ struct InstanceFormView: View {
     @State private var disableUDP: Bool = false
     @State private var enableProxy: Bool = false
     
-    @State private var blockSOCKS: Bool = false
     @State private var blockHTTP: Bool = false
     @State private var blockTLS: Bool = false
+    @State private var blockSOCKS: Bool = false
     
     @State private var lbsStrategy: LoadBalancingStrategy = .roundRobin
     @State private var urlString: String = ""
@@ -56,6 +56,17 @@ struct InstanceFormView: View {
     private var isEditMode: Bool { instance != nil }
     private var title: String { isEditMode ? "Edit Instance" : "Add Instance" }
     private var confirmButtonText: String { isEditMode ? "Save" : "Add" }
+    
+    private var blockedTrafficString: String {
+        var blockedTrafficStrings: [String] = []
+        if blockHTTP { blockedTrafficStrings.append("HTTP") }
+        if blockTLS { blockedTrafficStrings.append("TLS") }
+        if blockSOCKS { blockedTrafficStrings.append("SOCKS") }
+        if blockedTrafficStrings.isEmpty {
+            return "None"
+        }
+        return blockedTrafficStrings.joined(separator: ", ")
+    }
     
     enum InputMode: String, CaseIterable {
         case form = "Form"
@@ -439,10 +450,13 @@ struct InstanceFormView: View {
         
         Section {
             NavigationLink {
-                TrafficBlockingView(blockSOCKS: $blockSOCKS, blockHTTP: $blockHTTP, blockTLS: $blockTLS)
+                TrafficBlockingView(blockHTTP: $blockHTTP, blockTLS: $blockTLS, blockSOCKS: $blockSOCKS)
             } label: {
                 HStack {
                     Text("Traffic Blocking")
+                    Spacer()
+                    Text(blockedTrafficString)
+                        .foregroundStyle(.secondary)
                 }
             }
         }

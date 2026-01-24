@@ -8,16 +8,16 @@
 import SwiftUI
 
 struct TrafficBlockingView: View {
-    @Binding var blockSOCKS: Bool
     @Binding var blockHTTP: Bool
     @Binding var blockTLS: Bool
+    @Binding var blockSOCKS: Bool
     
     var body: some View {
         Form {
             Section {
-                Toggle("Block SOCKS", isOn: $blockSOCKS)
                 Toggle("Block HTTP", isOn: $blockHTTP)
                 Toggle("Block TLS", isOn: $blockTLS)
+                Toggle("Block SOCKS", isOn: $blockSOCKS)
             } footer: {
                 Text("Block certain traffic from being tunneled")
             }
