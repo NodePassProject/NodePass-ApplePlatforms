@@ -15,7 +15,6 @@ struct InstanceListView: View {
     @State var instances: [Instance] = []
     
     @State private var isShowAddInstanceSheet: Bool = false
-    @State private var isShowEditInstanceSheet: Bool = false
     @State private var instanceToEdit: Instance?
     
     @State private var isShowDeleteInstanceAlert: Bool = false
@@ -63,11 +62,9 @@ struct InstanceListView: View {
                 listInstances()
             }
         }
-        .sheet(isPresented: $isShowEditInstanceSheet) {
-            if let instance = instanceToEdit {
-                EditInstanceView(server: server, instance: instance) {
-                    listInstances()
-                }
+        .sheet(item: $instanceToEdit) { instance in
+            EditInstanceView(server: server, instance: instance) {
+                listInstances()
             }
         }
         .alert("Delete Instance", isPresented: $isShowDeleteInstanceAlert) {
@@ -117,7 +114,6 @@ struct InstanceListView: View {
                 }
                 Button {
                     instanceToEdit = instance
-                    isShowEditInstanceSheet = true
                 } label: {
                     Label("Edit", systemImage: "pencil")
                 }
