@@ -197,17 +197,17 @@ struct ServerListView: View {
                     }
                     .contextMenu {
                         ControlGroup {
-                            let base64EncodedURL = server.url.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
-                            let base64EncodedKey = server.key.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
-                            ShareLink(item: "np://master?url=\(base64EncodedURL)&key=\(base64EncodedKey)") {
-                                Label("Share", systemImage: "square.and.arrow.up")
-                            }
                             Button {
                                 state.editServerSheetMode = .editing
                                 state.editServerSheetServer = server
                                 state.isShowEditServerSheet = true
                             } label: {
                                 Label("Edit", systemImage: "pencil")
+                            }
+                            let base64EncodedURL = server.url.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
+                            let base64EncodedKey = server.key.data(using: .utf8)!.base64EncodedString(options: .lineLength64Characters)
+                            ShareLink(item: "np://master?url=\(base64EncodedURL)&key=\(base64EncodedKey)") {
+                                Label("Share", systemImage: "square.and.arrow.up")
                             }
                         }
                         Divider()
