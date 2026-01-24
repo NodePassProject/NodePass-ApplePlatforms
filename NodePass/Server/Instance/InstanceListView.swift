@@ -88,6 +88,22 @@ struct InstanceListView: View {
     @ViewBuilder
     private func instanceCard(instance: Instance) -> some View {
         InstanceCardView(instance: instance)
+            .swipeActions(edge: .leading) {
+                Button {
+                    NPUI.copyToClipboard(instance.url)
+                } label: {
+                    Label("Copy", systemImage: "doc.on.doc")
+                }
+                .tint(.blue)
+            }
+            .swipeActions(edge: .trailing) {
+                Button {
+                    instanceToEdit = instance
+                } label: {
+                    Label("Edit", systemImage: "pencil")
+                }
+                .tint(.orange)
+            }
             .contextMenu {
                 ControlGroup {
                     Button {
@@ -105,17 +121,6 @@ struct InstanceListView: View {
                     } label: {
                         Label("Restart", systemImage: "restart")
                     }
-                }
-                Divider()
-                Button {
-                    NPUI.copyToClipboard(instance.url)
-                } label: {
-                    Label("Copy URL", systemImage: "document.on.document")
-                }
-                Button {
-                    instanceToEdit = instance
-                } label: {
-                    Label("Edit", systemImage: "pencil")
                 }
                 Divider()
                 Button(role: .destructive) {
