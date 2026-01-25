@@ -188,12 +188,6 @@
     "Certificate Path" : {
 
     },
-    "Changes are now effective" : {
-
-    },
-    "Command URL" : {
-
-    },
     "Configure advanced settings and tuning parameters." : {
 
     },
@@ -228,9 +222,6 @@
 
     },
     "Copy" : {
-
-    },
-    "Copy URL" : {
 
     },
     "CPU" : {
@@ -296,37 +287,16 @@
     "Edit" : {
 
     },
-    "Edit Address" : {
-
-    },
     "Edit Instance" : {
-
-    },
-    "Edit Listen Port" : {
-
-    },
-    "Edit Port" : {
 
     },
     "Edit Server" : {
 
     },
-    "Edit Service Port" : {
-
-    },
-    "Edit Tunnel Port" : {
-
-    },
     "Enable PROXY Protocol" : {
 
     },
-    "Enter a new address." : {
-
-    },
     "Enter a new name for the service." : {
-
-    },
-    "Enter a new port." : {
 
     },
     "Enter instance URL directly." : {
@@ -640,9 +610,6 @@
     "Stop" : {
 
     },
-    "Success" : {
-
-    },
     "Support Us" : {
 
     },
@@ -735,9 +702,6 @@
 
     },
     "TLS encryption settings." : {
-
-    },
-    "TLS Level" : {
 
     },
     "TLS Mode" : {
@@ -857,9 +821,6 @@
 
     },
     "You are about to force delete this service. This action is irreversible and any error will be ignored. Are you sure?" : {
-
-    },
-    "You Should Connect To" : {
 
     }
   },
