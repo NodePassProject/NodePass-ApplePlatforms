@@ -49,10 +49,18 @@ struct TunnelForwardCardView: View {
         VStack(spacing: 20) {
             HStack {
                 VStack(alignment: .leading) {
-                    Text("Tunnel Forward")
-                        .foregroundStyle(.secondary)
-                        .font(.caption)
-                        .bold()
+                    HStack {
+                        Text("Tunnel Forward")
+                            .foregroundStyle(.secondary)
+                            .font(.caption)
+                            .bold()
+                        Spacer()
+                        if service.isConfigurationInvalid {
+                            Label("Configuration Invalid", systemImage: "exclamationmark.triangle.fill")
+                                .font(.caption2)
+                                .foregroundStyle(.red)
+                        }
+                    }
                     Text(service.name)
                 }
                 Spacer()
