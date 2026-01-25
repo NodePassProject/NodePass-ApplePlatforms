@@ -668,6 +668,28 @@ struct ServiceListView: View {
                     }
                 }
             }
+            
+            // Delete invalid local services
+            let allRemoteServiceIds = Set(
+                store.values
+                    .flatMap { $0 }
+                    .compactMap { $0.metadata?.peer.serviceId }
+                    .filter { !$0.isEmpty }
+            )
+            
+            let localServicesToDelete = services.filter { service in
+                let serviceIdString = service.id.uuidString
+                return !allRemoteServiceIds.contains(serviceIdString)
+            }
+            
+            for service in localServicesToDelete {
+                context.delete(service)
+            }
+            
+            if !localServicesToDelete.isEmpty {
+                try? context.save()
+            }
+            
             if errorStore.count == 0 {
                 isSensoryFeedbackTriggered.toggle()
             }
