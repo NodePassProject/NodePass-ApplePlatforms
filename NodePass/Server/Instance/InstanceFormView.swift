@@ -207,7 +207,7 @@ struct InstanceFormView: View {
         }
         
         Section {
-            LabeledTextField("IP", prompt: instanceType == .server ? "" : "", text: $tunnelAddress)
+            LabeledTextField("IP", prompt: "Optional", text: $tunnelAddress)
                 .autocorrectionDisabled()
 #if os(iOS)
                 .textInputAutocapitalization(.never)
@@ -316,7 +316,7 @@ struct InstanceFormView: View {
 #endif
                 }
             } else {
-                LabeledTextField("IP", prompt: instanceType == .server ? "" : "", text: $targetAddress)
+                LabeledTextField("IP", prompt: "Optional", text: $targetAddress)
                     .autocorrectionDisabled()
 #if os(iOS)
                     .textInputAutocapitalization(.never)
@@ -788,7 +788,7 @@ struct InstanceFormView: View {
             queryParams.append("lbs=\(lbsStrategy.rawValue)")
         }
         
-        if isAdvancedModeEnabled && logLevel != .info {
+        if logLevel != .info {
             queryParams.append("log=\(logLevel.rawValue)")
         }
         
@@ -819,17 +819,20 @@ struct InstanceFormView: View {
             let instanceService = InstanceService()
             do {
                 if let instance = instance {
-                    _ = try await instanceService.updateInstance(
-                        baseURLString: server.url,
-                        apiKey: server.key,
-                        id: instance.id,
-                        url: url
-                    )
+                    if instance.url != url {
+                        _ = try await instanceService.updateInstance(
+                            baseURLString: server.url,
+                            apiKey: server.key,
+                            id: instance.id,
+                            url: url
+                        )
+                    }
                 } else {
                     _ = try await instanceService.createInstance(
                         baseURLString: server.url,
                         apiKey: server.key,
-                        url: url
+                        url: url,
+                        alias: String(localized: "Untitled")
                     )
                 }
                 await MainActor.run {

@@ -265,16 +265,17 @@ struct AddDirectForwardServiceView: View {
         Task {
             let instanceService = InstanceService()
             do {
+                let name = NPCore.noEmptyName(name)
                 let clientInstance = try await instanceService.createInstance(
                     baseURLString: client.url,
                     apiKey: client.key,
-                    url: command
+                    url: command,
+                    alias: "\(name)-client"
                 )
                 
                 let fullCommand = clientInstance.config ?? command
                 
                 let serviceId = UUID()
-                let name = NPCore.noEmptyName(name)
                 let service = Service(
                     id: serviceId,
                     name: name,

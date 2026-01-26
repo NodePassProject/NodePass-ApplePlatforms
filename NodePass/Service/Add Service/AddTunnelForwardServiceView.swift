@@ -421,15 +421,18 @@ struct AddTunnelForwardServiceView: View {
         Task {
             let instanceService = InstanceService()
             do {
+                let name = NPCore.noEmptyName(name)
                 async let createRelayServerInstance = instanceService.createInstance(
                     baseURLString: relayServer.url,
                     apiKey: relayServer.key,
-                    url: relayServerCommand
+                    url: relayServerCommand,
+                    alias: "\(name)-client"
                 )
                 async let createDestinationServerInstance = instanceService.createInstance(
                     baseURLString: destinationServer.url,
                     apiKey: destinationServer.key,
-                    url: destinationServerCommand
+                    url: destinationServerCommand,
+                    alias: "\(name)-server"
                 )
                 
                 let (relayServerInstance, destinationServerInstance) = try await (createRelayServerInstance, createDestinationServerInstance)
@@ -438,7 +441,6 @@ struct AddTunnelForwardServiceView: View {
                 let destinationServerFullCommand = destinationServerInstance.config ?? destinationServerCommand
                 
                 let serviceId = UUID()
-                let name = NPCore.noEmptyName(name)
                 let service = Service(
                     id: serviceId,
                     name: name,

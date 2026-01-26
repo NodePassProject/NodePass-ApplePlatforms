@@ -32,6 +32,13 @@ struct InstanceCardView: View {
                     Badge("\(ping) ms", backgroundColor: .blue, textColor: .white)
                 }
                 Spacer()
+                if let alias = instance.alias, !alias.isEmpty {
+                    Text(alias)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                }
             }
             
             Text(instance.url)

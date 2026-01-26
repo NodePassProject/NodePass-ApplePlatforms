@@ -188,6 +188,9 @@
     "Certificate Path" : {
 
     },
+    "Configuration Invalid" : {
+
+    },
     "Configure advanced settings and tuning parameters." : {
 
     },
@@ -204,9 +207,6 @@
 
     },
     "Configure Widget" : {
-
-    },
-    "Configuration Invalid" : {
 
     },
     "Connect to tunnel address and forward from/to target." : {
@@ -300,6 +300,9 @@
 
     },
     "Enter a new name for the service." : {
+
+    },
+    "Enter a new name for the instance." : {
 
     },
     "Enter instance URL directly." : {
@@ -468,6 +471,9 @@
     "OK" : {
 
     },
+    "Optional" : {
+
+    },
     "Oldest to Newest" : {
 
     },
@@ -523,6 +529,9 @@
 
     },
     "Rename" : {
+
+    },
+    "Rename Instance" : {
 
     },
     "Rename Service" : {
