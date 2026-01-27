@@ -164,6 +164,9 @@
     "An error occurred" : {
 
     },
+    "An optional friendly name for this instance." : {
+
+    },
     "Ascending" : {
 
     },
@@ -302,9 +305,6 @@
     "Enter a new name for the service." : {
 
     },
-    "Enter a new name for the instance." : {
-
-    },
     "Enter instance URL directly." : {
 
     },
@@ -340,6 +340,9 @@
 
     },
     "Input Mode" : {
+
+    },
+    "Instance Alias" : {
 
     },
     "Instance Type" : {
@@ -529,9 +532,6 @@
 
     },
     "Rename" : {
-
-    },
-    "Rename Instance" : {
 
     },
     "Rename Service" : {

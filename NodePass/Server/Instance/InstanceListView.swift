@@ -17,10 +17,6 @@ struct InstanceListView: View {
     @State private var isShowAddInstanceSheet: Bool = false
     @State private var instanceToEdit: Instance?
     
-    @State private var isShowRenameAlert: Bool = false
-    @State private var instanceToRename: Instance?
-    @State private var renameText: String = ""
-    
     @State private var isShowDeleteInstanceAlert: Bool = false
     @State private var instanceToDelete: Instance?
     
@@ -82,20 +78,6 @@ struct InstanceListView: View {
         } message: {
             Text("You are about to delete this service. This action is irreversible. Are you sure?")
         }
-        .alert("Rename Instance", isPresented: $isShowRenameAlert) {
-            TextField("Name", text: $renameText)
-            Button("Cancel", role: .cancel) {
-                instanceToRename = nil
-                renameText = ""
-            }
-            Button("OK") {
-                renameInstance(instance: instanceToRename!, newAlias: renameText)
-                instanceToRename = nil
-                renameText = ""
-            }
-        } message: {
-            Text("Enter a new name for the instance.")
-        }
         .alert("Error", isPresented: $isShowErrorAlert) {
             Button("OK", role: .cancel) {
                 listInstances()
@@ -123,15 +105,6 @@ struct InstanceListView: View {
                     Label("Edit", systemImage: "pencil")
                 }
                 .tint(.orange)
-                
-                Button {
-                    instanceToRename = instance
-                    renameText = instance.alias ?? ""
-                    isShowRenameAlert = true
-                } label: {
-                    Label("Rename", systemImage: "character.cursor.ibeam")
-                }
-                .tint(.blue)
             }
             .contextMenu {
                 ControlGroup {
@@ -189,28 +162,6 @@ struct InstanceListView: View {
 #if DEBUG
                 print("Error Deleting Instances: \(error.localizedDescription)")
                 loadingState = .error(error.localizedDescription)
-#endif
-                errorMessage = error.localizedDescription
-                isShowErrorAlert = true
-            }
-        }
-    }
-    
-    private func renameInstance(instance: Instance, newAlias: String) {
-        Task {
-            let instanceService = InstanceService()
-            do {
-                let aliasValue = NPCore.noEmptyName(newAlias)
-                try await instanceService.updateInstanceAlias(
-                    baseURLString: server.url,
-                    apiKey: server.key,
-                    id: instance.id,
-                    alias: aliasValue
-                )
-                listInstances()
-            } catch {
-#if DEBUG
-                print("Error Renaming Instance: \(error.localizedDescription)")
 #endif
                 errorMessage = error.localizedDescription
                 isShowErrorAlert = true

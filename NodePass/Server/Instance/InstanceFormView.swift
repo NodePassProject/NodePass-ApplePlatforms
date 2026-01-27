@@ -17,6 +17,7 @@ struct InstanceFormView: View {
     let onComplete: () -> Void
     
     @State private var inputMode: InputMode = .form
+    @State private var alias: String = ""
     @State private var instanceType: InstanceType = .server
     @State private var tunnelAddress: String = ""
     @State private var tunnelPort: String = ""
@@ -104,6 +105,19 @@ struct InstanceFormView: View {
         NavigationStack {
             Form {
                 Section {
+                    TextField("Name", text: $alias)
+                        .autocorrectionDisabled()
+#if os(iOS)
+                        .textInputAutocapitalization(.never)
+#endif
+                } header: {
+                    Text("Instance Alias")
+                } footer: {
+                    Text("An optional friendly name for this instance.")
+                        .foregroundStyle(.secondary)
+                }
+                
+                Section {
                     Picker("Input Mode", selection: $inputMode) {
                         ForEach(InputMode.allCases, id: \.self) { mode in
                             Text(mode.rawValue).tag(mode)
@@ -181,6 +195,7 @@ struct InstanceFormView: View {
             .onAppear {
                 if let instance = instance {
                     parseInstanceURL(instance.url)
+                    alias = instance.alias ?? ""
                 }
             }
         }
@@ -814,17 +829,32 @@ struct InstanceFormView: View {
         }
         
         let url = inputMode == .url ? urlString : generateURL()
+        let aliasValue = NPCore.noEmptyName(alias)
         
         Task {
             let instanceService = InstanceService()
             do {
                 if let instance = instance {
                     if instance.url != url {
-                        _ = try await instanceService.updateInstance(
+                        do {
+                            _ = try await instanceService.updateInstance(
+                                baseURLString: server.url,
+                                apiKey: server.key,
+                                id: instance.id,
+                                url: url
+                            )
+                        } catch {
+                            if !error.localizedDescription.contains("409") {
+                                throw error
+                            }
+                        }
+                    }
+                    if NPCore.noEmptyName(instance.alias ?? "") != aliasValue {
+                        try await instanceService.updateInstanceAlias(
                             baseURLString: server.url,
                             apiKey: server.key,
                             id: instance.id,
-                            url: url
+                            alias: aliasValue
                         )
                     }
                 } else {
@@ -832,7 +862,7 @@ struct InstanceFormView: View {
                         baseURLString: server.url,
                         apiKey: server.key,
                         url: url,
-                        alias: String(localized: "Untitled")
+                        alias: aliasValue
                     )
                 }
                 await MainActor.run {
