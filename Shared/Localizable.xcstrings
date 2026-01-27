@@ -200,9 +200,6 @@
     "Configure connection pool behavior and limits." : {
 
     },
-    "Configure instance using form fields." : {
-
-    },
     "Configure multiple target addresses for load balancing." : {
 
     },
@@ -210,6 +207,9 @@
 
     },
     "Configure Widget" : {
+
+    },
+    "Details" : {
 
     },
     "Connect to tunnel address and forward from/to target." : {
@@ -305,9 +305,6 @@
     "Enter a new name for the service." : {
 
     },
-    "Enter instance URL directly." : {
-
-    },
     "Error" : {
 
     },
@@ -334,9 +331,6 @@
 
     },
     "Get up-to-date information in your Widget." : {
-
-    },
-    "Input Method" : {
 
     },
     "Input Mode" : {
@@ -474,10 +468,10 @@
     "OK" : {
 
     },
-    "Optional" : {
+    "Oldest to Newest" : {
 
     },
-    "Oldest to Newest" : {
+    "Optional" : {
 
     },
     "Pool" : {
@@ -809,6 +803,9 @@
 
     },
     "URL" : {
+
+    },
+    "Command" : {
 
     },
     "URL Example: https://17.253.144.10:1000/api/v1" : {

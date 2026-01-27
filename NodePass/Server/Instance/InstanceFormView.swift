@@ -86,8 +86,8 @@ struct InstanceFormView: View {
     }
     
     enum InputMode: String, CaseIterable {
-        case form = "Form"
-        case url = "URL"
+        case form = "Details"
+        case url = "Command"
     }
     
     enum InstanceType: String, CaseIterable {
@@ -117,25 +117,6 @@ struct InstanceFormView: View {
                         .foregroundStyle(.secondary)
                 }
                 
-                Section {
-                    Picker("Input Mode", selection: $inputMode) {
-                        ForEach(InputMode.allCases, id: \.self) { mode in
-                            Text(mode.rawValue).tag(mode)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                } header: {
-                    Text("Input Method")
-                } footer: {
-                    if inputMode == .form {
-                        Text("Configure instance using form fields.")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Text("Enter instance URL directly.")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                
                 if inputMode == .form {
                     formModeContent
                 } else {
@@ -158,6 +139,16 @@ struct InstanceFormView: View {
 #endif
             .navigationTitle(title)
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Picker("Input Mode", selection: $inputMode) {
+                        ForEach(InputMode.allCases, id: \.self) { mode in
+                            Text(mode.rawValue).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                }
+                
                 ToolbarItem(placement: .cancellationAction) {
                     if #available(iOS 26.0, macOS 26.0, *) {
                         Button(role: .cancel) {
