@@ -65,7 +65,7 @@ struct NATPassthroughCardView: View {
                     .alignmentGuide(.imageAlignment) { d in d[VerticalAlignment.center] }
                 Spacer()
                 VStack(spacing: 3) {
-                    let serverName = servers.first(where: { $0.id == implementation0.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                    let serverName = servers.first(where: { $0.id == implementation0.serverID })?.name ?? (isPreview ? "Select" : "Unknown")
                     let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: implementation0.command)
                     Text(serverName)
                         .lineLimit(1)
@@ -95,7 +95,7 @@ struct NATPassthroughCardView: View {
                     let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: implementation1.command)
                     if addressesAndPorts.destination.address == "127.0.0.1" {
                         VStack(spacing: 3) {
-                            let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                            let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? (isPreview ? "Select" : "Unknown")
                             let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: implementation1.command)
                             Text(serverName)
                                 .lineLimit(1)
@@ -113,7 +113,7 @@ struct NATPassthroughCardView: View {
                     }
                     else {
                         VStack(spacing: 3) {
-                            let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                            let serverName = servers.first(where: { $0.id == implementation1.serverID })?.name ?? (isPreview ? "Select" : "Unknown")
                             Text(serverName)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.5)

@@ -55,7 +55,7 @@ struct DirectForwardCardView: View {
             
             HStack(alignment: .imageAlignment) {
                 let implementation = service.implementations!.first(where: { $0.position == 0 })!
-                let serverName = servers.first(where: { $0.id == implementation.serverID })?.name ?? String(localized: isPreview ? "Select" : "Unknown")
+                let serverName = servers.first(where: { $0.id == implementation.serverID })?.name ?? (isPreview ? "Select" : "Unknown")
                 let addressesAndPorts = NPCore.parseAddressesAndPorts(urlString: implementation.command)
                 Image(systemName: "laptopcomputer.and.iphone")
                     .font(.title)

@@ -282,7 +282,7 @@ struct AddTunnelForwardServiceView: View {
                         type: .tunnelForward,
                         implementations: [
                             Implementation(
-                                name: String(localized: "\(name) Relay"),
+                                name: "\(name) Relay",
                                 type: .tunnelForwardRelay,
                                 position: 0,
                                 serverID: relayServer?.id ?? "",
@@ -291,7 +291,7 @@ struct AddTunnelForwardServiceView: View {
                                 fullCommand: relayServerCommand
                             ),
                             Implementation(
-                                name: String(localized: "\(name) Destination"),
+                                name: "\(name) Destination",
                                 type: .tunnelForwardDestination,
                                 position: 1,
                                 serverID: destinationServer?.id ?? "",
@@ -447,7 +447,7 @@ struct AddTunnelForwardServiceView: View {
                     type: .tunnelForward,
                     implementations: [
                         Implementation(
-                            name: String(localized: "\(name) Relay"),
+                            name: "\(name) Relay",
                             type: .tunnelForwardRelay,
                             position: 0,
                             serverID: relayServer.id,
@@ -456,7 +456,7 @@ struct AddTunnelForwardServiceView: View {
                             fullCommand: relayServerFullCommand
                         ),
                         Implementation(
-                            name: String(localized: "\(name) Destination"),
+                            name: "\(name) Destination",
                             type: .tunnelForwardDestination,
                             position: 1,
                             serverID: destinationServer.id,
@@ -475,7 +475,7 @@ struct AddTunnelForwardServiceView: View {
                         baseURLString: relayServer.url,
                         apiKey: relayServer.key,
                         id: relayServerInstance.id,
-                        serviceAlias: String(localized: "\(name)"),
+                        serviceAlias: "\(name)",
                         serviceId: serviceId.uuidString,
                         serviceType: isExternalTarget ? "4" : "2"
                     )
@@ -483,7 +483,7 @@ struct AddTunnelForwardServiceView: View {
                         baseURLString: destinationServer.url,
                         apiKey: destinationServer.key,
                         id: destinationServerInstance.id,
-                        serviceAlias: String(localized: "\(name)"),
+                        serviceAlias: "\(name)",
                         serviceId: serviceId.uuidString,
                         serviceType: isExternalTarget ? "4" : "2"
                     )

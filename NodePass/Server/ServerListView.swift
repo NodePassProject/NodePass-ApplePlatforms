@@ -16,9 +16,9 @@ fileprivate enum SortIndicator: String, CaseIterable {
     var title: String {
         switch(self) {
         case .name:
-            return String(localized: "Name")
+            return "Name"
         case .date:
-            return String(localized: "Date")
+            return "Date"
         }
     }
 }
@@ -30,9 +30,9 @@ fileprivate enum SortOrder: String, CaseIterable {
     var title: String {
         switch(self) {
         case .ascending:
-            return String(localized: "Ascending")
+            return "Ascending"
         case .descending:
-            return String(localized: "Descending")
+            return "Descending"
         }
     }
     
@@ -41,16 +41,16 @@ fileprivate enum SortOrder: String, CaseIterable {
         case .name:
             switch(self) {
             case .ascending:
-                return String(localized: "Ascending")
+                return "Ascending"
             case .descending:
-                return String(localized: "Descending")
+                return "Descending"
             }
         case .date:
             switch(self) {
             case .ascending:
-                return String(localized: "Oldest to Newest")
+                return "Oldest to Newest"
             case .descending:
-                return String(localized: "Newest to Oldest")
+                return "Newest to Oldest"
             }
         }
     }

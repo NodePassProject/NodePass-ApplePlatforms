@@ -53,9 +53,9 @@ class NPCore {
         
         var displayName: String {
             switch self {
-            case .automatic: return String(localized: "Automatic")
-            case .light: return String(localized: "Light")
-            case .dark: return String(localized: "Dark")
+            case .automatic: return "Automatic"
+            case .light: return "Light"
+            case .dark: return "Dark"
             }
         }
     }
@@ -160,7 +160,7 @@ class NPCore {
     
     // MARK: - Utilities
     static func noEmptyName(_ name: String) -> String {
-        return name == "" ? String(localized: "Untitled") : name
+        return name == "" ? "Untitled" : name
     }
     
     static func formatBytes(_ bytes: Int64, decimals: Int = 2) -> String {
@@ -191,36 +191,36 @@ class NPCore {
         let days = hours / 24
 
         func formatShort(_ unit: String, _ value: Int64) -> String {
-            return String(format: NSLocalizedString("%lld%@", comment: "Short format: 5d"), value, NSLocalizedString(unit, comment: "Time unit"))
+            return String(format: "%lld%@", value, unit)
         }
 
         func formatLong(_ unit1: String, _ value1: Int64, _ unit2: String, _ value2: Int64) -> String {
-            return String(format: NSLocalizedString("%lld%@%lld%@", comment: "Long format: 5d 3h"), value1, NSLocalizedString(unit1, comment: "Time unit 1"), value2, NSLocalizedString(unit2, comment: "Time unit 2"))
+            return String(format: "%lld%@ %lld%@", value1, unit1, value2, unit2)
         }
         
         if days >= 10 {
-            return formatShort(String(localized: "timeUnitShortened.d"), days)
+            return formatShort("d", days)
         } else if days > 0 {
-            return shortened ? formatShort(String(localized: "timeUnitShortened.d"), days) : formatLong(String(localized: "timeUnitShortened.d"), days, String(localized: "timeUnitShortened.h"), hours % 24)
+            return shortened ? formatShort("d", days) : formatLong("d", days, "h", hours % 24)
         } else if hours > 0 {
-            return shortened ? formatShort(String(localized: "timeUnitShortened.h"), hours) : formatLong(String(localized: "timeUnitShortened.h"), hours, String(localized: "timeUnitShortened.m"), minutes % 60)
+            return shortened ? formatShort("h", hours) : formatLong("h", hours, "m", minutes % 60)
         } else if minutes > 0 {
-            return shortened ? formatShort(String(localized: "timeUnitShortened.m"), minutes) : formatLong(String(localized: "timeUnitShortened.m"), minutes, String(localized: "timeUnitShortened.s"), seconds % 60)
+            return shortened ? formatShort("m", minutes) : formatLong("m", minutes, "s", seconds % 60)
         } else {
-            return formatShort(String(localized: "timeUnitShortened.s"), seconds)
+            return formatShort("s", seconds)
         }
     }
     
     static func localizedTLSLevel(tlsLevel: String) -> String {
         switch(tlsLevel) {
         case "0":
-            return String(localized: "Unencrypted", comment: "TLS Level: Unencrypted")
+            return "No TLS Encryption"
         case "1":
-            return String(localized: "Self-signed Certificates", comment: "TLS Level: Self-signed Certificates")
+            return "Self-signed Certificate"
         case "2":
-            return String(localized: "Trusted Certificates", comment: "TLS Level: Trusted Certificates")
+            return "Trusted Certificate"
         default:
-            return String(localized: "Unknown")
+            return "Unknown"
         }
     }
 }

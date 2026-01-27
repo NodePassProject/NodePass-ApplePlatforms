@@ -22,9 +22,9 @@ enum MainTab: String, CaseIterable {
     
     var title: String {
         switch self {
-        case .services: String(localized: "Services")
-        case .servers: String(localized: "Servers")
-        case .settings: String(localized: "Settings")
+        case .services: "Services"
+        case .servers: "Servers"
+        case .settings: "Settings"
         }
     }
 }

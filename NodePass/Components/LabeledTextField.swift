@@ -8,19 +8,19 @@
 import SwiftUI
 
 struct LabeledTextField: View {
-    let title: LocalizedStringKey
+    let title: String
     let prompt: String
     var text: Binding<String>
     let isNumberOnly: Bool
     
-    init(_ title: LocalizedStringKey, prompt: String, text: Binding<String>) {
+    init(_ title: String, prompt: String, text: Binding<String>) {
         self.title = title
         self.prompt = prompt
         self.text = text
         self.isNumberOnly = false
     }
     
-    init(_ title: LocalizedStringKey, prompt: String, text: Binding<String>, isNumberOnly: Bool) {
+    init(_ title: String, prompt: String, text: Binding<String>, isNumberOnly: Bool) {
         self.title = title
         self.prompt = prompt
         self.text = text
