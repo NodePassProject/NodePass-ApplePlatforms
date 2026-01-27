@@ -252,7 +252,7 @@ struct AddNATPassthroughServiceView: View {
                             type: .natPassthrough,
                             implementations: [
                                 Implementation(
-                                    name: String(localized: "\(name) Remote"),
+                                    name: "\(name) Remote",
                                     type: .natPassthroughServer,
                                     position: 0,
                                     serverID: remoteServer?.id ?? "",
@@ -261,7 +261,7 @@ struct AddNATPassthroughServiceView: View {
                                     fullCommand: serverCommand
                                 ),
                                 Implementation(
-                                    name: String(localized: "\(name) Local"),
+                                    name: "\(name) Local",
                                     type: .natPassthroughClient,
                                     position: 1,
                                     serverID: localServer?.id ?? "",
@@ -416,7 +416,7 @@ struct AddNATPassthroughServiceView: View {
                     type: .natPassthrough,
                     implementations: [
                         Implementation(
-                            name: String(localized: "\(name) Remote"),
+                            name: "\(name) Remote",
                             type: .natPassthroughServer,
                             position: 0,
                             serverID: remoteServer.id,
@@ -425,7 +425,7 @@ struct AddNATPassthroughServiceView: View {
                             fullCommand: serverFullCommand
                         ),
                         Implementation(
-                            name: String(localized: "\(name) Local"),
+                            name: "\(name) Local",
                             type: .natPassthroughClient,
                             position: 1,
                             serverID: localServer.id,
@@ -444,7 +444,7 @@ struct AddNATPassthroughServiceView: View {
                         baseURLString: remoteServer.url,
                         apiKey: remoteServer.key,
                         id: serverInstance.id,
-                        serviceAlias: String(localized: "\(name)"),
+                        serviceAlias: "\(name)",
                         serviceId: serviceId.uuidString,
                         serviceType: isExternalTarget ? "3" : "1"
                     )
@@ -452,7 +452,7 @@ struct AddNATPassthroughServiceView: View {
                         baseURLString: localServer.url,
                         apiKey: localServer.key,
                         id: clientInstance.id,
-                        serviceAlias: String(localized: "\(name)"),
+                        serviceAlias: "\(name)",
                         serviceId: serviceId.uuidString,
                         serviceType: isExternalTarget ? "3" : "1"
                     )

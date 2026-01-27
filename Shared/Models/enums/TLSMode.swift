@@ -17,7 +17,7 @@ enum TLSMode: String, CaseIterable {
         case .selfSigned:
             return "Self-signed Certificate"
         case .custom:
-            return "Custom Certificate"
+            return "Trusted Certificate"
         }
     }
 }

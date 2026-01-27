@@ -16,9 +16,9 @@ fileprivate enum SortIndicator: String, CaseIterable {
     var title: String {
         switch(self) {
         case .name:
-            return String(localized: "Name")
+            return "Name"
         case .date:
-            return String(localized: "Date")
+            return "Date"
         }
     }
 }
@@ -30,9 +30,9 @@ fileprivate enum SortOrder: String, CaseIterable {
     var title: String {
         switch(self) {
         case .ascending:
-            return String(localized: "Ascending")
+            return "Ascending"
         case .descending:
-            return String(localized: "Descending")
+            return "Descending"
         }
     }
     
@@ -41,16 +41,16 @@ fileprivate enum SortOrder: String, CaseIterable {
         case .name:
             switch(self) {
             case .ascending:
-                return String(localized: "Ascending")
+                return "Ascending"
             case .descending:
-                return String(localized: "Descending")
+                return "Descending"
             }
         case .date:
             switch(self) {
             case .ascending:
-                return String(localized: "Oldest to Newest")
+                return "Oldest to Newest"
             case .descending:
-                return String(localized: "Newest to Oldest")
+                return "Newest to Oldest"
             }
         }
     }
@@ -361,7 +361,7 @@ struct ServiceListView: View {
     
     private func deleteService(service: Service, isForce: Bool = false) {
         func showGeneralizedErrorMessage(error: Error, instanceID: String) {
-            errorMessage = String(localized: "Error Deleting Instance \(instanceID):\(error.localizedDescription)")
+            errorMessage = "Error Deleting Instance \(instanceID):\(error.localizedDescription)"
             isShowErrorAlert = true
         }
         
@@ -399,7 +399,7 @@ struct ServiceListView: View {
                         context.delete(service)
                     }
                     else {
-                        errorMessage = String(localized: "Error Deleting Instance \(serverInstanceID): Server not found.")
+                        errorMessage = "Error Deleting Instance \(serverInstanceID): Server not found."
                         isShowErrorAlert = true
                     }
                     return
@@ -410,7 +410,7 @@ struct ServiceListView: View {
                         try? context.save()
                     }
                     else {
-                        errorMessage = String(localized: "Error Deleting Instance \(clientInstanceID): Server not found.")
+                        errorMessage = "Error Deleting Instance \(clientInstanceID): Server not found."
                         isShowErrorAlert = true
                     }
                     return
@@ -450,7 +450,7 @@ struct ServiceListView: View {
                         try? context.save()
                     }
                     else {
-                        errorMessage = String(localized: "Error Deleting Instance \(clientInstanceID): Server not found.")
+                        errorMessage = "Error Deleting Instance \(clientInstanceID): Server not found."
                         isShowErrorAlert = true
                     }
                     return
@@ -522,7 +522,7 @@ struct ServiceListView: View {
                             
                             if let existingService = services.first(where: { $0.id.uuidString == serviceId }) {
                                 // Update existing service
-                                existingService.name = instance.metadata?.peer.alias ?? String(localized: "Untitled")
+                                existingService.name = instance.metadata?.peer.alias ?? "Untitled"
                                 existingService.isConfigurationInvalid = !isValidConfiguration
                                 if let implementation = existingService.implementations?.first {
                                     implementation.name = clientInstance.metadata!.peer.alias
@@ -534,7 +534,7 @@ struct ServiceListView: View {
                                 // Create new service
                                 let service = Service(
                                     id: UUID(uuidString: serviceId) ?? UUID(),
-                                    name: instance.metadata?.peer.alias ?? String(localized: "Untitled"),
+                                    name: instance.metadata?.peer.alias ?? "Untitled",
                                     type: .directForward,
                                     implementations: [
                                         Implementation(
@@ -571,7 +571,7 @@ struct ServiceListView: View {
                                         
                                         if let existingService = services.first(where: { $0.id.uuidString == serviceId }) {
                                             // Update existing service
-                                            existingService.name = instance.metadata?.peer.alias ?? String(localized: "Untitled")
+                                            existingService.name = instance.metadata?.peer.alias ?? "Untitled"
                                             existingService.isConfigurationInvalid = !isValidConfiguration
                                             if let implementations = existingService.implementations {
                                                 // Update by instanceID
@@ -594,7 +594,7 @@ struct ServiceListView: View {
                                             
                                             let service = Service(
                                                 id: UUID(uuidString: serviceId) ?? UUID(),
-                                                name: instance.metadata?.peer.alias ?? String(localized: "Untitled"),
+                                                name: instance.metadata?.peer.alias ?? "Untitled",
                                                 type: .natPassthrough,
                                                 implementations: [
                                                     Implementation(
@@ -632,7 +632,7 @@ struct ServiceListView: View {
                                         
                                         if let existingService = services.first(where: { $0.id.uuidString == serviceId }) {
                                             // Update existing service
-                                            existingService.name = instance.metadata?.peer.alias ?? String(localized: "Untitled")
+                                            existingService.name = instance.metadata?.peer.alias ?? "Untitled"
                                             existingService.isConfigurationInvalid = !isValidConfiguration
                                             if let implementations = existingService.implementations {
                                                 // Update by instanceID
@@ -656,7 +656,7 @@ struct ServiceListView: View {
                                             
                                             let service = Service(
                                                 id: UUID(uuidString: serviceId) ?? UUID(),
-                                                name: instance.metadata?.peer.alias ?? String(localized: "Untitled"),
+                                                name: instance.metadata?.peer.alias ?? "Untitled",
                                                 type: .tunnelForward,
                                                 implementations: [
                                                     Implementation(

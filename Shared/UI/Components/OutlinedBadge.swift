@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct OutlinedBadge: View {
-    let text: LocalizedStringKey
+    let text: String
     let borderColor: Color
     let textColor: Color
     let lineWidth: CGFloat
     
-    init(_ text: LocalizedStringKey,
+    init(_ text: String,
          borderColor: Color = .blue,
          textColor: Color = .blue,
          lineWidth: CGFloat = 1.0) {
