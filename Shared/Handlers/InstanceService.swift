@@ -9,18 +9,20 @@ import Foundation
 
 enum InstanceAPI: APIEndpoint {
     case listInstances(baseURLString: String, apiKey: String)
-    case createInstance(baseURLString: String, apiKey: String, url: String)
+    case createInstance(baseURLString: String, apiKey: String, url: String, alias: String?)
     case deleteInstance(baseURLString: String, apiKey: String, id: String)
     case updateInstance(baseURLString: String, apiKey: String, id: String, url: String)
+    case updateInstanceAlias(baseURLString: String, apiKey: String, id: String, alias: String?)
     case updateInstanceStatus(baseURLString: String, apiKey: String, id: String, action: String)
     case updateInstancePeer(baseURLString: String, apiKey: String, id: String, serviceAlias: String, serviceId: String, serviceType: String)
     
     var baseURL: URL {
         switch self {
         case .listInstances(let baseURLString, _): return URL(string: baseURLString)!
-        case .createInstance(let baseURLString, _, _): return URL(string: baseURLString)!
+        case .createInstance(let baseURLString, _, _, _): return URL(string: baseURLString)!
         case .deleteInstance(let baseURLString, _, _): return URL(string: baseURLString)!
         case .updateInstance(let baseURLString, _, _, _): return URL(string: baseURLString)!
+        case .updateInstanceAlias(let baseURLString, _, _, _): return URL(string: baseURLString)!
         case .updateInstanceStatus(let baseURLString, _, _, _): return URL(string: baseURLString)!
         case .updateInstancePeer(let baseURLString, _, _, _, _, _): return URL(string: baseURLString)!
         }
@@ -32,6 +34,7 @@ enum InstanceAPI: APIEndpoint {
         case .createInstance: return "/instances"
         case .deleteInstance(_, _, let id): return "/instances/\(id)"
         case .updateInstance(_, _, let id, _): return "/instances/\(id)"
+        case .updateInstanceAlias(_, _, let id, _): return "/instances/\(id)"
         case .updateInstanceStatus(_, _, let id, _): return "/instances/\(id)"
         case .updateInstancePeer(_, _, let id, _, _, _): return "/instances/\(id)"
         }
@@ -43,6 +46,7 @@ enum InstanceAPI: APIEndpoint {
         case .createInstance: return .post
         case .deleteInstance: return .delete
         case .updateInstance: return .put
+        case .updateInstanceAlias: return .patch
         case .updateInstanceStatus: return .patch
         case .updateInstancePeer: return .patch
         }
@@ -51,9 +55,10 @@ enum InstanceAPI: APIEndpoint {
     var headers: [String: String]? {
         switch self {
         case .listInstances(_, let apiKey): return ["X-API-Key": apiKey]
-        case .createInstance(_, let apiKey, _): return ["X-API-Key": apiKey]
+        case .createInstance(_, let apiKey, _, _): return ["X-API-Key": apiKey]
         case .deleteInstance(_, let apiKey, _): return ["X-API-Key": apiKey]
         case .updateInstance(_, let apiKey, _, _): return ["X-API-Key": apiKey]
+        case .updateInstanceAlias(_, let apiKey, _, _): return ["X-API-Key": apiKey]
         case .updateInstanceStatus(_, let apiKey, _, _): return ["X-API-Key": apiKey]
         case .updateInstancePeer(_, let apiKey, _, _, _, _): return ["X-API-Key": apiKey]
         }
@@ -65,6 +70,7 @@ enum InstanceAPI: APIEndpoint {
         case .createInstance: return nil
         case .deleteInstance: return nil
         case .updateInstance: return nil
+        case .updateInstanceAlias: return nil
         case .updateInstanceStatus: return nil
         case .updateInstancePeer: return nil
         }
@@ -73,9 +79,20 @@ enum InstanceAPI: APIEndpoint {
     var parameters: [String: Any]? {
         switch self {
         case .listInstances: return nil
-        case .createInstance(_, _, let url): return ["url": url]
+        case .createInstance(_, _, let url, let alias):
+            var params: [String: Any] = ["url": url]
+            if let alias = alias {
+                params["alias"] = alias
+            }
+            return params
         case .deleteInstance: return nil
         case .updateInstance(_, _, _, let url): return ["url": url]
+        case .updateInstanceAlias(_, _, _, let alias):
+            var params: [String: Any] = [:]
+            if let alias = alias {
+                params["alias"] = alias
+            }
+            return params
         case .updateInstanceStatus(_, _, _, let action): return ["action": action]
         case .updateInstancePeer(_, _, _, let serviceAlias, let serviceId, let serviceType): return [
             "meta": [
@@ -107,8 +124,8 @@ class InstanceService {
         }
     }
     
-    func createInstance(baseURLString: String, apiKey: String, url: String) async throws -> Instance {
-        let endpoint = InstanceAPI.createInstance(baseURLString: baseURLString, apiKey: apiKey, url: url)
+    func createInstance(baseURLString: String, apiKey: String, url: String, alias: String? = nil) async throws -> Instance {
+        let endpoint = InstanceAPI.createInstance(baseURLString: baseURLString, apiKey: apiKey, url: url, alias: alias)
         
         return try await withCheckedThrowingContinuation { continuation in
             networkService.request(endpoint, expecting: Instance.self) { result in
@@ -133,6 +150,16 @@ class InstanceService {
         return try await withCheckedThrowingContinuation { continuation in
             networkService.request(endpoint, expecting: Instance.self) { result in
                 continuation.resume(with: result.map { $0.value })
+            }
+        }
+    }
+    
+    func updateInstanceAlias(baseURLString: String, apiKey: String, id: String, alias: String?) async throws {
+        let endpoint = InstanceAPI.updateInstanceAlias(baseURLString: baseURLString, apiKey: apiKey, id: id, alias: alias)
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            networkService.request(endpoint) { result in
+                continuation.resume(with: result)
             }
         }
     }

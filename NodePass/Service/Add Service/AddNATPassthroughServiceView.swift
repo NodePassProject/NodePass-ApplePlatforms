@@ -390,15 +390,18 @@ struct AddNATPassthroughServiceView: View {
         Task {
             let instanceService = InstanceService()
             do {
+                let name = NPCore.noEmptyName(name)
                 async let createServerInstance: (Instance) = instanceService.createInstance(
                     baseURLString: remoteServer.url,
                     apiKey: remoteServer.key,
-                    url: serverCommand
+                    url: serverCommand,
+                    alias: "\(name)-server"
                 )
                 async let createClientInstance: (Instance) = instanceService.createInstance(
                     baseURLString: localServer.url,
                     apiKey: localServer.key,
-                    url: clientCommand
+                    url: clientCommand,
+                    alias: "\(name)-client"
                 )
                 
                 let (serverInstance, clientInstance) = try await (createServerInstance, createClientInstance)
@@ -407,7 +410,6 @@ struct AddNATPassthroughServiceView: View {
                 let clientFullCommand = clientInstance.config ?? clientCommand
                 
                 let serviceId = UUID()
-                let name = NPCore.noEmptyName(name)
                 let service = Service(
                     id: serviceId,
                     name: name,

@@ -116,7 +116,7 @@
     "Add" : {
 
     },
-    "Add custom URL query parameters not covered above" : {
+    "Add custom URL query parameters not covered above." : {
 
     },
     "Add Direct Forward" : {
@@ -158,7 +158,13 @@
     "Advanced Mode" : {
 
     },
+    "Advanced Settings" : {
+
+    },
     "An error occurred" : {
+
+    },
+    "An optional friendly name for this instance." : {
 
     },
     "Ascending" : {
@@ -167,7 +173,7 @@
     "Automatic" : {
 
     },
-    "Block certain traffic from being tunneled" : {
+    "Block certain traffic from being tunneled." : {
 
     },
     "Block HTTP" : {
@@ -185,19 +191,19 @@
     "Certificate Path" : {
 
     },
-    "Changes are now effective" : {
+    "Configuration Invalid" : {
 
     },
-    "Command URL" : {
+    "Configure advanced settings and tuning parameters." : {
 
     },
-    "Configure connection pool behavior and limits" : {
+    "Configure connection pool behavior and limits." : {
 
     },
-    "Configure instance using form fields" : {
+    "Configure instance using form fields." : {
 
     },
-    "Configure multiple target addresses for load balancing" : {
+    "Configure multiple target addresses for load balancing." : {
 
     },
     "Configure Server Detail Widget" : {
@@ -206,7 +212,7 @@
     "Configure Widget" : {
 
     },
-    "Connect to tunnel address and forward from/to target" : {
+    "Connect to tunnel address and forward from/to target." : {
 
     },
     "Connection Mode" : {
@@ -218,13 +224,10 @@
     "Connection Type" : {
 
     },
-    "Control protocol availability and PROXY protocol v1 support" : {
+    "Control protocol availability and PROXY v1 support." : {
 
     },
     "Copy" : {
-
-    },
-    "Copy URL" : {
 
     },
     "CPU" : {
@@ -263,7 +266,7 @@
     "Dial Address" : {
 
     },
-    "Dial: Specific source IP or 'auto' by OS" : {
+    "Dial: Specific source IP or 'auto' by OS." : {
 
     },
     "Direct Forward" : {
@@ -278,7 +281,7 @@
     "DNS Cache Duration" : {
 
     },
-    "DNS: Cache TTL duration in '30s, 5m, 1h'" : {
+    "DNS: Cache TTL duration in '30s, 5m, 1h'." : {
 
     },
     "Domain" : {
@@ -290,40 +293,19 @@
     "Edit" : {
 
     },
-    "Edit Address" : {
-
-    },
     "Edit Instance" : {
-
-    },
-    "Edit Listen Port" : {
-
-    },
-    "Edit Port" : {
 
     },
     "Edit Server" : {
 
     },
-    "Edit Service Port" : {
-
-    },
-    "Edit Tunnel Port" : {
-
-    },
     "Enable PROXY Protocol" : {
-
-    },
-    "Enter a new address." : {
 
     },
     "Enter a new name for the service." : {
 
     },
-    "Enter a new port." : {
-
-    },
-    "Enter instance URL directly" : {
+    "Enter instance URL directly." : {
 
     },
     "Error" : {
@@ -358,6 +340,9 @@
 
     },
     "Input Mode" : {
+
+    },
+    "Instance Alias" : {
 
     },
     "Instance Type" : {
@@ -396,7 +381,7 @@
     "Light" : {
 
     },
-    "Listen on tunnel address and forward to/from target" : {
+    "Listen on tunnel address and forward to/from target." : {
 
     },
     "Listen Port" : {
@@ -423,7 +408,7 @@
     "Log Level" : {
 
     },
-    "Logging" : {
+    "Logging Level" : {
 
     },
     "Matrix Unavailable" : {
@@ -489,6 +474,9 @@
     "OK" : {
 
     },
+    "Optional" : {
+
+    },
     "Oldest to Newest" : {
 
     },
@@ -516,13 +504,13 @@
     "Rate Limit (Mbps)" : {
 
     },
-    "Rate: Bandwidth limit or 0 for unlimited" : {
+    "Rate: Bandwidth limit or 0 for unlimited." : {
 
     },
     "Read Timeout" : {
 
     },
-    "Read: Timeout duration or 0 to disable" : {
+    "Read: Timeout duration or 0 to disable." : {
 
     },
     "Refresh Widget" : {
@@ -573,7 +561,7 @@
     "Server" : {
 
     },
-    "Server address to connect or Client address to bind" : {
+    "Server address to connect or Client address to bind." : {
 
     },
     "Server Details" : {
@@ -607,25 +595,22 @@
     "Services" : {
 
     },
-    "Set logging verbosity level" : {
-
-    },
     "Settings" : {
 
     },
     "Share" : {
 
     },
-    "Single target address to connect or to bind" : {
+    "Single target address to connect or to bind." : {
 
     },
-    "Slot: Max concurrent connections allowed" : {
+    "Slot: Max concurrent connections allowed." : {
 
     },
     "SNI Hostname" : {
 
     },
-    "SNI hostname for TLS connections" : {
+    "SNI hostname for TLS connections." : {
 
     },
     "Sort" : {
@@ -635,9 +620,6 @@
 
     },
     "Stop" : {
-
-    },
-    "Success" : {
 
     },
     "Support Us" : {
@@ -731,10 +713,7 @@
     "TLS" : {
 
     },
-    "TLS encryption settings" : {
-
-    },
-    "TLS Level" : {
+    "TLS encryption settings." : {
 
     },
     "TLS Mode" : {
@@ -796,7 +775,7 @@
     "Tunnel %@ Address" : {
 
     },
-    "Tunnel address to bind, empty IP for all interfaces" : {
+    "Tunnel address to bind, empty IP for all interfaces." : {
 
     },
     "Tunnel Forward" : {
@@ -854,9 +833,6 @@
 
     },
     "You are about to force delete this service. This action is irreversible and any error will be ignored. Are you sure?" : {
-
-    },
-    "You Should Connect To" : {
 
     }
   },

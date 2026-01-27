@@ -13,6 +13,7 @@ struct Instance: Identifiable, Codable, Equatable {
     let status: Status
     let url: String
     let config: String?
+    let alias: String?
     let tcp: Int?
     let udp: Int?
     let tcpReceive: Int64
@@ -29,6 +30,7 @@ struct Instance: Identifiable, Codable, Equatable {
         case status
         case url
         case config
+        case alias
         case tcp = "tcps"
         case udp = "udps"
         case tcpReceive = "tcprx"

@@ -36,10 +36,18 @@ struct NATPassthroughCardView: View {
         VStack(spacing: 20) {
             HStack {
                 VStack(alignment: .leading) {
-                    Text("NAT Passthrough")
-                        .foregroundStyle(.secondary)
-                        .font(.caption)
-                        .bold()
+                    HStack {
+                        Text("NAT Passthrough")
+                            .foregroundStyle(.secondary)
+                            .font(.caption)
+                            .bold()
+                        Spacer()
+                        if service.isConfigurationInvalid {
+                            Label("Configuration Invalid", systemImage: "exclamationmark.triangle.fill")
+                                .font(.caption2)
+                                .foregroundStyle(.red)
+                        }
+                    }
                     Text(service.name)
                 }
                 Spacer()

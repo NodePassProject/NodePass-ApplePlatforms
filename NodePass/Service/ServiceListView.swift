@@ -513,28 +513,45 @@ struct ServiceListView: View {
                     if let serviceId = instance.metadata?.peer.serviceId, serviceId != "", !examinedServiceIds.contains(serviceId) {
                         let serverId0 = serverId
                         let instance0 = instance
-                        if ["0", "5"].contains(instance0.metadata!.peer.serviceType) && !services.map({ $0.id.uuidString }).contains(serviceId) {
-                            // Direct Forward
+                        if ["0", "5"].contains(instance0.metadata!.peer.serviceType) {
+                            // Direct Forward - must be client
                             let clientId = serverId0
                             let clientInstance = instance0
-                            let service = Service(
-                                id: UUID(uuidString: serviceId) ?? UUID(),
-                                name: instance.metadata?.peer.alias ?? String(localized: "Untitled"),
-                                type: .directForward,
-                                implementations: [
-                                    Implementation(
-                                        name: clientInstance.metadata!.peer.alias,
-                                        type: .directForwardClient,
-                                        position: 0,
-                                        serverID: clientId,
-                                        instanceID: clientInstance.id,
-                                        command: clientInstance.url,
-                                        fullCommand: clientInstance.config ?? clientInstance.url
-                                    )
-                                ]
-                            )
-                            context.insert(service)
-                            try? context.save()
+                            let clientScheme = NPCore.parseScheme(urlString: clientInstance.url)
+                            let isValidConfiguration = clientScheme == .client
+                            
+                            if let existingService = services.first(where: { $0.id.uuidString == serviceId }) {
+                                // Update existing service
+                                existingService.name = instance.metadata?.peer.alias ?? String(localized: "Untitled")
+                                existingService.isConfigurationInvalid = !isValidConfiguration
+                                if let implementation = existingService.implementations?.first {
+                                    implementation.name = clientInstance.metadata!.peer.alias
+                                    implementation.command = clientInstance.url
+                                    implementation.fullCommand = clientInstance.config ?? clientInstance.url
+                                }
+                                try? context.save()
+                            } else {
+                                // Create new service
+                                let service = Service(
+                                    id: UUID(uuidString: serviceId) ?? UUID(),
+                                    name: instance.metadata?.peer.alias ?? String(localized: "Untitled"),
+                                    type: .directForward,
+                                    implementations: [
+                                        Implementation(
+                                            name: clientInstance.metadata!.peer.alias,
+                                            type: .directForwardClient,
+                                            position: 0,
+                                            serverID: clientId,
+                                            instanceID: clientInstance.id,
+                                            command: clientInstance.url,
+                                            fullCommand: clientInstance.config ?? clientInstance.url
+                                        )
+                                    ]
+                                )
+                                service.isConfigurationInvalid = !isValidConfiguration
+                                context.insert(service)
+                                try? context.save()
+                            }
                             
                             examinedServiceIds.append(serverId)
                             continue
@@ -542,34 +559,39 @@ struct ServiceListView: View {
                         for serverId in store.keys {
                             for instance in store[serverId]! {
                                 if instance.metadata?.peer.serviceId == serviceId && instance.id != instance0.id {
-                                    if !services.map({ $0.id.uuidString }).contains(serviceId) {
-                                        let serverId1 = serverId
-                                        let instance1 = instance
+                                    let serverId1 = serverId
+                                    let instance1 = instance
+                                    
+                                    switch(instance.metadata!.peer.serviceType) {
+                                    case "1", "3", "6":
+                                        // NAT Passthrough - must be one server and one client
+                                        let schemeOfInstance0 = NPCore.parseScheme(urlString: instance0.url)
+                                        let schemeOfInstance1 = NPCore.parseScheme(urlString: instance1.url)
+                                        let isValidConfiguration = (schemeOfInstance0 == .server && schemeOfInstance1 == .client) || (schemeOfInstance1 == .server && schemeOfInstance0 == .client)
                                         
-                                        switch(instance.metadata!.peer.serviceType) {
-                                        case "1", "3", "6":
-                                            // NAT Passthrough
-                                            let schemeOfInstance0 = NPCore.parseScheme(urlString: instance0.url)
-                                            let schemeOfInstance1 = NPCore.parseScheme(urlString: instance1.url)
-                                            let serverId: String
-                                            let clientId: String
-                                            let serverInstance: Instance
-                                            let clientInstance: Instance
-                                            if schemeOfInstance0 == .server && schemeOfInstance1 == .client {
-                                                serverId = serverId0
-                                                serverInstance = instance0
-                                                clientId = serverId1
-                                                clientInstance = instance1
+                                        if let existingService = services.first(where: { $0.id.uuidString == serviceId }) {
+                                            // Update existing service
+                                            existingService.name = instance.metadata?.peer.alias ?? String(localized: "Untitled")
+                                            existingService.isConfigurationInvalid = !isValidConfiguration
+                                            if let implementations = existingService.implementations {
+                                                // Update by instanceID
+                                                if let impl0 = implementations.first(where: { $0.instanceID == instance0.id }) {
+                                                    impl0.name = instance0.metadata!.peer.alias
+                                                    impl0.command = instance0.url
+                                                    impl0.fullCommand = instance0.config ?? instance0.url
+                                                }
+                                                if let impl1 = implementations.first(where: { $0.instanceID == instance1.id }) {
+                                                    impl1.name = instance1.metadata!.peer.alias
+                                                    impl1.command = instance1.url
+                                                    impl1.fullCommand = instance1.config ?? instance1.url
+                                                }
                                             }
-                                            else if schemeOfInstance1 == .server && schemeOfInstance0 == .client {
-                                                serverId = serverId1
-                                                serverInstance = instance1
-                                                clientId = serverId0
-                                                clientInstance = instance0
-                                            }
-                                            else {
-                                                continue
-                                            }
+                                            try? context.save()
+                                        } else {
+                                            // Create new service - determine positions based on scheme
+                                            let (serverInstance, clientInstance) = schemeOfInstance0 == .server ? (instance0, instance1) : (instance1, instance0)
+                                            let (serverId, clientId) = schemeOfInstance0 == .server ? (serverId0, serverId1) : (serverId1, serverId0)
+                                            
                                             let service = Service(
                                                 id: UUID(uuidString: serviceId) ?? UUID(),
                                                 name: instance.metadata?.peer.alias ?? String(localized: "Untitled"),
@@ -595,72 +617,77 @@ struct ServiceListView: View {
                                                     )
                                                 ]
                                             )
+                                            service.isConfigurationInvalid = !isValidConfiguration
                                             context.insert(service)
                                             try? context.save()
-                                            
-                                            examinedServiceIds.append(serverId)
-                                            continue
-                                        case "2", "4", "7":
-                                            // Tunnel Forward
-                                            let schemeOfInstance0 = NPCore.parseScheme(urlString: instance0.url)
+                                        }
+                                        
+                                        examinedServiceIds.append(serverId)
+                                        continue
+                                    case "2", "4", "7":
+                                        // Tunnel Forward - must be one server and one client
+                                        let schemeOfInstance0 = NPCore.parseScheme(urlString: instance0.url)
+                                        let schemeOfInstance1 = NPCore.parseScheme(urlString: instance1.url)
+                                        let isValidConfiguration = (schemeOfInstance0 == .server && schemeOfInstance1 == .client) || (schemeOfInstance1 == .server && schemeOfInstance0 == .client)
+                                        
+                                        if let existingService = services.first(where: { $0.id.uuidString == serviceId }) {
+                                            // Update existing service
+                                            existingService.name = instance.metadata?.peer.alias ?? String(localized: "Untitled")
+                                            existingService.isConfigurationInvalid = !isValidConfiguration
+                                            if let implementations = existingService.implementations {
+                                                // Update by instanceID
+                                                if let impl0 = implementations.first(where: { $0.instanceID == instance0.id }) {
+                                                    impl0.name = instance0.metadata!.peer.alias
+                                                    impl0.command = instance0.url
+                                                    impl0.fullCommand = instance0.config ?? instance0.url
+                                                }
+                                                if let impl1 = implementations.first(where: { $0.instanceID == instance1.id }) {
+                                                    impl1.name = instance1.metadata!.peer.alias
+                                                    impl1.command = instance1.url
+                                                    impl1.fullCommand = instance1.config ?? instance1.url
+                                                }
+                                            }
+                                            try? context.save()
+                                        } else {
+                                            // Create new service - use mode to determine relay vs destination
                                             let modeOfInstance0 = NPCore.parseQueryParameters(urlString: instance0.url)["mode"]
-                                            let schemeOfInstance1 = NPCore.parseScheme(urlString: instance1.url)
-                                            let modeOfInstance1 = NPCore.parseQueryParameters(urlString: instance1.url)["mode"]
-                                            guard let modeOfInstance0, let modeOfInstance1 else {
-                                                continue
-                                            }
-                                            let relayServerId: String
-                                            let destinationServerId: String
-                                            let relayServerInstance: Instance
-                                            let destinationServerInstance: Instance
-                                            if (schemeOfInstance0 == .server && modeOfInstance0 == "1") || (schemeOfInstance1 == .server && modeOfInstance1 == "2") {
-                                                relayServerId = serverId0
-                                                relayServerInstance = instance0
-                                                destinationServerId = serverId1
-                                                destinationServerInstance = instance1
-                                            }
-                                            else if (schemeOfInstance1 == .server && modeOfInstance1 == "1") || (schemeOfInstance0 == .server && modeOfInstance0 == "2") {
-                                                relayServerId = serverId1
-                                                relayServerInstance = instance1
-                                                destinationServerId = serverId0
-                                                destinationServerInstance = instance0
-                                            }
-                                            else {
-                                                continue
-                                            }
+                                            let (relayInstance, destInstance) = modeOfInstance0 == "1" ? (instance0, instance1) : (instance1, instance0)
+                                            let (relayServerId, destServerId) = modeOfInstance0 == "1" ? (serverId0, serverId1) : (serverId1, serverId0)
+                                            
                                             let service = Service(
                                                 id: UUID(uuidString: serviceId) ?? UUID(),
                                                 name: instance.metadata?.peer.alias ?? String(localized: "Untitled"),
                                                 type: .tunnelForward,
                                                 implementations: [
                                                     Implementation(
-                                                        name: relayServerInstance.metadata!.peer.alias,
+                                                        name: relayInstance.metadata!.peer.alias,
                                                         type: .tunnelForwardRelay,
                                                         position: 0,
                                                         serverID: relayServerId,
-                                                        instanceID: relayServerInstance.id,
-                                                        command: relayServerInstance.url,
-                                                        fullCommand: relayServerInstance.config ?? relayServerInstance.url
+                                                        instanceID: relayInstance.id,
+                                                        command: relayInstance.url,
+                                                        fullCommand: relayInstance.config ?? relayInstance.url
                                                     ),
                                                     Implementation(
-                                                        name: destinationServerInstance.metadata!.peer.alias,
+                                                        name: destInstance.metadata!.peer.alias,
                                                         type: .tunnelForwardDestination,
                                                         position: 1,
-                                                        serverID: destinationServerId,
-                                                        instanceID: destinationServerInstance.id,
-                                                        command: destinationServerInstance.url,
-                                                        fullCommand: destinationServerInstance.config ?? destinationServerInstance.url
+                                                        serverID: destServerId,
+                                                        instanceID: destInstance.id,
+                                                        command: destInstance.url,
+                                                        fullCommand: destInstance.config ?? destInstance.url
                                                     )
                                                 ]
                                             )
+                                            service.isConfigurationInvalid = !isValidConfiguration
                                             context.insert(service)
                                             try? context.save()
-                                            
-                                            examinedServiceIds.append(serverId)
-                                            continue
-                                        default:
-                                            continue
                                         }
+                                        
+                                        examinedServiceIds.append(serverId)
+                                        continue
+                                    default:
+                                        continue
                                     }
                                 }
                             }
@@ -668,6 +695,28 @@ struct ServiceListView: View {
                     }
                 }
             }
+            
+            // Delete invalid local services
+            let allRemoteServiceIds = Set(
+                store.values
+                    .flatMap { $0 }
+                    .compactMap { $0.metadata?.peer.serviceId }
+                    .filter { !$0.isEmpty }
+            )
+            
+            let localServicesToDelete = services.filter { service in
+                let serviceIdString = service.id.uuidString
+                return !allRemoteServiceIds.contains(serviceIdString)
+            }
+            
+            for service in localServicesToDelete {
+                context.delete(service)
+            }
+            
+            if !localServicesToDelete.isEmpty {
+                try? context.save()
+            }
+            
             if errorStore.count == 0 {
                 isSensoryFeedbackTriggered.toggle()
             }

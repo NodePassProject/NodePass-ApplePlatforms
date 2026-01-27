@@ -15,6 +15,7 @@ class Service {
     var name: String = ""
     var type: ServiceType = ServiceType.directForward
     var implementations: [Implementation]?
+    var isConfigurationInvalid: Bool = false
     
     init(id: UUID, name: String, type: ServiceType, implementations: [Implementation]) {
         self.id = id
@@ -22,6 +23,7 @@ class Service {
         self.name = name
         self.type = type
         self.implementations = implementations
+        self.isConfigurationInvalid = false
     }
     
     init(name: String, type: ServiceType, implementations: [Implementation]) {
@@ -30,5 +32,6 @@ class Service {
         self.name = name
         self.type = type
         self.implementations = implementations
+        self.isConfigurationInvalid = false
     }
 }

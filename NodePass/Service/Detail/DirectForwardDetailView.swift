@@ -19,37 +19,18 @@ struct DirectForwardDetailView: View {
     var server: Server? {
         servers.first(where: { $0.id == implementation.serverID })
     }
-    var addressesAndPorts: (tunnel: (address: String, port: String), destination: (address: String, port: String)) {
-        NPCore.parseAddressesAndPorts(urlString: implementation.command)
-    }
     
     @Query private var servers: [Server]
     
-    @State private var isShowEditRelayPortAlert: Bool = false
-    @State private var newRelayPort: String = ""
-    
-    @State private var isShowEditDestinationAddressAlert: Bool = false
-    @State private var newDestinationAddress: String = ""
-    
-    @State private var isShowEditDestinationPortAlert: Bool = false
-    @State private var newDestinationPort: String = ""
+    @State private var instance: Instance?
+    @State private var isShowEditInstanceSheet: Bool = false
     
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
     
-    @State private var isSensoryFeedbackTriggered: Bool = false
-    
     var body: some View {
         if service.type == .directForward {
             Form {
-                if let server {
-                    let connectionString = "\(server.getHost()):\(addressesAndPorts.tunnel.port)"
-                    Section("You Should Connect To") {
-                        Text(connectionString)
-                    }
-                    .copiable(connectionString)
-                }
-                
                 Section("Relay Server") {
                     if let server {
                         VStack {
@@ -60,122 +41,45 @@ struct DirectForwardDetailView: View {
                                 }
                         }
                         .frame(maxWidth: .infinity)
+                        
+                        if let instance {
+                            VStack {
+                                InstanceCardView(instance: instance)
+                                    .onTapGesture {
+                                        isShowEditInstanceSheet = true
+                                    }
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        else {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                        }
                     }
                     else {
                         LabeledContent("Server") {
                             Text("Not on this device")
                         }
                     }
-                    HStack {
-                        LabeledContent("Listen Port") {
-                            Text(addressesAndPorts.tunnel.port)
-                        }
-                        if server != nil {
-                            Button {
-                                isShowEditRelayPortAlert = true
-                            } label: {
-                                Image(systemName: "pencil")
-                            }
-                        }
-                    }
-                    .copiable(addressesAndPorts.tunnel.port)
-                    LabeledContent("Command URL") {
-                        Text(implementation.command)
-                            .minimumScaleFactor(0.5)
-                    }
-                    .copiable(implementation.command)
-                }
-                
-                Section("Destination Server") {
-                    if implementation.isMultipleDestination {
-                        
-                    }
-                    else {
-                        HStack {
-                            LabeledContent("Address") {
-                                Text(addressesAndPorts.destination.address)
-                                    .minimumScaleFactor(0.5)
-                            }
-                            if server != nil {
-                                Button {
-                                    isShowEditDestinationAddressAlert = true
-                                } label: {
-                                    Image(systemName: "pencil")
-                                }
-                            }
-                        }
-                        .copiable(addressesAndPorts.destination.address)
-                        HStack {
-                            LabeledContent("Port") {
-                                Text(addressesAndPorts.destination.port)
-                            }
-                            if server != nil {
-                                Button {
-                                    isShowEditDestinationPortAlert = true
-                                } label: {
-                                    Image(systemName: "pencil")
-                                }
-                            }
-                        }
-                        .copiable(addressesAndPorts.destination.port)
-                    }
                 }
             }
             .formStyle(.grouped)
             .navigationTitle(service.name)
-            .alert("Edit Listen Port", isPresented: $isShowEditRelayPortAlert) {
-                TextField("Port", text: $newRelayPort)
-#if os(iOS)
-                    .keyboardType(.numberPad)
-#endif
-                Button("OK") {
-                    updateImplementation(newRelayPort: newRelayPort)
-                    newRelayPort = ""
-                }
-                Button("Cancel", role: .cancel) {
-                    newRelayPort = ""
-                }
-            } message: {
-                Text("Enter a new port.")
+            .onAppear {
+                fetchInstance()
             }
-            .alert("Edit Address", isPresented: $isShowEditDestinationAddressAlert) {
-                TextField("Address", text: $newDestinationAddress)
-                    .autocorrectionDisabled()
-#if os(iOS)
-                    .textInputAutocapitalization(.never)
-                    .keyboardType(.URL)
-#endif
-                Button("OK") {
-                    updateImplementation(newDestinationAddress: newDestinationAddress)
-                    newDestinationAddress = ""
+            .sheet(isPresented: $isShowEditInstanceSheet) {
+                if let server, let instance {
+                    EditInstanceView(server: server, instance: instance) {
+                        fetchInstance()
+                    }
                 }
-                Button("Cancel", role: .cancel) {
-                    newDestinationAddress = ""
-                }
-            } message: {
-                Text("Enter a new address.")
-            }
-            .alert("Edit Port", isPresented: $isShowEditDestinationPortAlert) {
-                TextField("Port", text: $newDestinationPort)
-#if os(iOS)
-                    .keyboardType(.numberPad)
-#endif
-                Button("OK") {
-                    updateImplementation(newDestinationPort: newDestinationPort)
-                    newDestinationPort = ""
-                }
-                Button("Cancel", role: .cancel) {
-                    newDestinationPort = ""
-                }
-            } message: {
-                Text("Enter a new port.")
             }
             .alert("Error", isPresented: $isShowErrorAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(errorMessage)
             }
-            .sensoryFeedback(.success, trigger: isSensoryFeedbackTriggered)
         }
         else {
             Image(systemName: "exclamationmark.circle")
@@ -183,74 +87,18 @@ struct DirectForwardDetailView: View {
         }
     }
     
-    private func updateImplementation(newRelayPort: String) {
+    private func fetchInstance() {
+        guard let server else { return }
         Task {
             let instanceService = InstanceService()
             do {
-                let implementation = implementation
-                let server = servers.first(where: { $0.id == implementation.serverID })!
-                let command = implementation.dryModifyTunnelPort(port: newRelayPort)
-                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url, apiKey: server.key, id: implementation.instanceID, url: command)
-                
-                implementation.command = command
-                implementation.fullCommand = updatedInstance.config ?? command
+                let instances = try await instanceService.listInstances(baseURLString: server.url, apiKey: server.key)
+                self.instance = instances.first(where: { $0.id == implementation.instanceID })
             }
             catch {
 #if DEBUG
-                print("Error Updating Instances: \(error.localizedDescription)")
+                print("Error Fetching Instance: \(error.localizedDescription)")
 #endif
-                errorMessage = error.localizedDescription
-                isShowErrorAlert = true
-            }
-        }
-    }
-    
-    private func updateImplementation(newDestinationAddress: String) {
-        Task {
-            let instanceService = InstanceService()
-            do {
-                let implementation = implementation
-                let server = servers.first(where: { $0.id == implementation.serverID })!
-                let command = implementation.dryModifyDestinationAddress(address: newDestinationAddress)
-                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url, apiKey: server.key, id: implementation.instanceID, url: command)
-                
-                implementation.command = command
-                implementation.fullCommand = updatedInstance.config ?? command
-            }
-            catch {
-#if DEBUG
-                print("Error Updating Instances: \(error.localizedDescription)")
-#endif
-                errorMessage = error.localizedDescription
-                isShowErrorAlert = true
-            }
-        }
-    }
-    
-    private func updateImplementation(newDestinationPort: String) {
-        Task {
-            let instanceService = InstanceService()
-            do {
-                let implementation = implementation
-                let server = servers.first(where: { $0.id == implementation.serverID })!
-                let command = implementation.dryModifyDestinationPort(port: newDestinationPort)
-                let updatedInstance = try await instanceService.updateInstance(baseURLString: server.url, apiKey: server.key, id: implementation.instanceID, url: command)
-                
-                implementation.command = command
-                implementation.fullCommand = updatedInstance.config ?? command
-                
-#if os(iOS)
-                let drop = Drop(title: String(localized: "Success"), subtitle: String(localized: "Changes are now effective"), icon: UIImage(systemName: "checkmark.circle"))
-                Drops.show(drop)
-#endif
-                isSensoryFeedbackTriggered.toggle()
-            }
-            catch {
-#if DEBUG
-                print("Error Updating Instances: \(error.localizedDescription)")
-#endif
-                errorMessage = error.localizedDescription
-                isShowErrorAlert = true
             }
         }
     }
