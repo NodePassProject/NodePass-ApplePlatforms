@@ -31,6 +31,7 @@ struct InstanceFormView: View {
     @State private var crtPath: String = ""
     @State private var keyPath: String = ""
     @State private var sni: String = ""
+    @State private var password: String = ""
     @State private var connectionMode: ConnectionMode = .auto
     @State private var connectionType: Instance.Transport = .tcp
     @State private var minConnections: String = ""
@@ -345,6 +346,12 @@ struct InstanceFormView: View {
         }
         
         Section {
+            LabeledTextField("Password", prompt: "Optional", text: $password)
+                .autocorrectionDisabled()
+#if os(iOS)
+                .textInputAutocapitalization(.never)
+#endif
+            
             if instanceType == .server {
                 Picker("TLS Mode", selection: $tlsMode) {
                     ForEach(TLSMode.allCases, id: \.self) { mode in
@@ -568,6 +575,7 @@ struct InstanceFormView: View {
         
         instanceType = url.hasPrefix("server://") ? .server : .client
         
+        password = urlComponents.user ?? ""
         tunnelAddress = urlComponents.host ?? ""
         tunnelPort = urlComponents.port.map { String($0) } ?? ""
         
@@ -718,10 +726,12 @@ struct InstanceFormView: View {
         }
         
         var url: String
+        let passwordPrefix = password.isEmpty ? "" : "\(password)@"
+        
         if instanceType == .server {
-            url = "server://\(tunnelAddr):\(tunnelPt)/\(targetPath)"
+            url = "server://\(passwordPrefix)\(tunnelAddr):\(tunnelPt)/\(targetPath)"
         } else {
-            url = "client://\(tunnelAddr):\(tunnelPt)/\(targetPath)"
+            url = "client://\(passwordPrefix)\(tunnelAddr):\(tunnelPt)/\(targetPath)"
         }
         
         var queryParams: [String] = []
