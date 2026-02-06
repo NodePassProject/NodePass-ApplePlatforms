@@ -31,7 +31,7 @@ struct SettingsView: View {
             }
             
             Section {
-                Picker(String(localized: "Theme"), selection: $selectedTheme) {
+                Picker("Theme", selection: $selectedTheme) {
                     ForEach(NPCore.AppTheme.allCases, id: \.self) { theme in
                         Text(theme.displayName).tag(theme)
                     }

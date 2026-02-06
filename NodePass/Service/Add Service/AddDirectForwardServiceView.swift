@@ -170,7 +170,7 @@ struct AddDirectForwardServiceView: View {
                         type: .directForward,
                         implementations: [
                             Implementation(
-                                name: String(localized: "\(name) Relay"),
+                                name: "\(name) Relay",
                                 type: .directForwardClient,
                                 position: 0,
                                 serverID: client?.id ?? "",
@@ -282,7 +282,7 @@ struct AddDirectForwardServiceView: View {
                     type: .directForward,
                     implementations: [
                         Implementation(
-                            name: String(localized: "\(name) Relay"),
+                            name: "\(name) Relay",
                             type: .directForwardClient,
                             position: 0,
                             serverID: client.id,
@@ -300,7 +300,7 @@ struct AddDirectForwardServiceView: View {
                         baseURLString: client.url,
                         apiKey: client.key,
                         id: clientInstance.id,
-                        serviceAlias: String(localized: "\(name)"),
+                        serviceAlias: "\(name)",
                         serviceId: serviceId.uuidString,
                         serviceType: "0"
                     )

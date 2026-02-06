@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct DoubleMatrixGaugeStyle: GaugeStyle {
-    let text1: LocalizedStringKey
-    let text2: LocalizedStringKey
+    let text1: String
+    let text2: String
     let color1: Color
     let color2: Color
     let size: CGFloat
