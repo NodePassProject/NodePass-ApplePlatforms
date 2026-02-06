@@ -13,6 +13,10 @@ struct AddDirectForwardServiceView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Server.timestamp) private var servers: [Server]
     
+    private var enabledServers: [Server] {
+        servers.filter { $0.isEnabled }
+    }
+    
     private var isAdvancedModeEnabled: Bool = NPCore.isAdvancedModeEnabled
     
     @State private var name: String = ""
@@ -42,7 +46,7 @@ struct AddDirectForwardServiceView: View {
                     Picker("Server", selection: $client) {
                         Text("Select")
                             .tag(nil as Server?)
-                        ForEach(servers) { server in
+                        ForEach(enabledServers) { server in
                             Text(server.name)
                                 .tag(server)
                         }

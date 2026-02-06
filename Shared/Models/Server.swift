@@ -15,13 +15,15 @@ class Server {
     var name: String = ""
     var url: String = ""
     var key: String = ""
+    var isEnabled: Bool = true
     
-    init(name: String, url: String, key: String) {
+    init(name: String, url: String, key: String, isEnabled: Bool = true) {
         self.id = UUID().uuidString
         self.timestamp = Date()
         self.name = name
         self.url = url
         self.key = key
+        self.isEnabled = isEnabled
     }
     
     func getHost() -> String {

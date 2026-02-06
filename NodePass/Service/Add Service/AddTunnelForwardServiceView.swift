@@ -13,6 +13,10 @@ struct AddTunnelForwardServiceView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Server.timestamp) private var servers: [Server]
     
+    private var enabledServers: [Server] {
+        servers.filter { $0.isEnabled }
+    }
+    
     @State private var isAdvancedModeEnabled: Bool = NPCore.isAdvancedModeEnabled
     
     @State private var name: String = ""
@@ -74,7 +78,7 @@ struct AddTunnelForwardServiceView: View {
                     Picker("Server", selection: $relayServer) {
                         Text("Select")
                             .tag(nil as Server?)
-                        ForEach(servers) { server in
+                        ForEach(enabledServers) { server in
                             Text(server.name)
                                 .tag(server)
                         }
@@ -112,7 +116,7 @@ struct AddTunnelForwardServiceView: View {
                     Picker("Server", selection: $destinationServer) {
                         Text("Select")
                             .tag(nil as Server?)
-                        ForEach(servers) { server in
+                        ForEach(enabledServers) { server in
                             Text(server.name)
                                 .tag(server)
                         }

@@ -479,12 +479,14 @@ struct ServiceListView: View {
             var store: [String: [Instance]] = .init() // Server.id: [Instance]
             var errorStore: [String: String] = .init() // (Server.name || Server.id): Error.localizedDescription
             var examinedServiceIds: [String] = .init()
-            syncProgress = (0, servers.count)
+            // Only include enabled servers
+            let enabledServers = servers.filter { $0.isEnabled }
+            syncProgress = (0, enabledServers.count)
             withAnimation {
                 isShowSyncProgressView = true
             }
             try await withThrowingTaskGroup(of: (server: Server, result: Result<[Instance], Error>).self) { group in
-                for server in servers {
+                for server in enabledServers {
                     group.addTask {
                         do {
                             let instances = try await instanceService.listInstances(

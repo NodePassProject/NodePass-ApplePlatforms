@@ -46,7 +46,9 @@ class NPState {
             let data = NPData.shared
             let dataHandler = await data.createDataHandler()()
             let servers = await dataHandler.getAllServers()
-            await getServerMetadatas(servers: servers)
+            // Only update metadata for enabled servers
+            let enabledServers = servers.filter { $0.isEnabled }
+            await getServerMetadatas(servers: enabledServers)
         }
     }
     
