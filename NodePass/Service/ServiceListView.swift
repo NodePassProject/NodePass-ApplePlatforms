@@ -513,8 +513,13 @@ struct ServiceListView: View {
                     if let serviceId = instance.metadata?.peer.serviceId, serviceId != "", !examinedServiceIds.contains(serviceId) {
                         let serverId0 = serverId
                         let instance0 = instance
-                        if ["0", "5"].contains(instance0.metadata!.peer.serviceType) {
+                        if ["0", "5"].contains(instance0.metadata?.peer.serviceType ?? "") {
                             // Direct Forward - must be client
+                            guard let clientInstanceMetadata = instance0.metadata else {
+                                examinedServiceIds.append(serviceId)
+                                continue
+                            }
+                            
                             let clientId = serverId0
                             let clientInstance = instance0
                             let clientScheme = NPCore.parseScheme(urlString: clientInstance.url)
@@ -525,7 +530,7 @@ struct ServiceListView: View {
                                 existingService.name = instance.metadata?.peer.alias ?? "Untitled"
                                 existingService.isConfigurationInvalid = !isValidConfiguration
                                 if let implementation = existingService.implementations?.first {
-                                    implementation.name = clientInstance.metadata!.peer.alias
+                                    implementation.name = clientInstanceMetadata.peer.alias
                                     implementation.command = clientInstance.url
                                     implementation.fullCommand = clientInstance.config ?? clientInstance.url
                                 }
@@ -538,7 +543,7 @@ struct ServiceListView: View {
                                     type: .directForward,
                                     implementations: [
                                         Implementation(
-                                            name: clientInstance.metadata!.peer.alias,
+                                            name: clientInstanceMetadata.peer.alias,
                                             type: .directForwardClient,
                                             position: 0,
                                             serverID: clientId,
@@ -553,16 +558,28 @@ struct ServiceListView: View {
                                 try? context.save()
                             }
                             
-                            examinedServiceIds.append(serverId)
+                            examinedServiceIds.append(serviceId)
                             continue
                         }
+                        
+                        // Try to find the second instance for dual-instance services
+                        var foundPairInstance = false
                         for serverId in store.keys {
                             for instance in store[serverId]! {
                                 if instance.metadata?.peer.serviceId == serviceId && instance.id != instance0.id {
                                     let serverId1 = serverId
                                     let instance1 = instance
                                     
-                                    switch(instance.metadata!.peer.serviceType) {
+                                    foundPairInstance = true
+                                    
+                                    // Validate metadata exists for both instances
+                                    guard let metadata0 = instance0.metadata,
+                                          let metadata1 = instance1.metadata else {
+                                        examinedServiceIds.append(serviceId)
+                                        continue
+                                    }
+                                    
+                                    switch(metadata1.peer.serviceType) {
                                     case "1", "3", "6":
                                         // NAT Passthrough - must be one server and one client
                                         let schemeOfInstance0 = NPCore.parseScheme(urlString: instance0.url)
@@ -576,12 +593,12 @@ struct ServiceListView: View {
                                             if let implementations = existingService.implementations {
                                                 // Update by instanceID
                                                 if let impl0 = implementations.first(where: { $0.instanceID == instance0.id }) {
-                                                    impl0.name = instance0.metadata!.peer.alias
+                                                    impl0.name = metadata0.peer.alias
                                                     impl0.command = instance0.url
                                                     impl0.fullCommand = instance0.config ?? instance0.url
                                                 }
                                                 if let impl1 = implementations.first(where: { $0.instanceID == instance1.id }) {
-                                                    impl1.name = instance1.metadata!.peer.alias
+                                                    impl1.name = metadata1.peer.alias
                                                     impl1.command = instance1.url
                                                     impl1.fullCommand = instance1.config ?? instance1.url
                                                 }
@@ -591,6 +608,7 @@ struct ServiceListView: View {
                                             // Create new service - determine positions based on scheme
                                             let (serverInstance, clientInstance) = schemeOfInstance0 == .server ? (instance0, instance1) : (instance1, instance0)
                                             let (serverId, clientId) = schemeOfInstance0 == .server ? (serverId0, serverId1) : (serverId1, serverId0)
+                                            let (serverMetadata, clientMetadata) = schemeOfInstance0 == .server ? (metadata0, metadata1) : (metadata1, metadata0)
                                             
                                             let service = Service(
                                                 id: UUID(uuidString: serviceId) ?? UUID(),
@@ -598,7 +616,7 @@ struct ServiceListView: View {
                                                 type: .natPassthrough,
                                                 implementations: [
                                                     Implementation(
-                                                        name: serverInstance.metadata!.peer.alias,
+                                                        name: serverMetadata.peer.alias,
                                                         type: .natPassthroughServer,
                                                         position: 0,
                                                         serverID: serverId,
@@ -607,7 +625,7 @@ struct ServiceListView: View {
                                                         fullCommand: serverInstance.config ?? serverInstance.url
                                                     ),
                                                     Implementation(
-                                                        name: clientInstance.metadata!.peer.alias,
+                                                        name: clientMetadata.peer.alias,
                                                         type: .natPassthroughClient,
                                                         position: 1,
                                                         serverID: clientId,
@@ -622,7 +640,7 @@ struct ServiceListView: View {
                                             try? context.save()
                                         }
                                         
-                                        examinedServiceIds.append(serverId)
+                                        examinedServiceIds.append(serviceId)
                                         continue
                                     case "2", "4", "7":
                                         // Tunnel Forward - must be one server and one client
@@ -637,12 +655,12 @@ struct ServiceListView: View {
                                             if let implementations = existingService.implementations {
                                                 // Update by instanceID
                                                 if let impl0 = implementations.first(where: { $0.instanceID == instance0.id }) {
-                                                    impl0.name = instance0.metadata!.peer.alias
+                                                    impl0.name = metadata0.peer.alias
                                                     impl0.command = instance0.url
                                                     impl0.fullCommand = instance0.config ?? instance0.url
                                                 }
                                                 if let impl1 = implementations.first(where: { $0.instanceID == instance1.id }) {
-                                                    impl1.name = instance1.metadata!.peer.alias
+                                                    impl1.name = metadata1.peer.alias
                                                     impl1.command = instance1.url
                                                     impl1.fullCommand = instance1.config ?? instance1.url
                                                 }
@@ -653,6 +671,7 @@ struct ServiceListView: View {
                                             let modeOfInstance0 = NPCore.parseQueryParameters(urlString: instance0.url)["mode"]
                                             let (relayInstance, destInstance) = modeOfInstance0 == "1" ? (instance0, instance1) : (instance1, instance0)
                                             let (relayServerId, destServerId) = modeOfInstance0 == "1" ? (serverId0, serverId1) : (serverId1, serverId0)
+                                            let (relayMetadata, destMetadata) = modeOfInstance0 == "1" ? (metadata0, metadata1) : (metadata1, metadata0)
                                             
                                             let service = Service(
                                                 id: UUID(uuidString: serviceId) ?? UUID(),
@@ -660,7 +679,7 @@ struct ServiceListView: View {
                                                 type: .tunnelForward,
                                                 implementations: [
                                                     Implementation(
-                                                        name: relayInstance.metadata!.peer.alias,
+                                                        name: relayMetadata.peer.alias,
                                                         type: .tunnelForwardRelay,
                                                         position: 0,
                                                         serverID: relayServerId,
@@ -669,7 +688,7 @@ struct ServiceListView: View {
                                                         fullCommand: relayInstance.config ?? relayInstance.url
                                                     ),
                                                     Implementation(
-                                                        name: destInstance.metadata!.peer.alias,
+                                                        name: destMetadata.peer.alias,
                                                         type: .tunnelForwardDestination,
                                                         position: 1,
                                                         serverID: destServerId,
@@ -684,7 +703,7 @@ struct ServiceListView: View {
                                             try? context.save()
                                         }
                                         
-                                        examinedServiceIds.append(serverId)
+                                        examinedServiceIds.append(serviceId)
                                         continue
                                     default:
                                         continue
@@ -692,8 +711,23 @@ struct ServiceListView: View {
                                 }
                             }
                         }
+                        
+                        // If no pair instance was found for a dual-instance service, mark it as invalid
+                        if !foundPairInstance {
+                            if let existingService = services.first(where: { $0.id.uuidString == serviceId }) {
+                                // Mark the existing service as having invalid configuration
+                                existingService.isConfigurationInvalid = true
+                                try? context.save()
+                            }
+                            examinedServiceIds.append(serviceId)
+                        }
                     }
                 }
+            }
+            
+            // Save all updates before proceeding to delete
+            await MainActor.run {
+                try? context.save()
             }
             
             // Delete invalid local services
@@ -704,26 +738,48 @@ struct ServiceListView: View {
                     .filter { !$0.isEmpty }
             )
             
-            let localServicesToDelete = services.filter { service in
-                let serviceIdString = service.id.uuidString
-                return !allRemoteServiceIds.contains(serviceIdString)
+            // Wait a moment to ensure UI has updated with the latest changes
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second
+            
+            await MainActor.run {
+                // Build a safe mapping of service IDs to persistent IDs
+                var serviceIdToPersistentId: [String: PersistentIdentifier] = [:]
+                
+                for service in services {
+                    // Access service.id - use the persistent ID as backup identifier
+                    serviceIdToPersistentId[service.id.uuidString] = service.persistentModelID
+                }
+                
+                // Identify services to delete
+                var persistentIdsToDelete: [PersistentIdentifier] = []
+                for (serviceIdString, persistentId) in serviceIdToPersistentId {
+                    if !allRemoteServiceIds.contains(serviceIdString) {
+                        persistentIdsToDelete.append(persistentId)
+                    }
+                }
+                
+                // Delete services by persistent ID
+                for persistentId in persistentIdsToDelete {
+                    if let serviceToDelete = context.model(for: persistentId) as? Service {
+                        context.delete(serviceToDelete)
+                    }
+                }
+                
+                if !persistentIdsToDelete.isEmpty {
+                    try? context.save()
+                }
             }
             
-            for service in localServicesToDelete {
-                context.delete(service)
+            await MainActor.run {
+                if errorStore.count == 0 {
+                    isSensoryFeedbackTriggered.toggle()
+                }
+                else {
+                    syncErrorStore = errorStore
+                    isShowSyncErrorSheet = true
+                }
             }
             
-            if !localServicesToDelete.isEmpty {
-                try? context.save()
-            }
-            
-            if errorStore.count == 0 {
-                isSensoryFeedbackTriggered.toggle()
-            }
-            else {
-                syncErrorStore = errorStore
-                isShowSyncErrorSheet = true
-            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 withAnimation {
                     isShowSyncProgressView = false

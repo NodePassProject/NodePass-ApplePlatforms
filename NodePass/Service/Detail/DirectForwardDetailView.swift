@@ -23,10 +23,17 @@ struct DirectForwardDetailView: View {
     @Query private var servers: [Server]
     
     @State private var instance: Instance?
+    @State private var instanceLoadingState: LoadingState = .loading
     @State private var isShowEditInstanceSheet: Bool = false
     
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
+    
+    enum LoadingState {
+        case loading
+        case loaded
+        case notFound
+    }
     
     var body: some View {
         if service.type == .directForward {
@@ -42,17 +49,26 @@ struct DirectForwardDetailView: View {
                         }
                         .frame(maxWidth: .infinity)
                         
-                        if let instance {
-                            VStack {
-                                InstanceCardView(instance: instance)
-                                    .onTapGesture {
-                                        isShowEditInstanceSheet = true
-                                    }
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        else {
+                        switch instanceLoadingState {
+                        case .loading:
                             ProgressView()
+                                .listRowSeparator(.hidden)
+                                .frame(maxWidth: .infinity)
+                        case .loaded:
+                            if let instance {
+                                VStack {
+                                    InstanceCardView(instance: instance)
+                                        .onTapGesture {
+                                            isShowEditInstanceSheet = true
+                                        }
+                                }
+                                .listRowSeparator(.hidden)
+                                .frame(maxWidth: .infinity)
+                            }
+                        case .notFound:
+                            Label("Instance Not Found", systemImage: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.red)
+                                .listRowSeparator(.hidden)
                                 .frame(maxWidth: .infinity)
                         }
                     }
@@ -89,16 +105,30 @@ struct DirectForwardDetailView: View {
     
     private func fetchInstance() {
         guard let server else { return }
+        instanceLoadingState = .loading
         Task {
             let instanceService = InstanceService()
             do {
                 let instances = try await instanceService.listInstances(baseURLString: server.url, apiKey: server.key)
-                self.instance = instances.first(where: { $0.id == implementation.instanceID })
+                if let foundInstance = instances.first(where: { $0.id == implementation.instanceID }) {
+                    await MainActor.run {
+                        self.instance = foundInstance
+                        self.instanceLoadingState = .loaded
+                    }
+                } else {
+                    await MainActor.run {
+                        self.instance = nil
+                        self.instanceLoadingState = .notFound
+                    }
+                }
             }
             catch {
 #if DEBUG
                 print("Error Fetching Instance: \(error.localizedDescription)")
 #endif
+                await MainActor.run {
+                    self.instanceLoadingState = .notFound
+                }
             }
         }
     }
