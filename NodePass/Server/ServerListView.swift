@@ -198,6 +198,12 @@ struct ServerListView: View {
                     .contextMenu {
                         ControlGroup {
                             Button {
+                                server.isEnabled.toggle()
+                                try? context.save()
+                            } label: {
+                                Label(server.isEnabled ? "Disable" : "Enable", systemImage: server.isEnabled ? "pause.circle" : "play.circle")
+                            }
+                            Button {
                                 state.editServerSheetMode = .editing
                                 state.editServerSheetServer = server
                                 state.isShowEditServerSheet = true

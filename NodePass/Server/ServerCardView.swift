@@ -27,6 +27,9 @@ struct ServerCardView: View {
         VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading) {
                 HStack(spacing: 10) {
+                    Circle()
+                        .fill(server.isEnabled ? Color.green : Color.gray)
+                        .frame(width: 8, height: 8)
                     Text(server.name)
                     if let uptime = metadata?.uptime {
                         HStack(spacing: 5) {
@@ -115,7 +118,13 @@ struct ServerCardView: View {
                 .foregroundStyle(.secondary)
             }
             else {
-                if let metadataResult {
+                if !server.isEnabled {
+                    Text("Disabled")
+                        .bold()
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                }
+                else if let metadataResult {
                     switch metadataResult {
                     case .success:
                         Text("Metadata Unavailable")

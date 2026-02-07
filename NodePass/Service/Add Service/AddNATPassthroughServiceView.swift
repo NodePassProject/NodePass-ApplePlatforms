@@ -13,6 +13,10 @@ struct AddNATPassthroughServiceView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Server.timestamp) private var servers: [Server]
     
+    private var enabledServers: [Server] {
+        servers.filter { $0.isEnabled }
+    }
+    
     private var isAdvancedModeEnabled: Bool = NPCore.isAdvancedModeEnabled
     
     @State private var name: String = ""
@@ -54,7 +58,7 @@ struct AddNATPassthroughServiceView: View {
                     Picker("Server", selection: $remoteServer) {
                         Text("Select")
                             .tag(nil as Server?)
-                        ForEach(servers) { server in
+                        ForEach(enabledServers) { server in
                             Text(server.name)
                                 .tag(server)
                         }
@@ -94,7 +98,7 @@ struct AddNATPassthroughServiceView: View {
                     Picker("Server", selection: $localServer) {
                         Text("Select")
                             .tag(nil as Server?)
-                        ForEach(servers) { server in
+                        ForEach(enabledServers) { server in
                             Text(server.name)
                                 .tag(server)
                         }

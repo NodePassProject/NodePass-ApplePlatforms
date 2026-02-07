@@ -30,11 +30,19 @@ struct NATPassthroughDetailView: View {
     
     @State private var instance0: Instance?
     @State private var instance1: Instance?
+    @State private var instance0LoadingState: LoadingState = .loading
+    @State private var instance1LoadingState: LoadingState = .loading
     @State private var isShowEditInstance0Sheet: Bool = false
     @State private var isShowEditInstance1Sheet: Bool = false
     
     @State private var isShowErrorAlert: Bool = false
     @State private var errorMessage: String = ""
+    
+    enum LoadingState {
+        case loading
+        case loaded
+        case notFound
+    }
     
     var body: some View {
         if service.type == .natPassthrough {
@@ -52,17 +60,26 @@ struct NATPassthroughDetailView: View {
                         }
                         .frame(maxWidth: .infinity)
                         
-                        if let instance0 {
-                            VStack {
-                                InstanceCardView(instance: instance0)
-                                    .onTapGesture {
-                                        isShowEditInstance0Sheet = true
-                                    }
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        else {
+                        switch instance0LoadingState {
+                        case .loading:
                             ProgressView()
+                                .listRowSeparator(.hidden)
+                                .frame(maxWidth: .infinity)
+                        case .loaded:
+                            if let instance0 {
+                                VStack {
+                                    InstanceCardView(instance: instance0)
+                                        .onTapGesture {
+                                            isShowEditInstance0Sheet = true
+                                        }
+                                }
+                                .listRowSeparator(.hidden)
+                                .frame(maxWidth: .infinity)
+                            }
+                        case .notFound:
+                            Label("Instance Not Found", systemImage: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.red)
+                                .listRowSeparator(.hidden)
                                 .frame(maxWidth: .infinity)
                         }
                     }
@@ -86,17 +103,26 @@ struct NATPassthroughDetailView: View {
                         }
                         .frame(maxWidth: .infinity)
                         
-                        if let instance1 {
-                            VStack {
-                                InstanceCardView(instance: instance1)
-                                    .onTapGesture {
-                                        isShowEditInstance1Sheet = true
-                                    }
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        else {
+                        switch instance1LoadingState {
+                        case .loading:
                             ProgressView()
+                                .listRowSeparator(.hidden)
+                                .frame(maxWidth: .infinity)
+                        case .loaded:
+                            if let instance1 {
+                                VStack {
+                                    InstanceCardView(instance: instance1)
+                                        .onTapGesture {
+                                            isShowEditInstance1Sheet = true
+                                        }
+                                }
+                                .listRowSeparator(.hidden)
+                                .frame(maxWidth: .infinity)
+                            }
+                        case .notFound:
+                            Label("Instance Not Found", systemImage: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.red)
+                                .listRowSeparator(.hidden)
                                 .frame(maxWidth: .infinity)
                         }
                     }
@@ -140,30 +166,58 @@ struct NATPassthroughDetailView: View {
     
     private func fetchInstances() {
         if let server0 {
+            instance0LoadingState = .loading
             Task {
                 let instanceService = InstanceService()
                 do {
                     let instances = try await instanceService.listInstances(baseURLString: server0.url, apiKey: server0.key)
-                    self.instance0 = instances.first(where: { $0.id == implementation0.instanceID })
+                    if let foundInstance = instances.first(where: { $0.id == implementation0.instanceID }) {
+                        await MainActor.run {
+                            self.instance0 = foundInstance
+                            self.instance0LoadingState = .loaded
+                        }
+                    } else {
+                        await MainActor.run {
+                            self.instance0 = nil
+                            self.instance0LoadingState = .notFound
+                        }
+                    }
                 }
                 catch {
 #if DEBUG
                     print("Error Fetching Instance 0: \(error.localizedDescription)")
 #endif
+                    await MainActor.run {
+                        self.instance0LoadingState = .notFound
+                    }
                 }
             }
         }
         if let server1 {
+            instance1LoadingState = .loading
             Task {
                 let instanceService = InstanceService()
                 do {
                     let instances = try await instanceService.listInstances(baseURLString: server1.url, apiKey: server1.key)
-                    self.instance1 = instances.first(where: { $0.id == implementation1.instanceID })
+                    if let foundInstance = instances.first(where: { $0.id == implementation1.instanceID }) {
+                        await MainActor.run {
+                            self.instance1 = foundInstance
+                            self.instance1LoadingState = .loaded
+                        }
+                    } else {
+                        await MainActor.run {
+                            self.instance1 = nil
+                            self.instance1LoadingState = .notFound
+                        }
+                    }
                 }
                 catch {
 #if DEBUG
                     print("Error Fetching Instance 1: \(error.localizedDescription)")
 #endif
+                    await MainActor.run {
+                        self.instance1LoadingState = .notFound
+                    }
                 }
             }
         }
