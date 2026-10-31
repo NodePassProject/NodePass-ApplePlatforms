@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		CB5E13492E7D42DB00870962 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB5E13482E7D42DB00870962 /* WidgetKit.framework */; };
 		CB5E134B2E7D42DB00870962 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB5E134A2E7D42DB00870962 /* SwiftUI.framework */; };
-		CB5E13582E7D42DC00870962 /* Widget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CB5E13462E7D42DB00870962 /* Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CB5E13582E7D42DC00870962 /* NodePass Widget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CB5E13462E7D42DB00870962 /* NodePass Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CB6682D52E1E90EA00A27696 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = CB6682D42E1E90EA00A27696 /* CodeScanner */; };
 		CBE71A522EB4DE53002D4EF8 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = CBE71A512EB4DE53002D4EF8 /* RevenueCat */; };
 		CBE71A542EB4DE53002D4EF8 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = CBE71A532EB4DE53002D4EF8 /* RevenueCatUI */; };
@@ -40,7 +40,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				CB5E13582E7D42DC00870962 /* Widget.appex in Embed Foundation Extensions */,
+				CB5E13582E7D42DC00870962 /* NodePass Widget.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -49,7 +49,7 @@
 
 /* Begin PBXFileReference section */
 		0A00000000000000000000B1 /* NodePassTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NodePassTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CB5E13462E7D42DB00870962 /* Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Widget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB5E13462E7D42DB00870962 /* NodePass Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NodePass Widget.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB5E13482E7D42DB00870962 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		CB5E134A2E7D42DB00870962 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		CB6682CD2E1D4BE300A27696 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -65,12 +65,12 @@
 			);
 			target = CBD4335A2E10FA4C002B153F /* NodePass */;
 		};
-		0A00000000000000000000C2 /* Exceptions for "Widget" folder in "Widget" target */ = {
+		0A00000000000000000000C2 /* Exceptions for "NodePass Widget" folder in "NodePass Widget" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = CB5E13452E7D42DB00870962 /* Widget */;
+			target = CB5E13452E7D42DB00870962 /* NodePass Widget */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -90,12 +90,12 @@
 			path = Scripts;
 			sourceTree = "<group>";
 		};
-		CB5E135E2E7D42F500870962 /* Widget */ = {
+		CB5E135E2E7D42F500870962 /* NodePass Widget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				0A00000000000000000000C2 /* Exceptions for "Widget" folder in "Widget" target */,
+				0A00000000000000000000C2 /* Exceptions for "NodePass Widget" folder in "NodePass Widget" target */,
 			);
-			path = Widget;
+			path = "NodePass Widget";
 			sourceTree = "<group>";
 		};
 		CBD433692E10FA69002B153F /* NodePass */ = {
@@ -162,7 +162,7 @@
 				0A00000000000000000000D3 /* Scripts */,
 				CBD4336B2E111155002B153F /* Shared */,
 				CBD433692E10FA69002B153F /* NodePass */,
-				CB5E135E2E7D42F500870962 /* Widget */,
+				CB5E135E2E7D42F500870962 /* NodePass Widget */,
 				0A00000000000000000000D1 /* NodePassTests */,
 				CB5E13472E7D42DB00870962 /* Frameworks */,
 				CBD4335C2E10FA4C002B153F /* Products */,
@@ -173,7 +173,7 @@
 			isa = PBXGroup;
 			children = (
 				CBD4335B2E10FA4C002B153F /* NodePass.app */,
-				CB5E13462E7D42DB00870962 /* Widget.appex */,
+				CB5E13462E7D42DB00870962 /* NodePass Widget.appex */,
 				0A00000000000000000000B1 /* NodePassTests.xctest */,
 			);
 			name = Products;
@@ -205,9 +205,9 @@
 			productReference = 0A00000000000000000000B1 /* NodePassTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		CB5E13452E7D42DB00870962 /* Widget */ = {
+		CB5E13452E7D42DB00870962 /* NodePass Widget */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CB5E135D2E7D42DC00870962 /* Build configuration list for PBXNativeTarget "Widget" */;
+			buildConfigurationList = CB5E135D2E7D42DC00870962 /* Build configuration list for PBXNativeTarget "NodePass Widget" */;
 			buildPhases = (
 				CB5E13422E7D42DB00870962 /* Sources */,
 				CB5E13432E7D42DB00870962 /* Frameworks */,
@@ -218,14 +218,14 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				CB5E135E2E7D42F500870962 /* Widget */,
+				CB5E135E2E7D42F500870962 /* NodePass Widget */,
 				CBD4336B2E111155002B153F /* Shared */,
 			);
-			name = Widget;
+			name = "NodePass Widget";
 			packageProductDependencies = (
 			);
 			productName = WidgetExtension;
-			productReference = CB5E13462E7D42DB00870962 /* Widget.appex */;
+			productReference = CB5E13462E7D42DB00870962 /* NodePass Widget.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		CBD4335A2E10FA4C002B153F /* NodePass */ = {
@@ -300,7 +300,7 @@
 			projectRoot = "";
 			targets = (
 				CBD4335A2E10FA4C002B153F /* NodePass */,
-				CB5E13452E7D42DB00870962 /* Widget */,
+				CB5E13452E7D42DB00870962 /* NodePass Widget */,
 				0A00000000000000000000F1 /* NodePassTests */,
 			);
 		};
@@ -362,7 +362,7 @@
 		};
 		CB5E13572E7D42DC00870962 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CB5E13452E7D42DB00870962 /* Widget */;
+			target = CB5E13452E7D42DB00870962 /* NodePass Widget */;
 			targetProxy = CB5E13562E7D42DC00870962 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -427,7 +427,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "NodePass Widget/NodePass Widget.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 60;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
@@ -435,7 +435,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Widget/Info.plist;
+				INFOPLIST_FILE = "NodePass Widget/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Widget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
@@ -470,7 +470,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "NodePass Widget/NodePass Widget.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 60;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
@@ -478,7 +478,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Widget/Info.plist;
+				INFOPLIST_FILE = "NodePass Widget/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Widget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
@@ -751,7 +751,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CB5E135D2E7D42DC00870962 /* Build configuration list for PBXNativeTarget "Widget" */ = {
+		CB5E135D2E7D42DC00870962 /* Build configuration list for PBXNativeTarget "NodePass Widget" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CB5E135A2E7D42DC00870962 /* Debug */,

@@ -1,5 +1,5 @@
 //
-//  WidgetAppBundle.swift
+//  NodePassWidgetBundle.swift
 //  NodePass Widget
 //
 
@@ -14,7 +14,7 @@ extension MasterStore {
 }
 
 @main
-struct WidgetAppBundle: WidgetBundle {
+struct NodePassWidgetBundle: WidgetBundle {
     init() {
         // Registered as an existing object: `@Dependency` values are resolved inside the intent
         // flow, not created there, so the store never has to be made off the main actor.
