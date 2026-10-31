@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7A0000000000000000000001 /* NodePass Widget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CB5E13462E7D42DB00870962 /* NodePass Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		70A56FA03095E9030072BE4D /* NodePass Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 70A56F963095E9020072BE4D /* NodePass Watch App.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7A0000000000000000000001 /* NodePass Widget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CB5E13462E7D42DB00870962 /* NodePass Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CB5E13492E7D42DB00870962 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB5E13482E7D42DB00870962 /* WidgetKit.framework */; };
 		CB5E134B2E7D42DB00870962 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB5E134A2E7D42DB00870962 /* SwiftUI.framework */; };
 		CB5E13582E7D42DC00870962 /* NodePass Widget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CB5E13462E7D42DB00870962 /* NodePass Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -19,13 +19,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		7A0000000000000000000002 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CBD433532E10FA4C002B153F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CB5E13452E7D42DB00870962;
-			remoteInfo = "NodePass Widget";
-		};
 		0A00000000000000000000A1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CBD433532E10FA4C002B153F /* Project object */;
@@ -40,6 +33,13 @@
 			remoteGlobalIDString = 70A56F953095E9020072BE4D;
 			remoteInfo = "NodePass Watch App Watch App";
 		};
+		7A0000000000000000000002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CBD433532E10FA4C002B153F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CB5E13452E7D42DB00870962;
+			remoteInfo = "NodePass Widget";
+		};
 		CB5E13562E7D42DC00870962 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CBD433532E10FA4C002B153F /* Project object */;
@@ -50,17 +50,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		7A0000000000000000000003 /* Embed Foundation Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				7A0000000000000000000001 /* NodePass Widget.appex in Embed Foundation Extensions */,
-			);
-			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		70A56FA43095E9030072BE4D /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -70,6 +59,17 @@
 				70A56FA03095E9030072BE4D /* NodePass Watch App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A0000000000000000000003 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				7A0000000000000000000001 /* NodePass Widget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CB5E13592E7D42DC00870962 /* Embed Foundation Extensions */ = {
@@ -97,13 +97,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		7A0000000000000000000006 /* Exceptions for "NodePass Watch App" folder in "NodePass Watch App" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 70A56F953095E9020072BE4D /* NodePass Watch App */;
-		};
 		0A00000000000000000000C1 /* Exceptions for "NodePass" folder in "NodePass" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -132,14 +125,16 @@
 			);
 			target = 70A56F953095E9020072BE4D /* NodePass Watch App */;
 		};
+		7A0000000000000000000006 /* Exceptions for "NodePass Watch App" folder in "NodePass Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 70A56F953095E9020072BE4D /* NodePass Watch App */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		7A0000000000000000000005 /* AppShared */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = AppShared;
-			sourceTree = "<group>";
-		};
 		0A00000000000000000000D1 /* NodePassTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = NodePassTests;
@@ -161,6 +156,11 @@
 				7A0000000000000000000006 /* Exceptions for "NodePass Watch App" folder in "NodePass Watch App" target */,
 			);
 			path = "NodePass Watch App";
+			sourceTree = "<group>";
+		};
+		7A0000000000000000000005 /* AppShared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AppShared;
 			sourceTree = "<group>";
 		};
 		CB5E135E2E7D42F500870962 /* NodePass Widget */ = {
@@ -308,8 +308,8 @@
 			);
 			fileSystemSynchronizedGroups = (
 				70A56F973095E9020072BE4D /* NodePass Watch App */,
-				CBD4336B2E111155002B153F /* Shared */,
 				7A0000000000000000000005 /* AppShared */,
+				CBD4336B2E111155002B153F /* Shared */,
 			);
 			name = "NodePass Watch App";
 			packageProductDependencies = (
@@ -358,9 +358,9 @@
 				70A56F9F3095E9030072BE4D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				7A0000000000000000000005 /* AppShared */,
 				CBD433692E10FA69002B153F /* NodePass */,
 				CBD4336B2E111155002B153F /* Shared */,
-				7A0000000000000000000005 /* AppShared */,
 			);
 			name = NodePass;
 			packageProductDependencies = (
@@ -489,11 +489,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		7A0000000000000000000004 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CB5E13452E7D42DB00870962 /* NodePass Widget */;
-			targetProxy = 7A0000000000000000000002 /* PBXContainerItemProxy */;
-		};
 		0A0000000000000000000141 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = CBD4335A2E10FA4C002B153F /* NodePass */;
@@ -504,6 +499,11 @@
 			platformFilter = ios;
 			target = 70A56F953095E9020072BE4D /* NodePass Watch App */;
 			targetProxy = 70A56F9E3095E9030072BE4D /* PBXContainerItemProxy */;
+		};
+		7A0000000000000000000004 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CB5E13452E7D42DB00870962 /* NodePass Widget */;
+			targetProxy = 7A0000000000000000000002 /* PBXContainerItemProxy */;
 		};
 		CB5E13572E7D42DC00870962 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -577,7 +577,7 @@
 				CODE_SIGN_ENTITLEMENTS = "NodePass Watch App/NodePass Watch App.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 60;
+				CURRENT_PROJECT_VERSION = 62;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -615,7 +615,7 @@
 				CODE_SIGN_ENTITLEMENTS = "NodePass Watch App/NodePass Watch App.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 60;
+				CURRENT_PROJECT_VERSION = 62;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -653,7 +653,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = "NodePass Widget/NodePass Widget.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 60;
+				CURRENT_PROJECT_VERSION = 62;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
@@ -700,7 +700,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = "NodePass Widget/NodePass Widget.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 60;
+				CURRENT_PROJECT_VERSION = 62;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
@@ -736,8 +736,8 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,4";
-				WATCHOS_DEPLOYMENT_TARGET = 27.0;
 				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 27.0;
 			};
 			name = Release;
 		};
@@ -874,7 +874,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 60;
+				CURRENT_PROJECT_VERSION = 62;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
@@ -931,7 +931,7 @@
 				CODE_SIGN_ENTITLEMENTS = NodePass/NodePass.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 60;
+				CURRENT_PROJECT_VERSION = 62;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = C7AS5D38Q8;
 				ENABLE_APP_SANDBOX = YES;
