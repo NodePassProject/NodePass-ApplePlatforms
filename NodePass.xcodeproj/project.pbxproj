@@ -118,13 +118,6 @@
 			);
 			target = CB5E13452E7D42DB00870962 /* NodePass Widget */;
 		};
-		70A56FA73095EA4F0072BE4D /* Exceptions for "Shared" folder in "NodePass Watch App" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				AppIcon.icon,
-			);
-			target = 70A56F953095E9020072BE4D /* NodePass Watch App */;
-		};
 		7A0000000000000000000006 /* Exceptions for "NodePass Watch App" folder in "NodePass Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -182,7 +175,6 @@
 		CBD4336B2E111155002B153F /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				70A56FA73095EA4F0072BE4D /* Exceptions for "Shared" folder in "NodePass Watch App" target */,
 				70A56FA53095EA470072BE4D /* Exceptions for "Shared" folder in "NodePass Widget" target */,
 			);
 			path = Shared;
