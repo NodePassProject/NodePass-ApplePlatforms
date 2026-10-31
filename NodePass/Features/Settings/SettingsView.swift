@@ -28,7 +28,7 @@ struct SettingsView: View {
             .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done", role: .confirm) { dismiss() }
+                    Button("Done", systemImage: "checkmark", role: .confirm) { dismiss() }
                 }
             }
         }

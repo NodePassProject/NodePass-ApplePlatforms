@@ -86,7 +86,7 @@ struct MasterOverviewView: View {
         .toolbar {
             if isSheet {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done", role: .confirm) { dismiss() }
+                    Button("Done", systemImage: "checkmark", role: .confirm) { dismiss() }
                 }
             }
             if !showsInlineActions {

@@ -143,7 +143,7 @@ struct InstanceLogView: View {
     /// Level filter, export, copy and clear: the overflow menu on iOS, a More menu on the Mac.
     @ViewBuilder
     private var consoleMenuItems: some View {
-        Menu("Levels") {
+        Menu("Levels", systemImage: "line.3.horizontal.decrease") {
             ForEach(LogLine.Level.allCases, id: \.self) { level in
                 Toggle(level.title, isOn: Binding(
                     get: { levels.contains(level) },

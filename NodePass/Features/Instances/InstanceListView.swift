@@ -326,11 +326,12 @@ struct InstanceListView: View {
     private var toolbarContent: some ToolbarContent {
         if isSelecting {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Done") { exitSelection() }
+                Button("Done", systemImage: "checkmark") { exitSelection() }
             }
             ToolbarItem(placement: .primaryAction) {
-                Button(multiSelection.count == filtered.count ? "Deselect All" : "Select All") {
-                    if multiSelection.count == filtered.count { multiSelection.removeAll() } else { multiSelection = Set(filtered.map(\.id)) }
+                let allSelected = multiSelection.count == filtered.count
+                Button(allSelected ? "Deselect All" : "Select All", systemImage: allSelected ? "checklist.unchecked" : "checklist.checked") {
+                    if allSelected { multiSelection.removeAll() } else { multiSelection = Set(filtered.map(\.id)) }
                 }
             }
             ToolbarItemGroup(placement: .bottomBar) {
