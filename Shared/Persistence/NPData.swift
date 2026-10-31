@@ -21,9 +21,8 @@ nonisolated enum NPData {
             return try ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)])
         }
 
-        let hasAppGroup = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: NPCore.appGroupIdentifier) != nil
         var attempts: [ModelConfiguration] = []
-        if hasAppGroup {
+        if NPCore.isAppGroupAvailable {
             attempts.append(ModelConfiguration(schema: schema, isStoredInMemoryOnly: false,
                                                groupContainer: .identifier(NPCore.appGroupIdentifier),
                                                cloudKitDatabase: .automatic))
@@ -31,7 +30,7 @@ nonisolated enum NPData {
                                                groupContainer: .identifier(NPCore.appGroupIdentifier),
                                                cloudKitDatabase: .none))
         }
-        attempts.append(ModelConfiguration(schema: schema, isStoredInMemoryOnly: false, cloudKitDatabase: .none))
+        attempts.append(ModelConfiguration(schema: schema, url: localStoreURL, cloudKitDatabase: .none))
 
         var lastError: any Error = CocoaError(.fileNoSuchFile)
         for configuration in attempts {
@@ -42,5 +41,14 @@ nonisolated enum NPData {
             }
         }
         throw lastError
+    }
+
+    /// Store used without an App Group. It is named explicitly because an unsandboxed macOS build
+    /// shares `~/Library/Application Support` with every other app, where SwiftData's default
+    /// `default.store` could belong to someone else.
+    private static var localStoreURL: URL {
+        let directory = URL.applicationSupportDirectory.appending(path: "NodePass", directoryHint: .isDirectory)
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        return directory.appending(path: "NodePass.store")
     }
 }

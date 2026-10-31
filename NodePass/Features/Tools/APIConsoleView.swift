@@ -67,7 +67,7 @@ struct APIConsoleView: View {
                     }
                     .labelsHidden()
                     .frame(width: 110)
-                    CodeField(title: "Path", text: $path, prompt: "/instances", keyboard: .URL)
+                    CodeField(title: "Path", text: $path, prompt: "/instances", input: .url)
                 }
                 Menu {
                     ForEach(quickPaths) { quick in
@@ -86,8 +86,7 @@ struct APIConsoleView: View {
                 if methodHasBody {
                     TextEditor(text: $requestBody)
                         .font(.callout.monospaced())
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
+                        .codeInput()
                         .frame(minHeight: 110)
                 }
             } header: {
@@ -129,7 +128,7 @@ struct APIConsoleView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("API Console")
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationTitle()
         .toolbar {
             if !history.isEmpty {
                 ToolbarItem(placement: .secondaryAction) {

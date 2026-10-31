@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct InstanceDetailView: View {
-    @Environment(AppModel.self) private var model
+    @Environment(NavigationModel.self) private var model
     @Environment(AppSettings.self) private var settings
 
     var session: MasterSession
@@ -33,7 +33,7 @@ struct InstanceDetailView: View {
     }
 
     private func content(_ instance: Instance) -> some View {
-        List {
+        Form {
             headerSection(instance)
             controlSection(instance)
             trafficSection(instance)
@@ -42,34 +42,22 @@ struct InstanceDetailView: View {
             logsSection(instance)
             dangerSection(instance)
         }
-        .listStyle(.insetGrouped)
+        .formStyle(.grouped)
         .navigationTitle(instance.displayName)
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationTitle()
+        #if os(iOS)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("Edit", systemImage: "pencil") { editorMode = .edit(instance) }
             }
             ToolbarItem(placement: .secondaryAction) {
-                Menu("More", systemImage: "ellipsis.circle") {
-                    Button("Rename…", systemImage: "character.cursor.ibeam") {
-                        aliasDraft = instance.alias
-                        isRenaming = true
-                    }
-                    Button("Duplicate…", systemImage: "plus.square.on.square") { editorMode = .duplicate(instance) }
-                    Divider()
-                    Button("Copy URL", systemImage: "document.on.document") { Clipboard.copy(instance.url) }
-                    Button("Copy Resolved Config", systemImage: "doc.text") { Clipboard.copy(instance.config) }
-                        .disabled(instance.config.isEmpty)
-                    Button("Copy ID", systemImage: "number") { Clipboard.copy(instance.id) }
-                    ShareLink(item: instance.url) { Label("Share URL", systemImage: "square.and.arrow.up") }
-                    Divider()
-                    Button("Delete", systemImage: "trash", role: .destructive) { deleteInstance(instance) }
-                }
+                Menu("More", systemImage: "ellipsis.circle") { moreMenuItems(instance) }
             }
         }
+        #endif
         .sheet(item: $editorMode) { mode in
             InstanceEditorView(session: session, mode: mode) { created in
-                if let created { model.selectedInstanceID = created.id }
+                if let created { model.select(instance: created.id, on: session.id) }
             }
         }
         .sheet(isPresented: $isEditingMeta) {
@@ -89,6 +77,23 @@ struct InstanceDetailView: View {
         .instanceCommanderPresentations(commander)
     }
 
+    @ViewBuilder
+    private func moreMenuItems(_ instance: Instance) -> some View {
+        Button("Rename…", systemImage: "character.cursor.ibeam") {
+            aliasDraft = instance.alias
+            isRenaming = true
+        }
+        Button("Duplicate…", systemImage: "plus.square.on.square") { editorMode = .duplicate(instance) }
+        Divider()
+        Button("Copy URL", systemImage: "document.on.document") { Clipboard.copy(instance.url) }
+        Button("Copy Resolved Config", systemImage: "doc.text") { Clipboard.copy(instance.config) }
+            .disabled(instance.config.isEmpty)
+        Button("Copy ID", systemImage: "number") { Clipboard.copy(instance.id) }
+        ShareLink(item: instance.url) { Label("Share URL", systemImage: "square.and.arrow.up") }
+        Divider()
+        Button("Delete", systemImage: "trash", role: .destructive) { deleteInstance(instance) }
+    }
+
     // MARK: Header
 
     private func headerSection(_ instance: Instance) -> some View {
@@ -101,6 +106,16 @@ struct InstanceDetailView: View {
                     if session.isBusy(instance.id) {
                         ProgressView().controlSize(.small)
                     }
+                    #if os(macOS)
+                    // The inspector has no toolbar of its own.
+                    Button("Edit…") { editorMode = .edit(instance) }
+                        .controlSize(.small)
+                    Menu("More", systemImage: "ellipsis") { moreMenuItems(instance) }
+                        .labelStyle(.iconOnly)
+                        .menuIndicator(.hidden)
+                        .fixedSize()
+                        .controlSize(.small)
+                    #endif
                 }
                 Text(instance.displayName)
                     .font(.title2.weight(.semibold))
@@ -131,38 +146,13 @@ struct InstanceDetailView: View {
 
     private func controlSection(_ instance: Instance) -> some View {
         Section {
-            HStack(spacing: 8) {
-                ForEach(InstanceAction.allCases) { action in
-                    Button {
-                        commander.run(action, on: [instance.id], session: session, settings: settings)
-                    } label: {
-                        VStack(spacing: 4) {
-                            Image(systemName: action.symbolName)
-                                .font(.title3)
-                            Text(action.title)
-                                .font(.caption2)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.7)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(tint(for: action))
-                    .disabled(!action.isApplicable(to: instance.status) || session.isBusy(instance.id))
-                }
+            InstanceActionBar { action in
+                action.isApplicable(to: instance.status) && !session.isBusy(instance.id)
+            } perform: { action in
+                commander.run(action, on: [instance.id], session: session, settings: settings)
             }
             .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
             .listRowBackground(Color.clear)
-        }
-    }
-
-    private func tint(for action: InstanceAction) -> Color {
-        switch action {
-        case .start: .green
-        case .stop: .orange
-        case .restart: .blue
-        case .reset: .gray
         }
     }
 
@@ -224,8 +214,8 @@ struct InstanceDetailView: View {
                     }
                 } else {
                     let targets = parsed.targets
-                    ForEach(Array(targets.enumerated()), id: \.offset) { index, target in
-                        KeyValueRow(key: targets.count > 1 ? "Target \(index + 1)" : "Target", value: target.description)
+                    ForEach(targets.scopedRows("target")) { row in
+                        KeyValueRow(key: targets.count > 1 ? "Target \(row.index + 1)" : "Target", value: row.element.description)
                     }
                 }
                 parameterRows(parsed, resolved: instance.parsedConfig)
@@ -264,7 +254,8 @@ struct InstanceDetailView: View {
     @ViewBuilder
     private func parameterRows(_ parsed: InstanceURL, resolved: InstanceURL?) -> some View {
         let explicitKeys = Set(parsed.parameters.map(\.key))
-        ForEach(Array(parsed.parameters.enumerated()), id: \.offset) { _, parameter in
+        ForEach(parsed.parameters.scopedRows("parameter")) { row in
+            let parameter = row.element
             let spec = ParameterCatalog.spec(key: parameter.key, role: parsed.role)
             LabeledContent {
                 Text(spec?.displayValue(parameter.value) ?? parameter.value)
@@ -282,7 +273,8 @@ struct InstanceDetailView: View {
             let injected = resolved.parameters.filter { !explicitKeys.contains($0.key) }
             if !injected.isEmpty {
                 DisclosureGroup {
-                    ForEach(Array(injected.enumerated()), id: \.offset) { _, parameter in
+                    ForEach(injected.scopedRows("default")) { row in
+                        let parameter = row.element
                         let spec = ParameterCatalog.spec(key: parameter.key, role: parsed.role)
                         LabeledContent {
                             Text(spec?.displayValue(parameter.value) ?? parameter.value)
@@ -358,11 +350,7 @@ struct InstanceDetailView: View {
                     LogLineRow(line: line, showsTime: false)
                 }
             }
-            NavigationLink {
-                InstanceLogView(session: session, instanceID: instance.id)
-            } label: {
-                Label("Open Console", systemImage: "terminal")
-            }
+            ConsoleLink(session: session, instanceID: instance.id)
         } header: {
             HStack {
                 Text("Logs")
@@ -384,7 +372,7 @@ struct InstanceDetailView: View {
 
     private func deleteInstance(_ instance: Instance) {
         commander.delete([instance.id], session: session, settings: settings) {
-            if model.selectedInstanceID == instance.id { model.selectedInstanceID = nil }
+            model.selectedInstanceIDs.remove(instance.id)
         }
     }
 }

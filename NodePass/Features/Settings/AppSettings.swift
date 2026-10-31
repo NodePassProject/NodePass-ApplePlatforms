@@ -59,6 +59,8 @@ final class AppSettings {
     var showInstanceIdentifiers: Bool { didSet { defaults.set(showInstanceIdentifiers, forKey: NPCore.DefaultsKey.showInstanceIdentifiers) } }
     var confirmDestructiveActions: Bool { didSet { defaults.set(confirmDestructiveActions, forKey: NPCore.DefaultsKey.confirmDestructiveActions) } }
     var instanceDensity: InstanceDensity { didSet { defaults.set(instanceDensity.rawValue, forKey: NPCore.DefaultsKey.instanceDensity) } }
+    /// macOS: keep a status item in the menu bar, which also keeps sessions live without windows.
+    var showsMenuBarExtra: Bool { didSet { defaults.set(showsMenuBarExtra, forKey: NPCore.DefaultsKey.showsMenuBarExtra) } }
 
     init(defaults: UserDefaults = NPCore.userDefaults) {
         self.defaults = defaults
@@ -72,5 +74,16 @@ final class AppSettings {
         showInstanceIdentifiers = defaults.object(forKey: NPCore.DefaultsKey.showInstanceIdentifiers) as? Bool ?? true
         confirmDestructiveActions = defaults.object(forKey: NPCore.DefaultsKey.confirmDestructiveActions) as? Bool ?? true
         instanceDensity = InstanceDensity(rawValue: defaults.string(forKey: NPCore.DefaultsKey.instanceDensity) ?? "") ?? .regular
+        showsMenuBarExtra = defaults.object(forKey: NPCore.DefaultsKey.showsMenuBarExtra) as? Bool ?? true
+    }
+
+    /// The part of the settings that running sessions depend on.
+    var sessionConfiguration: SessionConfiguration {
+        SessionConfiguration(
+            liveEventsEnabled: liveEventsEnabled,
+            infoRefreshInterval: infoRefreshInterval,
+            instancePollInterval: instancePollInterval,
+            logCapacity: logBufferSize
+        )
     }
 }

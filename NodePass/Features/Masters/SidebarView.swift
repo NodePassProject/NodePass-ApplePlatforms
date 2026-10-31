@@ -23,17 +23,18 @@ private enum MasterSortKey: String, CaseIterable, Identifiable {
 }
 
 struct SidebarView: View {
-    @Environment(AppModel.self) private var model
+    @Environment(NavigationModel.self) private var model
     @Environment(SessionStore.self) private var sessions
     @Environment(\.modelContext) private var modelContext
+    #if os(macOS)
+    @Environment(\.openWindow) private var openWindow
+    #endif
 
     var masters: [Server]
 
     @AppStorage(NPCore.DefaultsKey.masterSortKey, store: NPCore.userDefaults) private var sortKeyRaw = "date"
     @AppStorage(NPCore.DefaultsKey.masterSortOrder, store: NPCore.userDefaults) private var sortOrderRaw = "ascending"
     @State private var searchText = ""
-    @State private var masterToDelete: Server?
-    @State private var masterToShare: Server?
 
     private var sortKey: MasterSortKey { MasterSortKey(rawValue: sortKeyRaw) ?? .date }
     private var ascending: Bool { sortOrderRaw != "descending" }
@@ -76,7 +77,7 @@ struct SidebarView: View {
                             .tag(SidebarItem.master(master.id))
                             .contextMenu { masterMenu(master) }
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button(role: .destructive) { masterToDelete = master } label: {
+                                Button(role: .destructive) { model.masterPendingDeletion = master } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
                                 Button { model.masterBeingEdited = master } label: {
@@ -85,10 +86,7 @@ struct SidebarView: View {
                                 .tint(.orange)
                             }
                             .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                                Button {
-                                    master.isEnabled.toggle()
-                                    try? modelContext.save()
-                                } label: {
+                                Button { toggleEnabled(master) } label: {
                                     Label(master.isEnabled ? "Disable" : "Enable", systemImage: master.isEnabled ? "pause.circle" : "play.circle")
                                 }
                                 .tint(master.isEnabled ? .gray : .green)
@@ -108,6 +106,10 @@ struct SidebarView: View {
         }
         .listStyle(.sidebar)
         .navigationTitle("NodePass")
+        #if os(macOS)
+        .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 360)
+        .safeAreaInset(edge: .bottom) { bottomBar }
+        #else
         .searchable(text: $searchText, placement: .sidebar, prompt: "Search masters")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -115,41 +117,13 @@ struct SidebarView: View {
             }
             ToolbarItem(placement: .secondaryAction) {
                 Menu("More", systemImage: "ellipsis.circle") {
-                    Picker("Sort By", selection: $sortKeyRaw) {
-                        ForEach(MasterSortKey.allCases) { key in
-                            Text(key.title).tag(key.rawValue)
-                        }
-                    }
-                    Picker("Order", selection: $sortOrderRaw) {
-                        Text("Ascending").tag("ascending")
-                        Text("Descending").tag("descending")
-                    }
+                    sortPickers
                     Divider()
                     Button("Settings", systemImage: "gear") { model.isPresentingSettings = true }
                 }
             }
         }
-        .onChange(of: model.sidebarSelection) { oldValue, newValue in
-            if oldValue?.masterID != newValue?.masterID {
-                model.selectedInstanceID = nil
-            }
-        }
-        .alert("Delete Master?", isPresented: Binding(get: { masterToDelete != nil }, set: { if !$0 { masterToDelete = nil } })) {
-            Button("Delete", role: .destructive) {
-                if let master = masterToDelete {
-                    if model.sidebarSelection == .master(master.id) { model.sidebarSelection = nil }
-                    modelContext.delete(master)
-                    try? modelContext.save()
-                }
-                masterToDelete = nil
-            }
-            Button("Cancel", role: .cancel) { masterToDelete = nil }
-        } message: {
-            Text("Only the saved connection is removed. Instances on the master are not affected.")
-        }
-        .sheet(item: $masterToShare) { master in
-            MasterShareView(master: master)
-        }
+        #endif
     }
 
     private var emptyMasters: some View {
@@ -167,22 +141,65 @@ struct SidebarView: View {
     }
 
     @ViewBuilder
+    private var sortPickers: some View {
+        Picker("Sort By", selection: $sortKeyRaw) {
+            ForEach(MasterSortKey.allCases) { key in
+                Text(key.title).tag(key.rawValue)
+            }
+        }
+        Picker("Order", selection: $sortOrderRaw) {
+            Text("Ascending").tag("ascending")
+            Text("Descending").tag("descending")
+        }
+    }
+
+    #if os(macOS)
+    /// Add and sort controls at the foot of the sidebar, where Mac apps keep list management.
+    private var bottomBar: some View {
+        HStack(spacing: 12) {
+            Button("Add Master", systemImage: "plus.circle") { model.isPresentingNewMaster = true }
+                .labelStyle(.titleAndIcon)
+            Spacer()
+            Menu("Sort Masters", systemImage: "arrow.up.arrow.down") { sortPickers }
+                .labelStyle(.iconOnly)
+                .menuIndicator(.hidden)
+                .fixedSize()
+                .help("Sort Masters")
+        }
+        .buttonStyle(.borderless)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+    }
+    #endif
+
+    @ViewBuilder
     private func masterMenu(_ master: Server) -> some View {
-        Button("Edit", systemImage: "pencil") { model.masterBeingEdited = master }
-        Button(master.isEnabled ? "Disable" : "Enable", systemImage: master.isEnabled ? "pause.circle" : "play.circle") {
-            master.isEnabled.toggle()
-            try? modelContext.save()
-        }
-        Button("Share…", systemImage: "qrcode") { masterToShare = master }
-        Button("Duplicate", systemImage: "plus.square.on.square") {
-            let copy = Server(name: master.name + " Copy", url: master.url, key: master.key, isEnabled: false)
-            copy.flavorRawValue = master.flavorRawValue
-            copy.trustsSelfSignedCertificatesRaw = master.trustsSelfSignedCertificatesRaw
-            modelContext.insert(copy)
-            try? modelContext.save()
-        }
+        #if os(macOS)
+        Button("Open in New Window", systemImage: "macwindow.badge.plus") { openWindow(value: SidebarItem.master(master.id)) }
         Divider()
-        Button("Delete", systemImage: "trash", role: .destructive) { masterToDelete = master }
+        #endif
+        Button("Edit…", systemImage: "pencil") { model.masterBeingEdited = master }
+        Button(master.isEnabled ? "Disable" : "Enable", systemImage: master.isEnabled ? "pause.circle" : "play.circle") {
+            toggleEnabled(master)
+        }
+        Button("Share…", systemImage: "qrcode") { model.masterBeingShared = master }
+        Button("Duplicate", systemImage: "plus.square.on.square") { duplicate(master) }
+        Divider()
+        Button("Delete…", systemImage: "trash", role: .destructive) { model.masterPendingDeletion = master }
+    }
+
+    private func toggleEnabled(_ master: Server) {
+        master.isEnabled.toggle()
+        try? modelContext.save()
+    }
+
+    private func duplicate(_ master: Server) {
+        let copy = Server(name: master.name + " Copy", url: master.url, key: master.key, isEnabled: false)
+        copy.flavorRawValue = master.flavorRawValue
+        copy.trustsSelfSignedCertificatesRaw = master.trustsSelfSignedCertificatesRaw
+        copy.notes = master.notes
+        modelContext.insert(copy)
+        try? modelContext.save()
     }
 }
 

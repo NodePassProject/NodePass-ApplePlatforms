@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct URLInspectorView: View {
-    @Environment(AppModel.self) private var model
+    @Environment(NavigationModel.self) private var model
     @Environment(SessionStore.self) private var sessions
     @Query(sort: \Server.timestamp) private var masters: [Server]
 
@@ -32,8 +32,7 @@ struct URLInspectorView: View {
             Section {
                 TextEditor(text: $text)
                     .font(.callout.monospaced())
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.never)
+                    .codeInput()
                     .frame(minHeight: 90)
                 HStack {
                     PasteButton(payloadType: String.self) { strings in
@@ -78,14 +77,11 @@ struct URLInspectorView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("URL Inspector")
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationTitle()
         .sheet(isPresented: $isPresentingEditor) {
             if let (session, url) = editorTarget {
                 InstanceEditorView(session: session, mode: .create(prefill: url)) { created in
-                    if let created {
-                        model.select(master: session.id)
-                        model.selectedInstanceID = created.id
-                    }
+                    if let created { model.select(instance: created.id, on: session.id) }
                 }
             }
         }

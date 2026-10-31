@@ -8,7 +8,7 @@
 import Foundation
 
 enum InstanceSortKey: String, CaseIterable, Identifiable {
-    case name, status, role, traffic, connections, ping, identifier
+    case name, status, role, traffic, connections, pool, ping, identifier
 
     var id: String { rawValue }
 
@@ -19,6 +19,7 @@ enum InstanceSortKey: String, CaseIterable, Identifiable {
         case .role: "Type"
         case .traffic: "Traffic"
         case .connections: "Connections"
+        case .pool: "Pool"
         case .ping: "Latency"
         case .identifier: "ID"
         }
@@ -130,27 +131,36 @@ struct InstanceFilter: Hashable {
     }
 
     private func comparator(_ lhs: Instance, _ rhs: Instance) -> Bool {
-        let result: Bool
+        ascending ? precedes(lhs, rhs) : precedes(rhs, lhs)
+    }
+
+    /// Strict ordering for the sort key in its natural direction (largest first for traffic,
+    /// connections and pool size), with ties broken by name and then ID.
+    private func precedes(_ lhs: Instance, _ rhs: Instance) -> Bool {
         switch sortKey {
         case .name:
-            let order = lhs.displayName.localizedStandardCompare(rhs.displayName)
-            result = order == .orderedSame ? lhs.id < rhs.id : order == .orderedAscending
+            break
         case .status:
-            result = lhs.status == rhs.status ? lhs.displayName.localizedStandardCompare(rhs.displayName) == .orderedAscending : lhs.status < rhs.status
+            if lhs.status < rhs.status { return true }
+            if rhs.status < lhs.status { return false }
         case .role:
-            result = lhs.role.rawValue == rhs.role.rawValue ? lhs.displayName.localizedStandardCompare(rhs.displayName) == .orderedAscending : lhs.role.rawValue < rhs.role.rawValue
+            if lhs.role.rawValue != rhs.role.rawValue { return lhs.role.rawValue < rhs.role.rawValue }
         case .traffic:
-            result = (lhs.totalReceived &+ lhs.totalTransmitted) > (rhs.totalReceived &+ rhs.totalTransmitted)
+            if lhs.totalTraffic != rhs.totalTraffic { return lhs.totalTraffic > rhs.totalTraffic }
         case .connections:
-            result = lhs.totalConnections > rhs.totalConnections
+            if lhs.totalConnections != rhs.totalConnections { return lhs.totalConnections > rhs.totalConnections }
+        case .pool:
+            if lhs.pool != rhs.pool { return lhs.pool > rhs.pool }
         case .ping:
+            // Unknown latency (0) sorts last.
             let l = lhs.ping == 0 ? Int.max : lhs.ping
             let r = rhs.ping == 0 ? Int.max : rhs.ping
-            result = l < r
+            if l != r { return l < r }
         case .identifier:
-            result = lhs.id < rhs.id
+            return lhs.id < rhs.id
         }
-        return ascending ? result : !result
+        let order = lhs.displayName.localizedStandardCompare(rhs.displayName)
+        return order == .orderedSame ? lhs.id < rhs.id : order == .orderedAscending
     }
 
     /// Recognizes `key:value` or `#key` search syntax for tags.

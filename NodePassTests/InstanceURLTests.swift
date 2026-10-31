@@ -138,4 +138,18 @@ struct InstanceURLTests {
         #expect(HostPort(host: "fe80::1", port: 1).description == "[fe80::1]:1")
         #expect(HostPort(parsing: "*:2000").host == "*")
     }
+
+    @Test func endpointSummary() {
+        var server = Instance(id: "s")
+        server.url = "server://0.0.0.0:10101/127.0.0.1:8080,backup.local:8081?mode=2"
+        #expect(server.endpointSummary == "0.0.0.0:10101 → 127.0.0.1:8080, backup.local:8081")
+
+        var portal = Instance(id: "p")
+        portal.url = "portal://0123456789abcdef0123456789abcdef@*/tcp:2000/udp:2001"
+        #expect(portal.endpointSummary == "* tcp:2000 udp:2001")
+
+        var unparsable = Instance(id: "u")
+        unparsable.url = "not a url"
+        #expect(unparsable.endpointSummary == "not a url")
+    }
 }

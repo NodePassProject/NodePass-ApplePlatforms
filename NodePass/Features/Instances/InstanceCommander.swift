@@ -218,7 +218,7 @@ struct BatchReportView: View {
                 }
             }
             .navigationTitle(report.title)
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done", role: .confirm) { dismiss() }
@@ -226,5 +226,6 @@ struct BatchReportView: View {
             }
         }
         .presentationDetents([.medium, .large])
+        .sheetFrame(width: 440, height: 420)
     }
 }

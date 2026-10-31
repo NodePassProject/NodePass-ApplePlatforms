@@ -30,6 +30,8 @@ struct InstanceEditorView: View {
 
     @State private var model: InstanceEditorModel
     @State private var isPickingParameter = false
+    @State private var isAddingCustomParameter = false
+    @State private var customParameterKey = ""
     @State private var errorMessage: String?
     @State private var revealsCredential = false
 
@@ -75,17 +77,14 @@ struct InstanceEditorView: View {
             }
             .formStyle(.grouped)
             .navigationTitle(title)
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationTitle()
             .toolbar {
+                #if os(iOS)
                 ToolbarItem(placement: .principal) {
-                    Picker("Input", selection: Binding(get: { model.inputMode }, set: { model.setInputMode($0) })) {
-                        ForEach(InstanceEditorModel.InputMode.allCases) { mode in
-                            Text(mode.rawValue).tag(mode)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .frame(maxWidth: 220)
+                    inputModePicker
+                        .frame(maxWidth: 220)
                 }
+                #endif
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "xmark", role: .cancel) { dismiss() }
                 }
@@ -103,8 +102,29 @@ struct InstanceEditorView: View {
                     withAnimation { model.addCustom(key: key) }
                 }
             }
+            .alert("Custom Parameter", isPresented: $isAddingCustomParameter) {
+                TextField("Key", text: $customParameterKey)
+                    .codeInput()
+                Button("Add") {
+                    withAnimation { model.addCustom(key: customParameterKey) }
+                    customParameterKey = ""
+                }
+                Button("Cancel", role: .cancel) { customParameterKey = "" }
+            } message: {
+                Text("Unknown keys are passed to the master unchanged.")
+            }
         }
         .interactiveDismissDisabled(model.hasChanges && model.original != nil)
+        .sheetFrame(width: 640, height: 760)
+    }
+
+    private var inputModePicker: some View {
+        Picker("Input", selection: Binding(get: { model.inputMode }, set: { model.setInputMode($0) })) {
+            ForEach(InstanceEditorModel.InputMode.allCases) { mode in
+                Text(mode.rawValue).tag(mode)
+            }
+        }
+        .pickerStyle(.segmented)
     }
 
     // MARK: Sections
@@ -112,6 +132,12 @@ struct InstanceEditorView: View {
     private var generalSection: some View {
         @Bindable var model = model
         return Section {
+            #if os(macOS)
+            // Sheets on macOS have no title bar to hold the picker.
+            inputModePicker
+                .labelsHidden()
+                .listRowSeparator(.hidden)
+            #endif
             TextField("Alias", text: $model.alias, prompt: Text("Optional display name"))
             Toggle(isOn: $model.autoRestart) {
                 Label("Auto-restart", systemImage: "arrow.trianglehead.clockwise")
@@ -146,7 +172,7 @@ struct InstanceEditorView: View {
         case .nodePass:
             Section {
                 credentialField(title: "Password", prompt: "Optional tunnel key")
-                CodeField(title: "Tunnel Host", text: $model.tunnelHost, prompt: model.role == .server ? "0.0.0.0 (all interfaces)" : "server.example.com", keyboard: .URL)
+                CodeField(title: "Tunnel Host", text: $model.tunnelHost, prompt: model.role == .server ? "0.0.0.0 (all interfaces)" : "server.example.com", input: .url)
                 portField("Tunnel Port", text: $model.tunnelPort)
             } header: {
                 Text(model.role == .server ? "Tunnel Listener" : "Tunnel Address")
@@ -159,13 +185,19 @@ struct InstanceEditorView: View {
             Section {
                 ForEach($model.targets) { $target in
                     HStack(spacing: 8) {
-                        CodeField(title: "Host", text: $target.host, prompt: "127.0.0.1", keyboard: .URL)
+                        CodeField(title: "Host", text: $target.host, prompt: "127.0.0.1", input: .url)
+                            .labelsHidden()
                         Divider()
                         TextField("Port", text: $target.port, prompt: Text("8080"))
-                            .keyboardType(.numberPad)
+                            .labelsHidden()
+                            .codeInput(.number)
                             .font(.body.monospaced())
                             .frame(width: 72)
                             .multilineTextAlignment(.trailing)
+                        #if os(macOS)
+                        RemoveRowButton(title: "Remove Target") { withAnimation { model.removeTarget(target.id) } }
+                            .disabled(model.targets.count < 2)
+                        #endif
                     }
                 }
                 .onDelete { offsets in
@@ -182,7 +214,7 @@ struct InstanceEditorView: View {
                 if model.targets.count > 1 {
                     Text("Multiple targets are balanced with the `lbs` strategy and require forward mode on servers (mode=2) or single-end mode on clients (mode=1).")
                 } else {
-                    Text("Destination of the business traffic. Swipe to delete, or add more targets for load balancing.")
+                    Text("Destination of the business traffic. Add more targets for load balancing.")
                 }
             }
 
@@ -194,7 +226,7 @@ struct InstanceEditorView: View {
                         .labelStyle(.iconOnly)
                         .buttonStyle(.borderless)
                 }
-                CodeField(title: "Host", text: $model.tunnelHost, prompt: model.role == .portal ? "* (all interfaces)" : "portal.example", keyboard: .URL)
+                CodeField(title: "Host", text: $model.tunnelHost, prompt: model.role == .portal ? "* (all interfaces)" : "portal.example", input: .url)
                 Toggle("Declare Carriers in Path", isOn: $model.usesCarrierPaths.animation())
                 if !model.usesCarrierPaths {
                     portField("Port", text: $model.tunnelPort)
@@ -219,10 +251,14 @@ struct InstanceEditorView: View {
                             .labelsHidden()
                             Spacer()
                             TextField("Port", text: $carrier.port, prompt: Text("2000"))
-                                .keyboardType(.numberPad)
+                                .labelsHidden()
+                                .codeInput(.number)
                                 .font(.body.monospaced())
                                 .frame(width: 80)
                                 .multilineTextAlignment(.trailing)
+                            #if os(macOS)
+                            RemoveRowButton(title: "Remove Carrier") { withAnimation { model.removeCarrier(carrier.id) } }
+                            #endif
                         }
                     }
                     .onDelete { model.carriers.remove(atOffsets: $0) }
@@ -238,12 +274,18 @@ struct InstanceEditorView: View {
         @Bindable var model = model
         return Section {
             ForEach($model.parameters) { $row in
-                ParameterRowView(row: $row, spec: model.spec(for: row.key), isApplicable: model.isApplicable(row.key), roleTitle: model.role.title)
+                ParameterRowView(row: $row, spec: model.spec(for: row.key), isApplicable: model.isApplicable(row.key), roleTitle: model.role.title) {
+                    withAnimation { model.remove(row.id) }
+                }
             }
             .onDelete { offsets in
                 withAnimation { model.parameters.remove(atOffsets: offsets) }
             }
+            #if os(macOS)
+            addParameterMenu
+            #else
             Button("Add Parameter", systemImage: "plus.circle.fill") { isPickingParameter = true }
+            #endif
             if !model.inapplicableRows.isEmpty {
                 Button("Remove \(model.inapplicableRows.count) Inapplicable", systemImage: "wand.and.sparkles", role: .destructive) {
                     withAnimation { model.removeInapplicable() }
@@ -263,13 +305,36 @@ struct InstanceEditorView: View {
         }
     }
 
+    #if os(macOS)
+    /// The catalog as a menu: one submenu per group, searchable by typing while it is open.
+    private var addParameterMenu: some View {
+        Menu("Add Parameter", systemImage: "plus.circle.fill") {
+            ForEach(model.availableSpecs.groupedByCategory, id: \.group) { entry in
+                Menu(entry.group.title, systemImage: entry.group.symbolName) {
+                    ForEach(entry.specs) { spec in
+                        Button {
+                            withAnimation { model.add(spec) }
+                        } label: {
+                            Text(spec.title)
+                            Text(spec.key)
+                        }
+                    }
+                }
+            }
+            Divider()
+            Button("Custom Key…") { isAddingCustomParameter = true }
+        }
+        .menuStyle(.borderlessButton)
+        .fixedSize()
+    }
+    #endif
+
     private var textSection: some View {
         @Bindable var model = model
         return Section {
             TextEditor(text: $model.rawText)
                 .font(.callout.monospaced())
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.never)
+                .codeInput()
                 .frame(minHeight: 120)
                 .onChange(of: model.rawText) { model.validateRawText() }
             HStack {
@@ -323,9 +388,12 @@ struct InstanceEditorView: View {
             if revealsCredential {
                 CodeField(title: title, text: $model.credential, prompt: prompt)
             } else {
-                SecureField(title, text: $model.credential, prompt: Text(prompt))
-                    .font(.body.monospaced())
-                    .textContentType(.oneTimeCode)
+                SecureField(text: $model.credential, prompt: Text(prompt)) {
+                    Text(title)
+                        .font(.body)
+                }
+                .font(.body.monospaced())
+                .textContentType(.oneTimeCode)
             }
             Button(revealsCredential ? "Hide" : "Reveal", systemImage: revealsCredential ? "eye.slash" : "eye") {
                 revealsCredential.toggle()
@@ -336,11 +404,10 @@ struct InstanceEditorView: View {
     }
 
     private func portField(_ title: String, text: Binding<String>) -> some View {
-        HStack {
-            Text(title)
-            Spacer()
+        LabeledContent(title) {
             TextField(title, text: text, prompt: Text("1–65535"))
-                .keyboardType(.numberPad)
+                .labelsHidden()
+                .codeInput(.number)
                 .font(.body.monospaced())
                 .multilineTextAlignment(.trailing)
                 .frame(maxWidth: 140)

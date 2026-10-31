@@ -203,12 +203,12 @@ final class MasterSession: Identifiable {
         connection = .idle
     }
 
-    func applySettings(liveEvents: Bool, infoInterval: TimeInterval, pollInterval: TimeInterval, logCapacity: Int) {
-        let liveChanged = liveEvents != liveEventsEnabled
-        liveEventsEnabled = liveEvents
-        infoRefreshInterval = infoInterval
-        instancePollInterval = pollInterval
-        self.logCapacity = logCapacity
+    func apply(_ configuration: SessionConfiguration) {
+        let liveChanged = configuration.liveEventsEnabled != liveEventsEnabled
+        liveEventsEnabled = configuration.liveEventsEnabled
+        infoRefreshInterval = configuration.infoRefreshInterval
+        instancePollInterval = configuration.instancePollInterval
+        logCapacity = configuration.logCapacity
         for key in logs.keys { logs[key]?.capacity = logCapacity }
         if liveChanged, eventTask != nil || pollTask != nil {
             stop()

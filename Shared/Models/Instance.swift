@@ -120,6 +120,7 @@ nonisolated struct Instance: Codable, Hashable, Identifiable, Sendable {
 
     var totalReceived: UInt64 { tcpReceived &+ udpReceived }
     var totalTransmitted: UInt64 { tcpTransmitted &+ udpTransmitted }
+    var totalTraffic: UInt64 { totalReceived &+ totalTransmitted }
     var totalConnections: Int { tcpConnections + udpConnections }
 
     /// Structured view of `url`, if it parses.
@@ -127,6 +128,17 @@ nonisolated struct Instance: Codable, Hashable, Identifiable, Sendable {
 
     /// Structured view of `config`, if it parses.
     var parsedConfig: InstanceURL? { try? InstanceURL(parsing: config) }
+
+    /// One-line description of where traffic enters and leaves, e.g. `:10101 → 127.0.0.1:8080`.
+    var endpointSummary: String {
+        guard let parsed = parsedURL else { return url }
+        if parsed.flavor == .openCtrl {
+            let carriers = parsed.carriers.map(\.description).joined(separator: " ")
+            return carriers.isEmpty ? parsed.tunnel.description : "\(parsed.tunnel.host) \(carriers)"
+        }
+        let targets = parsed.targets.map(\.description).joined(separator: ", ")
+        return targets.isEmpty ? parsed.tunnel.description : "\(parsed.tunnel.description) → \(targets)"
+    }
 
     /// Text searched by the instance list filter.
     var searchableText: String {

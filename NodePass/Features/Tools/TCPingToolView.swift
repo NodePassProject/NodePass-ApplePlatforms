@@ -59,7 +59,7 @@ struct TCPingToolView: View {
                         Text(master.displayName).tag(master.id)
                     }
                 }
-                CodeField(title: "Target", text: $target, prompt: "host:port", keyboard: .URL)
+                CodeField(title: "Target", text: $target, prompt: "host:port", input: .url)
                     .submitLabel(.go)
                     .onSubmit { Task { await run() } }
                 if !suggestions.isEmpty {
@@ -123,7 +123,7 @@ struct TCPingToolView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("TCP Ping")
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationTitle()
         .overlay {
             if enabledMasters.isEmpty {
                 ContentUnavailableView("No Enabled Masters", systemImage: "server.rack", description: Text("Add or enable a master to run probes."))

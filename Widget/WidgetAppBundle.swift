@@ -1,3 +1,8 @@
+//
+//  WidgetAppBundle.swift
+//  NodePass Widget
+//
+
 import WidgetKit
 import SwiftUI
 
@@ -5,5 +10,6 @@ import SwiftUI
 struct WidgetAppBundle: WidgetBundle {
     var body: some Widget {
         MasterOverviewWidget()
+        FleetWidget()
     }
 }

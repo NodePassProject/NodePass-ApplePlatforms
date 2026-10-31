@@ -39,7 +39,7 @@ struct MetricTile: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(12)
-        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(.tileBackground, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }
 

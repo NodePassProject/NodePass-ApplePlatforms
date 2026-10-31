@@ -17,7 +17,7 @@ final class SessionStore {
     func session(for id: String) -> MasterSession? { sessions[id] }
 
     /// Creates, updates and removes sessions so they mirror `masters`.
-    func sync(with masters: [Server], settings: AppSettings) {
+    func sync(with masters: [Server], configuration: SessionConfiguration) {
         var seen = Set<String>()
         for master in masters {
             seen.insert(master.id)
@@ -30,7 +30,7 @@ final class SessionStore {
                 }
             } else {
                 let session = MasterSession(snapshot: snapshot, flavorOverride: override)
-                apply(settings, to: session)
+                session.apply(configuration)
                 sessions[master.id] = session
                 if isActive, snapshot.isEnabled { session.start() }
             }
@@ -53,16 +53,7 @@ final class SessionStore {
         for session in sessions.values { session.stop() }
     }
 
-    func apply(_ settings: AppSettings) {
-        for session in sessions.values { apply(settings, to: session) }
-    }
-
-    private func apply(_ settings: AppSettings, to session: MasterSession) {
-        session.applySettings(
-            liveEvents: settings.liveEventsEnabled,
-            infoInterval: settings.infoRefreshInterval,
-            pollInterval: settings.instancePollInterval,
-            logCapacity: settings.logBufferSize
-        )
+    func apply(_ configuration: SessionConfiguration) {
+        for session in sessions.values { session.apply(configuration) }
     }
 }

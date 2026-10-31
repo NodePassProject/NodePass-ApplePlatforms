@@ -12,6 +12,8 @@ struct ParameterRowView: View {
     var spec: ParameterSpec?
     var isApplicable: Bool
     var roleTitle: String
+    /// Removes the row. iOS removes rows by swiping instead.
+    var onRemove: () -> Void = {}
 
     private var problem: String? { spec?.validate(row.value) }
 
@@ -29,6 +31,9 @@ struct ParameterRowView: View {
                 Spacer(minLength: 0)
                 valueControl
                     .frame(maxWidth: 260, alignment: .trailing)
+                #if os(macOS)
+                RemoveRowButton(title: "Remove Parameter", action: onRemove)
+                #endif
             }
             if let problem {
                 Text(problem)
@@ -93,7 +98,7 @@ struct ParameterRowView: View {
         case .integer:
             HStack(spacing: 4) {
                 TextField("Value", text: $row.value, prompt: Text(spec?.defaultValue ?? "0"))
-                    .keyboardType(.numberPad)
+                    .codeInput(.number)
                     .multilineTextAlignment(.trailing)
                     .font(.callout.monospaced())
                     .frame(maxWidth: 120)
@@ -109,8 +114,7 @@ struct ParameterRowView: View {
                 TextField("Value", text: $row.value, prompt: Text(spec?.placeholder ?? spec?.defaultValue ?? "5m"))
                     .multilineTextAlignment(.trailing)
                     .font(.callout.monospaced())
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.never)
+                    .codeInput()
                     .frame(maxWidth: 110)
                 Menu {
                     ForEach(["0", "10s", "30s", "1m", "5m", "30m", "1h"], id: \.self) { value in
@@ -142,7 +146,7 @@ struct ParameterRowView: View {
 
         case .host:
             HStack(spacing: 4) {
-                textField(prompt: spec?.placeholder ?? "host", keyboard: .URL)
+                textField(prompt: spec?.placeholder ?? "host", input: .url)
                 if spec?.defaultValue == "auto" {
                     Button("auto") { row.value = "auto" }
                         .font(.caption)
@@ -152,17 +156,15 @@ struct ParameterRowView: View {
             }
 
         case .path, .hostPort, .hex, .text, nil:
-            textField(prompt: spec?.placeholder ?? "value", keyboard: spec?.kind == .hostPort ? .URL : .default)
+            textField(prompt: spec?.placeholder ?? "value", input: spec?.kind == .hostPort ? .url : .plain)
         }
     }
 
-    private func textField(prompt: String?, keyboard: UIKeyboardType = .default) -> some View {
+    private func textField(prompt: String?, input: TextInputKind = .plain) -> some View {
         TextField("Value", text: $row.value, prompt: prompt.map { Text($0) })
             .multilineTextAlignment(.trailing)
             .font(.callout.monospaced())
-            .autocorrectionDisabled()
-            .textInputAutocapitalization(.never)
-            .keyboardType(keyboard)
+            .codeInput(input)
     }
 }
 
@@ -184,11 +186,6 @@ struct ParameterPickerView: View {
         }
     }
 
-    private var groups: [(ParameterGroup, [ParameterSpec])] {
-        var buckets: [ParameterGroup: [ParameterSpec]] = [:]
-        for spec in filtered { buckets[spec.group, default: []].append(spec) }
-        return buckets.keys.sorted().map { ($0, buckets[$0] ?? []) }
-    }
 
     var body: some View {
         NavigationStack {
@@ -207,9 +204,9 @@ struct ParameterPickerView: View {
                 } footer: {
                     Text("Unknown keys are passed to the master unchanged.")
                 }
-                ForEach(groups, id: \.0) { group, members in
+                ForEach(filtered.groupedByCategory, id: \.group) { entry in
                     Section {
-                        ForEach(members) { spec in
+                        ForEach(entry.specs) { spec in
                             Button {
                                 onPick(spec)
                                 dismiss()
@@ -237,7 +234,7 @@ struct ParameterPickerView: View {
                             .buttonStyle(.plain)
                         }
                     } header: {
-                        Label(group.title, systemImage: group.symbolName)
+                        Label(entry.group.title, systemImage: entry.group.symbolName)
                     }
                 }
             }
@@ -250,12 +247,35 @@ struct ParameterPickerView: View {
             }
             .searchable(text: $searchText, prompt: "Search parameters")
             .navigationTitle("Add Parameter")
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "xmark", role: .cancel) { dismiss() }
                 }
             }
         }
+    }
+}
+
+extension Array where Element == ParameterSpec {
+    /// Specs bucketed by catalog group, in group order.
+    var groupedByCategory: [(group: ParameterGroup, specs: [ParameterSpec])] {
+        var buckets: [ParameterGroup: [ParameterSpec]] = [:]
+        for spec in self { buckets[spec.group, default: []].append(spec) }
+        return buckets.keys.sorted().map { ($0, buckets[$0] ?? []) }
+    }
+}
+
+/// Trailing minus button for rows that iOS deletes by swiping.
+struct RemoveRowButton: View {
+    var title: String
+    var action: () -> Void
+
+    var body: some View {
+        Button(title, systemImage: "minus.circle.fill", action: action)
+            .labelStyle(.iconOnly)
+            .buttonStyle(.borderless)
+            .foregroundStyle(.secondary)
+            .help(title)
     }
 }

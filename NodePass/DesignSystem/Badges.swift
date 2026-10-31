@@ -7,30 +7,6 @@
 
 import SwiftUI
 
-extension InstanceStatus {
-    var tint: Color {
-        switch self {
-        case .running: .green
-        case .stopped: .secondary
-        case .error: .red
-        case .other: .orange
-        }
-    }
-}
-
-extension InstanceRole {
-    var tint: Color {
-        switch self {
-        case .server: .indigo
-        case .client: .teal
-        case .portal: .purple
-        case .vector: .cyan
-        case .egress: .orange
-        case .other: .gray
-        }
-    }
-}
-
 extension ConnectionState {
     var tint: Color {
         switch self {
@@ -68,10 +44,24 @@ struct StatusDot: View {
 
 /// Capsule label with a tinted background.
 struct Pill: View {
+    @Environment(\.backgroundProminence) private var backgroundProminence
+
     var text: String
     var tint: Color
     var systemImage: String? = nil
     var prominent = false
+
+    /// On a selected table or list row, tinted text would vanish into the highlight.
+    private var isOnSelection: Bool { backgroundProminence == .increased }
+
+    private var foreground: Color {
+        prominent || isOnSelection ? .white : tint
+    }
+
+    private var background: AnyShapeStyle {
+        if isOnSelection { return AnyShapeStyle(.white.opacity(0.22)) }
+        return prominent ? AnyShapeStyle(tint) : AnyShapeStyle(tint.opacity(0.14))
+    }
 
     var body: some View {
         HStack(spacing: 3) {
@@ -86,8 +76,8 @@ struct Pill: View {
         .fixedSize()
         .padding(.horizontal, 7)
         .padding(.vertical, 3)
-        .foregroundStyle(prominent ? .white : tint)
-        .background(prominent ? AnyShapeStyle(tint) : AnyShapeStyle(tint.opacity(0.14)), in: Capsule())
+        .foregroundStyle(foreground)
+        .background(background, in: Capsule())
     }
 }
 

@@ -69,6 +69,37 @@ struct FormattersAndFilterTests {
         #expect(groups.map(\.title) == ["env: dev", "env: prod"])
     }
 
+    @Test func sortingIsStrictInBothDirections() {
+        var a = Instance(id: "a")
+        a.alias = "alpha"
+        a.tcpReceived = 100
+        var b = Instance(id: "b")
+        b.alias = "bravo"
+        b.tcpReceived = 100
+        var c = Instance(id: "c")
+        c.alias = "charlie"
+        c.tcpReceived = 500
+
+        var filter = InstanceFilter()
+        filter.sortKey = .traffic
+        // Largest first; equal traffic falls back to the name.
+        #expect(filter.apply(to: [b, c, a]).map(\.id) == ["c", "a", "b"])
+        filter.ascending = false
+        #expect(filter.apply(to: [a, c, b]).map(\.id) == ["b", "a", "c"])
+    }
+
+    @Test func unknownLatencySortsLast() {
+        var fast = Instance(id: "fast")
+        fast.ping = 10
+        var slow = Instance(id: "slow")
+        slow.ping = 80
+        let unknown = Instance(id: "unknown")
+
+        var filter = InstanceFilter()
+        filter.sortKey = .ping
+        #expect(filter.apply(to: [unknown, slow, fast]).map(\.id) == ["fast", "slow", "unknown"])
+    }
+
     @Test func trafficRateTrackerHandlesResets() {
         var tracker = TrafficRateTracker()
         let start = Date(timeIntervalSince1970: 1000)

@@ -6,11 +6,9 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct MasterOverviewView: View {
-    @Environment(AppModel.self) private var model
-    @Environment(\.modelContext) private var modelContext
+    @Environment(NavigationModel.self) private var model
     @Environment(\.dismiss) private var dismiss
 
     var session: MasterSession
@@ -19,13 +17,10 @@ struct MasterOverviewView: View {
 
     @State private var aliasDraft = ""
     @State private var isEditingAlias = false
-    @State private var isConfirmingKeyRotation = false
-    @State private var rotationError: String?
-    @State private var isRotating = false
-    @State private var isShowingShare = false
+    @State private var aliasError: String?
 
     var body: some View {
-        List {
+        Form {
             statusSection
             if let info = session.info {
                 if info.hasSystemMetrics {
@@ -46,8 +41,10 @@ struct MasterOverviewView: View {
                 }
             }
         }
+        .formStyle(.grouped)
         .navigationTitle(master.displayName)
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationTitle()
+        #if os(iOS)
         .toolbar {
             if isSheet {
                 ToolbarItem(placement: .confirmationAction) {
@@ -57,27 +54,16 @@ struct MasterOverviewView: View {
             ToolbarItem(placement: .secondaryAction) {
                 Menu("More", systemImage: "ellipsis.circle") {
                     Button("Edit Master", systemImage: "pencil") { model.masterBeingEdited = master }
-                    Button("Share…", systemImage: "qrcode") { isShowingShare = true }
-                    Button("Refresh", systemImage: "arrow.clockwise") {
-                        Task {
-                            await session.refreshInfo()
-                            await session.refreshInstances()
-                        }
-                    }
+                    Button("Share…", systemImage: "qrcode") { model.masterBeingShared = master }
+                    Button("Refresh", systemImage: "arrow.clockwise") { refresh() }
                 }
             }
         }
-        .sheet(isPresented: $isShowingShare) { MasterShareView(master: master) }
-        .alert("Rotate API Key?", isPresented: $isConfirmingKeyRotation) {
-            Button("Rotate", role: .destructive) { Task { await rotateKey() } }
-            Button("Cancel", role: .cancel) {}
+        #endif
+        .alert("Could Not Rename Master", isPresented: Binding(isPresenting: $aliasError)) {
+            Button("OK", role: .cancel) {}
         } message: {
-            Text("The master generates a new key immediately. Every other client using the current key loses access. This app updates its saved key automatically.")
-        }
-        .alert("Rotation Failed", isPresented: Binding(get: { rotationError != nil }, set: { if !$0 { rotationError = nil } })) {
-            Button("OK", role: .cancel) { rotationError = nil }
-        } message: {
-            Text(rotationError ?? "")
+            Text(aliasError ?? "")
         }
     }
 
@@ -259,17 +245,13 @@ struct MasterOverviewView: View {
 
     private var administrationSection: some View {
         Section {
-            Button {
-                isConfirmingKeyRotation = true
-            } label: {
-                HStack {
-                    Label("Rotate API Key", systemImage: "key.horizontal")
-                    Spacer()
-                    if isRotating { ProgressView() }
-                }
-            }
-            .disabled(isRotating || !session.connection.isReachable)
-            Button("Edit Master", systemImage: "pencil") { model.masterBeingEdited = master }
+            Button("Rotate API Key…", systemImage: "key.horizontal") { model.masterPendingKeyRotation = master }
+                .disabled(!session.connection.isReachable)
+            Button("Edit Master…", systemImage: "pencil") { model.masterBeingEdited = master }
+            #if os(macOS)
+            Button("Share…", systemImage: "qrcode") { model.masterBeingShared = master }
+            Button("Refresh", systemImage: "arrow.clockwise") { refresh() }
+            #endif
         } header: {
             Text("Administration")
         } footer: {
@@ -279,6 +261,13 @@ struct MasterOverviewView: View {
 
     // MARK: Actions
 
+    private func refresh() {
+        Task {
+            await session.refreshInfo()
+            await session.refreshInstances()
+        }
+    }
+
     private func commitAlias() async {
         isEditingAlias = false
         let value = aliasDraft.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -287,22 +276,7 @@ struct MasterOverviewView: View {
             try await session.updateMasterAlias(value)
             Haptics.success()
         } catch {
-            rotationError = APIError.wrap(error).localizedDescription
-        }
-    }
-
-    private func rotateKey() async {
-        isRotating = true
-        defer { isRotating = false }
-        do {
-            let newKey = try await session.regenerateAPIKey()
-            guard !newKey.isEmpty else { throw APIError.invalidResponse }
-            master.key = newKey
-            try? modelContext.save()
-            Haptics.success()
-        } catch {
-            rotationError = APIError.wrap(error).localizedDescription
-            Haptics.warning()
+            aliasError = APIError.wrap(error).localizedDescription
         }
     }
 }

@@ -58,11 +58,16 @@ struct InstanceMetaEditorView: View {
                     ForEach($tags) { $row in
                         HStack(spacing: 8) {
                             CodeField(title: "Key", text: $row.key, prompt: "key")
+                                .labelsHidden()
                                 .frame(maxWidth: .infinity)
                             Text("=")
                                 .foregroundStyle(.tertiary)
                             CodeField(title: "Value", text: $row.value, prompt: "value")
+                                .labelsHidden()
                                 .frame(maxWidth: .infinity)
+                            #if os(macOS)
+                            RemoveRowButton(title: "Remove Tag") { withAnimation { tags.removeAll { $0.id == row.id } } }
+                            #endif
                         }
                         .listRowBackground(duplicateKeys.contains(row.key) ? Color.red.opacity(0.08) : nil)
                     }
@@ -90,7 +95,7 @@ struct InstanceMetaEditorView: View {
             }
             .formStyle(.grouped)
             .navigationTitle("Metadata")
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "xmark", role: .cancel) { dismiss() }
@@ -107,6 +112,7 @@ struct InstanceMetaEditorView: View {
                 tags = instance.meta.sortedTags.map { TagRow(key: $0.key, value: $0.value) }
             }
         }
+        .sheetFrame(width: 520, height: 560)
     }
 
     private func save() async {

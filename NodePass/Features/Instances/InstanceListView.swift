@@ -2,24 +2,25 @@
 //  InstanceListView.swift
 //  NodePass
 //
-//  Live instance table of one master with filtering, grouping and batch operations.
+//  Live instance list of one master with filtering, grouping and batch operations (iPhone and
+//  iPad). macOS shows the same data in `MasterWorkspaceView`.
 //
 
+#if os(iOS)
 import SwiftUI
-import SwiftData
 
 struct InstanceListView: View {
-    @Environment(AppModel.self) private var model
+    @Environment(NavigationModel.self) private var model
     @Environment(AppSettings.self) private var settings
     @Environment(\.horizontalSizeClass) private var sizeClass
 
     var session: MasterSession
     var master: Server
 
-    @AppStorage("NPInstanceSortKey", store: NPCore.userDefaults) private var sortKeyRaw = InstanceSortKey.name.rawValue
-    @AppStorage("NPInstanceSortAscending", store: NPCore.userDefaults) private var sortAscending = true
-    @AppStorage("NPInstanceGrouping", store: NPCore.userDefaults) private var groupingRaw = InstanceGrouping.none.rawValue
-    @AppStorage("NPInstanceGroupingTag", store: NPCore.userDefaults) private var groupingTagKey = ""
+    @AppStorage(NPCore.DefaultsKey.instanceSortKey, store: NPCore.userDefaults) private var sortKeyRaw = InstanceSortKey.name.rawValue
+    @AppStorage(NPCore.DefaultsKey.instanceSortAscending, store: NPCore.userDefaults) private var sortAscending = true
+    @AppStorage(NPCore.DefaultsKey.instanceGrouping, store: NPCore.userDefaults) private var groupingRaw = InstanceGrouping.none.rawValue
+    @AppStorage(NPCore.DefaultsKey.instanceGroupingTag, store: NPCore.userDefaults) private var groupingTagKey = ""
 
     @State private var filter = InstanceFilter()
     @State private var commander = InstanceCommander()
@@ -58,7 +59,7 @@ struct InstanceListView: View {
         .animation(.default, value: filtered.map(\.id))
         .overlay { overlay }
         .navigationTitle(master.displayName)
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationTitle()
         .searchable(text: $filter.searchText, placement: .toolbar, prompt: "Search, tag:value or #tag")
         .refreshable {
             await session.refreshInstances()
@@ -67,7 +68,7 @@ struct InstanceListView: View {
         .toolbar { toolbarContent }
         .sheet(item: $editorMode) { mode in
             InstanceEditorView(session: session, mode: mode) { created in
-                if let created { model.selectedInstanceID = created.id }
+                if let created { model.select(instance: created.id, on: session.id) }
             }
         }
         .sheet(isPresented: $isShowingOverview) {
@@ -77,11 +78,9 @@ struct InstanceListView: View {
         }
         .alert("Tag Selected Instances", isPresented: $isShowingTagPrompt) {
             TextField("Key", text: $batchTagKey)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.never)
+                .codeInput()
             TextField("Value", text: $batchTagValue)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.never)
+                .codeInput()
             Button("Apply") {
                 commander.applyTag(key: batchTagKey.trimmingCharacters(in: .whitespaces), value: batchTagValue.trimmingCharacters(in: .whitespaces), on: Array(multiSelection), session: session)
                 exitSelection()
@@ -179,49 +178,11 @@ struct InstanceListView: View {
                 }
             }
             ScrollView(.horizontal) {
-                HStack(spacing: 6) {
-                    statusChip(.running, count: session.runningCount)
-                    statusChip(.stopped, count: session.stoppedCount)
-                    statusChip(.error, count: session.errorCount)
-                    if session.flavor.roles.count > 1 {
-                        ForEach(session.flavor.roles, id: \.self) { role in
-                            roleChip(role)
-                        }
-                    }
-                    if effectiveFilter.isNarrowing {
-                        Button("Clear", systemImage: "xmark.circle.fill") { filter.clearNarrowing() }
-                            .labelStyle(.iconOnly)
-                            .buttonStyle(.borderless)
-                            .foregroundStyle(.secondary)
-                    }
-                }
+                InstanceFilterChips(session: session, filter: $filter)
             }
             .scrollIndicators(.hidden)
             .scrollClipDisabled()
         }
-    }
-
-    private func statusChip(_ status: InstanceStatus, count: Int) -> some View {
-        let isOn = filter.statuses.contains(status)
-        return Button {
-            if isOn { filter.statuses.remove(status) } else { filter.statuses.insert(status) }
-        } label: {
-            Pill(text: "\(count) \(status.title)", tint: status.tint, prominent: isOn)
-        }
-        .buttonStyle(.plain)
-        .accessibilityAddTraits(isOn ? .isSelected : [])
-    }
-
-    private func roleChip(_ role: InstanceRole) -> some View {
-        let isOn = filter.roles.contains(role)
-        let count = allInstances.filter { $0.role == role }.count
-        return Button {
-            if isOn { filter.roles.remove(role) } else { filter.roles.insert(role) }
-        } label: {
-            Pill(text: "\(count) \(role.title)", tint: role.tint, prominent: isOn)
-        }
-        .buttonStyle(.plain)
-        .accessibilityAddTraits(isOn ? .isSelected : [])
     }
 
     @ViewBuilder
@@ -356,7 +317,7 @@ struct InstanceListView: View {
                 commander.setRestartPolicy(true, on: ids, session: session)
                 exitSelection()
             }
-            Button("Disable Auto-restart", systemImage: "arrow.trianglehead.clockwise.slash") {
+            Button("Disable Auto-restart", systemImage: "pause.circle") {
                 commander.setRestartPolicy(false, on: ids, session: session)
                 exitSelection()
             }
@@ -408,8 +369,9 @@ struct InstanceListView: View {
         Divider()
         Button("Delete", systemImage: "trash", role: .destructive) {
             commander.delete([instance.id], session: session, settings: settings) {
-                if model.selectedInstanceID == instance.id { model.selectedInstanceID = nil }
+                model.selectedInstanceIDs.remove(instance.id)
             }
         }
     }
 }
+#endif

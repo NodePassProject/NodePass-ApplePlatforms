@@ -5,12 +5,13 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 import TelemetryDeck
 import RevenueCat
 
 @main
 struct NodePassApp: App {
-    @State private var model = AppModel()
+    @Environment(\.scenePhase) private var scenePhase
     @State private var settings = AppSettings()
     @State private var sessions = SessionStore()
     private let container: ModelContainer
@@ -35,16 +36,62 @@ struct NodePassApp: App {
     }
 
     var body: some Scene {
-        WindowGroup {
-            RootView()
-                .preferredColorScheme(settings.theme.colorScheme)
-                .environment(model)
-                .environment(settings)
-                .environment(sessions)
-                .modelContainer(container)
-                .onOpenURL { url in
-                    model.handle(deepLink: url)
-                }
+        WindowGroup(id: SceneID.main, for: SidebarItem.self) { $selection in
+            RootView(windowSelection: $selection)
+                .appEnvironment(settings: settings, sessions: sessions, container: container)
         }
+        #if os(macOS)
+        .defaultSize(width: 1360, height: 820)
+        .commands { NodePassCommands() }
+        #endif
+        .onChange(of: sessionsShouldRun, initial: true) { _, shouldRun in
+            if shouldRun { sessions.activate() } else { sessions.deactivate() }
+        }
+        .onChange(of: settings.sessionConfiguration) { _, configuration in
+            sessions.apply(configuration)
+        }
+        .onChange(of: scenePhase) { oldPhase, newPhase in
+            // Leaving the app is when widgets fall behind what the user just changed.
+            if oldPhase == .active, newPhase != .active {
+                WidgetCenter.shared.reloadAllTimelines()
+            }
+        }
+
+        #if os(macOS)
+        WindowGroup("Console", id: SceneID.console, for: ConsoleTarget.self) { $target in
+            ConsoleWindow(target: target)
+                .appEnvironment(settings: settings, sessions: sessions, container: container)
+        }
+        .defaultSize(width: 900, height: 560)
+
+        Settings {
+            SettingsWindow()
+                .appEnvironment(settings: settings, sessions: sessions, container: container)
+        }
+
+        MenuBarExtra(isInserted: $settings.showsMenuBarExtra) {
+            MenuBarStatusView()
+                .appEnvironment(settings: settings, sessions: sessions, container: container)
+        } label: {
+            MenuBarStatusLabel(sessions: sessions)
+        }
+        .menuBarExtraStyle(.window)
+        #endif
     }
+
+    /// Sessions stream while any window is on screen, and on macOS for as long as the menu bar
+    /// status item is shown, so it reflects live health without a window.
+    private var sessionsShouldRun: Bool {
+        #if os(macOS)
+        scenePhase != .background || settings.showsMenuBarExtra
+        #else
+        scenePhase != .background
+        #endif
+    }
+}
+
+/// Identifiers of the scenes that can be opened programmatically.
+enum SceneID {
+    static let main = "main"
+    static let console = "console"
 }

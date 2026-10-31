@@ -2,41 +2,10 @@
 //  Controls.swift
 //  NodePass
 //
-//  Shared small controls: monospaced value rows, copy buttons, flow layout, haptics.
+//  Shared small controls: monospaced value rows, copy buttons, flow layout, inline messages.
 //
 
 import SwiftUI
-#if canImport(UIKit)
-import UIKit
-#endif
-
-enum Clipboard {
-    static func copy(_ text: String) {
-        #if canImport(UIKit)
-        UIPasteboard.general.string = text
-        #endif
-    }
-}
-
-enum Haptics {
-    static func success() {
-        #if canImport(UIKit) && !os(visionOS)
-        UINotificationFeedbackGenerator().notificationOccurred(.success)
-        #endif
-    }
-
-    static func warning() {
-        #if canImport(UIKit) && !os(visionOS)
-        UINotificationFeedbackGenerator().notificationOccurred(.warning)
-        #endif
-    }
-
-    static func selection() {
-        #if canImport(UIKit) && !os(visionOS)
-        UISelectionFeedbackGenerator().selectionChanged()
-        #endif
-    }
-}
 
 /// Monospaced text that can be copied from its context menu.
 struct MonoText: View {
@@ -191,14 +160,30 @@ struct CodeField: View {
     var title: String
     @Binding var text: String
     var prompt: String? = nil
-    var keyboard: UIKeyboardType = .default
+    var input: TextInputKind = .plain
     var axis: Axis = .horizontal
 
     var body: some View {
-        TextField(title, text: $text, prompt: prompt.map { Text($0) }, axis: axis)
-            .font(.body.monospaced())
-            .autocorrectionDisabled()
-            .textInputAutocapitalization(.never)
-            .keyboardType(keyboard)
+        TextField(text: $text, prompt: prompt.map { Text($0) }, axis: axis) {
+            // macOS forms show the label beside the field; only the value is code.
+            Text(title)
+                .font(.body)
+        }
+        .font(.body.monospaced())
+        .codeInput(input)
+    }
+}
+
+/// An element with an ID that stays unique across sibling `ForEach`es in one list section, where
+/// plain offsets from two sequences would collide and rows would render in each other's place.
+struct ScopedRow<Element>: Identifiable {
+    let id: String
+    let index: Int
+    let element: Element
+}
+
+extension Sequence {
+    func scopedRows(_ scope: String) -> [ScopedRow<Element>] {
+        enumerated().map { ScopedRow(id: "\(scope)-\($0.offset)", index: $0.offset, element: $0.element) }
     }
 }

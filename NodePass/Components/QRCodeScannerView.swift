@@ -2,9 +2,11 @@
 //  QRCodeScannerView.swift
 //  NodePass
 //
-//  Scans `np://master?...` codes and hands back a `MasterImport`.
+//  Scans `np://master?...` codes with the camera and hands back a `MasterImport`. iOS only; the
+//  Mac imports codes from images through `QRCodeReader`.
 //
 
+#if os(iOS)
 import SwiftUI
 import CodeScanner
 import AVFoundation
@@ -39,7 +41,7 @@ struct QRCodeScannerView: View {
                 }
             }
             .navigationTitle("Scan Master Code")
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "xmark", role: .cancel) { dismiss() }
@@ -48,3 +50,4 @@ struct QRCodeScannerView: View {
         }
     }
 }
+#endif

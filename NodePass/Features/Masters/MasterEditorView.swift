@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 
 struct MasterEditorView: View {
     enum Mode {
@@ -16,7 +17,7 @@ struct MasterEditorView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @Environment(AppModel.self) private var model
+    @Environment(NavigationModel.self) private var model
 
     let mode: Mode
 
@@ -29,6 +30,8 @@ struct MasterEditorView: View {
     @State private var isEnabled = true
 
     @State private var isScanning = false
+    @State private var isImportingImage = false
+    @State private var importError: String?
     @State private var isTesting = false
     @State private var testResult: TestResult?
     @State private var isKeyVisible = false
@@ -51,14 +54,17 @@ struct MasterEditorView: View {
             Form {
                 Section {
                     TextField("Name", text: $name, prompt: Text("Optional"))
-                    CodeField(title: "API URL", text: $url, prompt: "https://host:9090/api/v1", keyboard: .URL)
+                    CodeField(title: "API URL", text: $url, prompt: "https://host:9090/api/v1", input: .url)
                     HStack {
                         if isKeyVisible {
                             CodeField(title: "API Key", text: $key, prompt: "X-API-Key")
                         } else {
-                            SecureField("API Key", text: $key, prompt: Text("X-API-Key"))
-                                .font(.body.monospaced())
-                                .textContentType(.oneTimeCode)
+                            SecureField(text: $key, prompt: Text("X-API-Key")) {
+                                Text("API Key")
+                                    .font(.body)
+                            }
+                            .font(.body.monospaced())
+                            .textContentType(.oneTimeCode)
                         }
                         Button(isKeyVisible ? "Hide key" : "Show key", systemImage: isKeyVisible ? "eye.slash" : "eye") {
                             isKeyVisible.toggle()
@@ -73,11 +79,19 @@ struct MasterEditorView: View {
                 }
 
                 Section {
+                    #if os(iOS)
                     Button {
                         isScanning = true
                     } label: {
                         Label("Scan QR Code", systemImage: "qrcode.viewfinder")
                     }
+                    #else
+                    Button {
+                        isImportingImage = true
+                    } label: {
+                        Label("Import QR Code Image…", systemImage: "qrcode.viewfinder")
+                    }
+                    #endif
                     PasteButton(payloadType: String.self) { strings in
                         guard let text = strings.first?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
                         if let link = URL(string: text), let imported = MasterImport(deepLink: link) {
@@ -90,6 +104,13 @@ struct MasterEditorView: View {
                     }
                     .labelStyle(.titleAndIcon)
                     .buttonBorderShape(.capsule)
+                    if let importError {
+                        InlineMessage(text: importError, style: .warning)
+                    }
+                } footer: {
+                    #if os(macOS)
+                    Text("You can also drop an image of a master code onto this window.")
+                    #endif
                 }
 
                 Section {
@@ -141,7 +162,7 @@ struct MasterEditorView: View {
             }
             .formStyle(.grouped)
             .navigationTitle(isEditing ? "Edit Master" : "Add Master")
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "xmark", role: .cancel) { dismiss() }
@@ -153,11 +174,23 @@ struct MasterEditorView: View {
                     .disabled(!canSave)
                 }
             }
+            #if os(iOS)
             .sheet(isPresented: $isScanning) {
                 QRCodeScannerView { imported in apply(imported) }
             }
+            #else
+            .fileImporter(isPresented: $isImportingImage, allowedContentTypes: [.image]) { result in
+                if case .success(let url) = result { importCode(fromImageAt: url) }
+            }
+            .dropDestination(for: URL.self) { urls, _ in
+                guard let url = urls.first else { return false }
+                importCode(fromImageAt: url)
+                return true
+            }
+            #endif
             .onAppear(perform: load)
         }
+        .sheetFrame(width: 520, height: 640)
     }
 
     private func load() {
@@ -180,6 +213,17 @@ struct MasterEditorView: View {
         url = imported.url
         key = imported.key
         testResult = nil
+    }
+
+    private func importCode(fromImageAt url: URL) {
+        Task {
+            do {
+                apply(try await QRCodeReader.masterImport(fromImageAt: url))
+                importError = nil
+            } catch {
+                importError = error.localizedDescription
+            }
+        }
     }
 
     private func save() {
@@ -247,17 +291,21 @@ struct MasterShareView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
-                    ShareLink(item: link) {
-                        Label("Share Link", systemImage: "square.and.arrow.up")
+                    HStack {
+                        ShareLink(item: link) {
+                            Label("Share Link", systemImage: "square.and.arrow.up")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        CopyButton(text: link.absoluteString, label: "Copy Link")
+                            .buttonStyle(.bordered)
                     }
-                    .buttonStyle(.borderedProminent)
                 } else {
                     ContentUnavailableView("Nothing to share", systemImage: "qrcode")
                 }
             }
             .padding()
             .navigationTitle(master.displayName)
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done", role: .confirm) { dismiss() }
@@ -265,5 +313,6 @@ struct MasterShareView: View {
             }
         }
         .presentationDetents([.medium, .large])
+        .sheetFrame(width: 380, height: 480)
     }
 }
