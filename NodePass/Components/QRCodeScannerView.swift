@@ -2,72 +2,49 @@
 //  QRCodeScannerView.swift
 //  NodePass
 //
-//  Created by Junhui Lou on 7/9/25.
+//  Scans `np://master?...` codes and hands back a `MasterImport`.
 //
 
 import SwiftUI
-import AVFoundation
 import CodeScanner
+import AVFoundation
 
-#if os(iOS)
 struct QRCodeScannerView: View {
     @Environment(\.dismiss) private var dismiss
-    @Binding var url: String
-    @Binding var key: String
-    
+    var onScan: (MasterImport) -> Void
+
+    @State private var failure: String?
+
     var body: some View {
         NavigationStack {
             CodeScannerView(codeTypes: [.qr], scanMode: .continuous, showViewfinder: true) { response in
-                if case let .success(result) = response {
-                    guard let url = URL(string: result.string) else {
-#if DEBUG
-                        print("Invalid URL string")
-#endif
+                switch response {
+                case .success(let result):
+                    guard let url = URL(string: result.string), let master = MasterImport(deepLink: url) else {
+                        failure = "This code is not a NodePass master link."
                         return
                     }
-                    
-                    if url.host == "master" {
-                        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-                              let queryItems = components.queryItems else {
-#if DEBUG
-                            print("Failed to parse URL components")
-#endif
-                            return
-                        }
-                        
-                        var result = [String: String]()
-                        
-                        for item in queryItems {
-                            if let value = item.value,
-                               let decodedData = Data(base64Encoded: value),
-                               let decodedString = String(data: decodedData, encoding: .utf8) {
-                                result[item.name] = decodedString
-                            }
-                        }
-                        
-                        self.url = result["url"] ?? ""
-                        self.key = result["key"] ?? ""
-                        
-                        dismiss()
-                        return
-                    }
-#if DEBUG
-                    print("No Action Completed")
-#endif
-                    return
+                    Haptics.success()
+                    onScan(master)
+                    dismiss()
+                case .failure(let error):
+                    failure = error.localizedDescription
                 }
             }
             .ignoresSafeArea()
+            .overlay(alignment: .bottom) {
+                if let failure {
+                    InlineMessage(text: failure, style: .warning)
+                        .padding()
+                }
+            }
+            .navigationTitle("Scan Master Code")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Label("Cancel", systemImage: "xmark")
-                    }
+                    Button("Cancel", systemImage: "xmark", role: .cancel) { dismiss() }
                 }
             }
         }
     }
 }
-#endif
