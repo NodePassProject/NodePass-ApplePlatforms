@@ -19,7 +19,11 @@ struct FleetWidgetView: View {
     @ViewBuilder
     private var content: some View {
         if entry.reports.isEmpty {
+            #if os(watchOS)
+            WidgetMessage(message: "Add a master in NodePass on your iPhone.")
+            #else
             WidgetMessage(message: "Add or enable a master in NodePass.")
+            #endif
         } else {
             FleetLayout(reports: entry.reports, family: family, date: entry.date)
         }
@@ -41,12 +45,134 @@ struct FleetLayout: View {
 
     var body: some View {
         switch family {
+        #if !os(watchOS)
         case .systemSmall: small
         case .systemLarge: rows(limits: [9, 7, 5, 3], style: .detailed)
         case .systemExtraLarge: table
-        default: rows(limits: [4, 3, 2, 1], style: .line)
+        #endif
+        #if !os(macOS)
+        case .accessoryCircular: accessoryCircular
+        case .accessoryRectangular: accessoryRectangular
+        case .accessoryInline: accessoryInline
+        #endif
+        #if os(watchOS)
+        case .accessoryCorner: accessoryCorner
+        #endif
+        default: fallback
         }
     }
+
+    @ViewBuilder
+    private var fallback: some View {
+        #if os(watchOS)
+        accessoryRectangular
+        #else
+        rows(limits: [4, 3, 2, 1], style: .line)
+        #endif
+    }
+
+    // MARK: Accessory families
+
+    #if !os(macOS)
+    private var reachableRatio: Double {
+        reports.isEmpty ? 0 : Double(reachable) / Double(reports.count)
+    }
+
+    /// Reachable masters as a share of all of them.
+    private var accessoryCircular: some View {
+        ZStack {
+            AccessoryWidgetBackground()
+            Gauge(value: reachableRatio) {
+                Image(systemName: "point.3.connected.trianglepath.dotted")
+            } currentValueLabel: {
+                Text("\(reachable)/\(reports.count)")
+                    .font(.system(.callout, design: .rounded).weight(.semibold))
+                    .monospacedDigit()
+                    .minimumScaleFactor(0.6)
+            }
+            .gaugeStyle(.accessoryCircular)
+            .tint(isHealthy ? .green : .orange)
+        }
+        .widgetAccentable()
+        .accessibilityLabel(summaryText)
+    }
+
+    /// The fleet summary on top, then the masters that need attention first.
+    private var accessoryRectangular: some View {
+        VStack(alignment: .leading, spacing: 1) {
+            HStack(spacing: 4) {
+                Image(systemName: isHealthy ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                    .font(.caption)
+                    .foregroundStyle(renderingMode.tint(isHealthy ? .green : .orange))
+                Text("Masters")
+                    .font(.headline)
+                    .widgetAccentable()
+                Spacer(minLength: 4)
+                Text("\(reachable)/\(reports.count)")
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
+            }
+            .lineLimit(1)
+            ForEach(attentionFirst.prefix(2)) { report in
+                HStack(spacing: 4) {
+                    MasterHealthGlyph(report: report)
+                        .font(.caption2)
+                    Text(report.name)
+                        .font(.caption2)
+                    Spacer(minLength: 4)
+                    Text(report.isReachable ? "\(report.running)/\(report.instances.count)" : (report.failure ?? "—"))
+                        .font(.caption2.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+                .lineLimit(1)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var accessoryInline: some View {
+        Label {
+            Text(summaryText)
+        } icon: {
+            Image(systemName: isHealthy ? "checkmark.circle" : "exclamationmark.triangle")
+        }
+    }
+
+    #if os(watchOS)
+    private var accessoryCorner: some View {
+        Text("\(reachable)")
+            .font(.system(.title2, design: .rounded).weight(.semibold))
+            .monospacedDigit()
+            .widgetAccentable()
+            .widgetLabel {
+                Gauge(value: reachableRatio) {
+                    Text("Masters")
+                } currentValueLabel: {
+                    Text("\(reachable) of \(reports.count) reachable")
+                }
+                .tint(isHealthy ? .green : .orange)
+            }
+            .accessibilityLabel(summaryText)
+    }
+    #endif
+
+    /// Masters that are unreachable or report errors first, then the rest in their order.
+    private var attentionFirst: [MasterReport] {
+        reports.filter(\.needsAttention) + reports.filter { !$0.needsAttention }
+    }
+
+    /// `All 4 masters healthy`, or what is wrong: `1 unreachable · 2 errors`.
+    private var summaryText: String {
+        if isHealthy {
+            return reports.count == 1 ? "Master healthy" : "All \(reports.count) masters healthy"
+        }
+        var parts: [String] = []
+        let unreachable = reports.count - reachable
+        if unreachable > 0 { parts.append("\(unreachable) unreachable") }
+        if errors > 0 { parts.append(errors == 1 ? "1 error" : "\(errors) errors") }
+        return parts.joined(separator: " · ")
+    }
+    #endif
 
     // MARK: Families
 
@@ -329,30 +455,5 @@ private struct FleetRow: View {
             parts.append(info.version)
         }
         return parts.joined(separator: " · ")
-    }
-}
-
-/// A small linear meter with its value.
-private struct Meter: View {
-    @Environment(\.widgetRenderingMode) private var renderingMode
-
-    var value: Double
-    var label: String
-    var tint: Color
-    /// Grows with the space a table column offers instead of keeping a fixed width.
-    var isFlexible = false
-
-    var body: some View {
-        HStack(spacing: 4) {
-            Gauge(value: min(max(value, 0), 1)) { EmptyView() }
-                .gaugeStyle(.accessoryLinearCapacity)
-                .tint(renderingMode.tint(tint))
-                .frame(minWidth: 44, maxWidth: isFlexible ? 120 : 44)
-                .widgetAccentable()
-            Text(label)
-                .font(.caption2.monospacedDigit())
-                .foregroundStyle(.secondary)
-                .frame(width: 30, alignment: .trailing)
-        }
     }
 }

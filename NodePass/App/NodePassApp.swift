@@ -16,6 +16,9 @@ struct NodePassApp: App {
     @State private var settings = AppSettings()
     @State private var sessions: SessionStore
     private let container: ModelContainer
+    #if os(iOS)
+    private let watchBridge: WatchBridge
+    #endif
 
     init() {
         NPCore.registerDefaults()
@@ -37,6 +40,11 @@ struct NodePassApp: App {
         let navigator = IntentNavigator()
         AppDependencyManager.shared.add(dependency: navigator)
         #endif
+        #if os(iOS)
+        // Activated at launch so a watch asking for the masters reaches it even when the system
+        // woke the app in the background for that request.
+        watchBridge = WatchBridge(masters: masters)
+        #endif
 
         let analyticsEnabled = NPCore.userDefaults.object(forKey: NPCore.DefaultsKey.analyticsEnabled) as? Bool ?? true
         if analyticsEnabled {
@@ -53,6 +61,9 @@ struct NodePassApp: App {
         WindowGroup(id: SceneID.main, for: SidebarItem.self) { $selection in
             RootView(windowSelection: $selection)
                 .appEnvironment(settings: settings, sessions: sessions, container: container)
+                #if os(iOS)
+                .environment(\.watchBridge, watchBridge)
+                #endif
         }
         #if os(macOS)
         .defaultSize(width: 1360, height: 820)

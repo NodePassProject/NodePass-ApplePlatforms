@@ -20,6 +20,35 @@ extension WidgetRenderingMode {
     }
 }
 
+extension WidgetFamily {
+    /// The families this bundle offers on the current platform: the Home Screen and desktop
+    /// sizes where they exist, the accessory sizes on the iPhone Lock Screen and on Apple Watch
+    /// (watch faces and the Smart Stack).
+    static var nodePassSupported: [WidgetFamily] {
+        #if os(watchOS)
+        [.accessoryCircular, .accessoryRectangular, .accessoryInline, .accessoryCorner]
+        #elseif os(macOS)
+        [.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge]
+        #else
+        [.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge, .accessoryCircular, .accessoryRectangular, .accessoryInline]
+        #endif
+    }
+
+    /// Lock Screen, watch face and Smart Stack families: small, often monochrome, never interactive.
+    var isAccessory: Bool {
+        #if os(watchOS)
+        true
+        #elseif os(macOS)
+        false
+        #else
+        switch self {
+        case .accessoryCircular, .accessoryRectangular, .accessoryInline: true
+        default: false
+        }
+        #endif
+    }
+}
+
 /// Status of one instance as a symbol whose shape alone tells the state apart.
 struct StatusGlyph: View {
     @Environment(\.widgetRenderingMode) private var renderingMode
@@ -240,13 +269,93 @@ struct RefreshButton: View {
     }
 }
 
+/// A small linear meter with its value.
+struct Meter: View {
+    @Environment(\.widgetRenderingMode) private var renderingMode
+
+    var value: Double
+    var label: String
+    var tint: Color
+    /// Grows with the space a table column offers instead of keeping a fixed width.
+    var isFlexible = false
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Gauge(value: min(max(value, 0), 1)) { EmptyView() }
+                .gaugeStyle(.accessoryLinearCapacity)
+                .tint(renderingMode.tint(tint))
+                .frame(minWidth: 44, maxWidth: isFlexible ? 120 : 44)
+                .widgetAccentable()
+            Text(label)
+                .font(.caption2.monospacedDigit())
+                .foregroundStyle(.secondary)
+                .frame(width: 30, alignment: .trailing)
+        }
+    }
+}
+
 /// A centered message with a retry button, for missing configuration or unreachable masters.
+/// Accessory families get the message alone, in the shape of the family.
 struct WidgetMessage: View {
+    @Environment(\.widgetFamily) private var family
+
     var title: String?
     var message: String
     var symbolName = "server.rack"
 
     var body: some View {
+        if family.isAccessory {
+            accessory
+        } else {
+            full
+        }
+    }
+
+    @ViewBuilder
+    private var accessory: some View {
+        #if os(macOS)
+        full
+        #else
+        switch family {
+        case .accessoryInline:
+            Label(title ?? message, systemImage: symbolName)
+        case .accessoryCircular:
+            ZStack {
+                AccessoryWidgetBackground()
+                Image(systemName: symbolName)
+                    .font(.title3)
+            }
+            .widgetAccentable()
+        #if os(watchOS)
+        case .accessoryCorner:
+            Image(systemName: symbolName)
+                .font(.title3)
+                .widgetAccentable()
+                .widgetLabel(title ?? message)
+        #endif
+        default:
+            HStack(spacing: 6) {
+                Image(systemName: symbolName)
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 1) {
+                    if let title {
+                        Text(title)
+                            .font(.headline)
+                            .lineLimit(1)
+                    }
+                    Text(message)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(title == nil ? 3 : 2)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        #endif
+    }
+
+    private var full: some View {
         VStack(spacing: 6) {
             Image(systemName: symbolName)
                 .font(.title2)

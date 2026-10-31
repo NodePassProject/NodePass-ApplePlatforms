@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A0000000000000000000001 /* NodePass Widget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CB5E13462E7D42DB00870962 /* NodePass Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		70A56FA03095E9030072BE4D /* NodePass Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 70A56F963095E9020072BE4D /* NodePass Watch App.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CB5E13492E7D42DB00870962 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB5E13482E7D42DB00870962 /* WidgetKit.framework */; };
 		CB5E134B2E7D42DB00870962 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB5E134A2E7D42DB00870962 /* SwiftUI.framework */; };
 		CB5E13582E7D42DC00870962 /* NodePass Widget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CB5E13462E7D42DB00870962 /* NodePass Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -17,12 +19,26 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		7A0000000000000000000002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CBD433532E10FA4C002B153F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CB5E13452E7D42DB00870962;
+			remoteInfo = "NodePass Widget";
+		};
 		0A00000000000000000000A1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CBD433532E10FA4C002B153F /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = CBD4335A2E10FA4C002B153F;
 			remoteInfo = NodePass;
+		};
+		70A56F9E3095E9030072BE4D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CBD433532E10FA4C002B153F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 70A56F953095E9020072BE4D;
+			remoteInfo = "NodePass Watch App Watch App";
 		};
 		CB5E13562E7D42DC00870962 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -34,6 +50,28 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		7A0000000000000000000003 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				7A0000000000000000000001 /* NodePass Widget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70A56FA43095E9030072BE4D /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				70A56FA03095E9030072BE4D /* NodePass Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CB5E13592E7D42DC00870962 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -49,6 +87,7 @@
 
 /* Begin PBXFileReference section */
 		0A00000000000000000000B1 /* NodePassTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NodePassTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		70A56F963095E9020072BE4D /* NodePass Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NodePass Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB5E13462E7D42DB00870962 /* NodePass Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NodePass Widget.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB5E13482E7D42DB00870962 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		CB5E134A2E7D42DB00870962 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -58,6 +97,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7A0000000000000000000006 /* Exceptions for "NodePass Watch App" folder in "NodePass Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 70A56F953095E9020072BE4D /* NodePass Watch App */;
+		};
 		0A00000000000000000000C1 /* Exceptions for "NodePass" folder in "NodePass" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -72,9 +118,28 @@
 			);
 			target = CB5E13452E7D42DB00870962 /* NodePass Widget */;
 		};
+		70A56FA53095EA470072BE4D /* Exceptions for "Shared" folder in "NodePass Widget" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppIcon.icon,
+			);
+			target = CB5E13452E7D42DB00870962 /* NodePass Widget */;
+		};
+		70A56FA73095EA4F0072BE4D /* Exceptions for "Shared" folder in "NodePass Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppIcon.icon,
+			);
+			target = 70A56F953095E9020072BE4D /* NodePass Watch App */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		7A0000000000000000000005 /* AppShared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AppShared;
+			sourceTree = "<group>";
+		};
 		0A00000000000000000000D1 /* NodePassTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = NodePassTests;
@@ -88,6 +153,14 @@
 		0A00000000000000000000D3 /* Scripts */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Scripts;
+			sourceTree = "<group>";
+		};
+		70A56F973095E9020072BE4D /* NodePass Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7A0000000000000000000006 /* Exceptions for "NodePass Watch App" folder in "NodePass Watch App" target */,
+			);
+			path = "NodePass Watch App";
 			sourceTree = "<group>";
 		};
 		CB5E135E2E7D42F500870962 /* NodePass Widget */ = {
@@ -108,6 +181,10 @@
 		};
 		CBD4336B2E111155002B153F /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				70A56FA73095EA4F0072BE4D /* Exceptions for "Shared" folder in "NodePass Watch App" target */,
+				70A56FA53095EA470072BE4D /* Exceptions for "Shared" folder in "NodePass Widget" target */,
+			);
 			path = Shared;
 			sourceTree = "<group>";
 		};
@@ -115,6 +192,13 @@
 
 /* Begin PBXFrameworksBuildPhase section */
 		0A00000000000000000000E1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70A56F933095E9020072BE4D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -161,7 +245,9 @@
 				0A00000000000000000000D2 /* docs */,
 				0A00000000000000000000D3 /* Scripts */,
 				CBD4336B2E111155002B153F /* Shared */,
+				7A0000000000000000000005 /* AppShared */,
 				CBD433692E10FA69002B153F /* NodePass */,
+				70A56F973095E9020072BE4D /* NodePass Watch App */,
 				CB5E135E2E7D42F500870962 /* NodePass Widget */,
 				0A00000000000000000000D1 /* NodePassTests */,
 				CB5E13472E7D42DB00870962 /* Frameworks */,
@@ -175,6 +261,7 @@
 				CBD4335B2E10FA4C002B153F /* NodePass.app */,
 				CB5E13462E7D42DB00870962 /* NodePass Widget.appex */,
 				0A00000000000000000000B1 /* NodePassTests.xctest */,
+				70A56F963095E9020072BE4D /* NodePass Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -204,6 +291,32 @@
 			productName = NodePassTests;
 			productReference = 0A00000000000000000000B1 /* NodePassTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		70A56F953095E9020072BE4D /* NodePass Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70A56FA13095E9030072BE4D /* Build configuration list for PBXNativeTarget "NodePass Watch App" */;
+			buildPhases = (
+				70A56F923095E9020072BE4D /* Sources */,
+				70A56F933095E9020072BE4D /* Frameworks */,
+				70A56F943095E9020072BE4D /* Resources */,
+				7A0000000000000000000003 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7A0000000000000000000004 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				70A56F973095E9020072BE4D /* NodePass Watch App */,
+				CBD4336B2E111155002B153F /* Shared */,
+				7A0000000000000000000005 /* AppShared */,
+			);
+			name = "NodePass Watch App";
+			packageProductDependencies = (
+			);
+			productName = "NodePass Watch App Watch App";
+			productReference = 70A56F963095E9020072BE4D /* NodePass Watch App.app */;
+			productType = "com.apple.product-type.application";
 		};
 		CB5E13452E7D42DB00870962 /* NodePass Widget */ = {
 			isa = PBXNativeTarget;
@@ -236,15 +349,18 @@
 				CBD433582E10FA4C002B153F /* Frameworks */,
 				CBD433592E10FA4C002B153F /* Resources */,
 				CB5E13592E7D42DC00870962 /* Embed Foundation Extensions */,
+				70A56FA43095E9030072BE4D /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				CB5E13572E7D42DC00870962 /* PBXTargetDependency */,
+				70A56F9F3095E9030072BE4D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				CBD433692E10FA69002B153F /* NodePass */,
 				CBD4336B2E111155002B153F /* Shared */,
+				7A0000000000000000000005 /* AppShared */,
 			);
 			name = NodePass;
 			packageProductDependencies = (
@@ -264,12 +380,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2710;
+				LastSwiftUpdateCheck = 2720;
 				LastUpgradeCheck = 2710;
 				TargetAttributes = {
 					0A00000000000000000000F1 = {
 						CreatedOnToolsVersion = 27.1;
 						TestTargetID = CBD4335A2E10FA4C002B153F;
+					};
+					70A56F953095E9020072BE4D = {
+						CreatedOnToolsVersion = 27.2;
 					};
 					CB5E13452E7D42DB00870962 = {
 						CreatedOnToolsVersion = 26.0;
@@ -300,6 +419,7 @@
 			projectRoot = "";
 			targets = (
 				CBD4335A2E10FA4C002B153F /* NodePass */,
+				70A56F953095E9020072BE4D /* NodePass Watch App */,
 				CB5E13452E7D42DB00870962 /* NodePass Widget */,
 				0A00000000000000000000F1 /* NodePassTests */,
 			);
@@ -308,6 +428,13 @@
 
 /* Begin PBXResourcesBuildPhase section */
 		0A0000000000000000000131 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70A56F943095E9020072BE4D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -338,6 +465,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		70A56F923095E9020072BE4D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CB5E13422E7D42DB00870962 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -355,10 +489,21 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		7A0000000000000000000004 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CB5E13452E7D42DB00870962 /* NodePass Widget */;
+			targetProxy = 7A0000000000000000000002 /* PBXContainerItemProxy */;
+		};
 		0A0000000000000000000141 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = CBD4335A2E10FA4C002B153F /* NodePass */;
 			targetProxy = 0A00000000000000000000A1 /* PBXContainerItemProxy */;
+		};
+		70A56F9F3095E9030072BE4D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = 70A56F953095E9020072BE4D /* NodePass Watch App */;
+			targetProxy = 70A56F9E3095E9030072BE4D /* PBXContainerItemProxy */;
 		};
 		CB5E13572E7D42DC00870962 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -422,6 +567,83 @@
 			};
 			name = Release;
 		};
+		70A56FA23095E9030072BE4D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "NodePass Watch App/NodePass Watch App.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 60;
+				DEVELOPMENT_TEAM = C7AS5D38Q8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "NodePass Watch App/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = NodePass;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.argsment.NodePass;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 27.0;
+			};
+			name = Debug;
+		};
+		70A56FA33095E9030072BE4D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "NodePass Watch App/NodePass Watch App.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 60;
+				DEVELOPMENT_TEAM = C7AS5D38Q8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "NodePass Watch App/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = NodePass;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.argsment.NodePass;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 27.0;
+			};
+			name = Release;
+		};
 		CB5E135A2E7D42DC00870962 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -447,12 +669,14 @@
 				MACOSX_DEPLOYMENT_TARGET = 27.0;
 				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass.Widget;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=watchos*]" = com.argsment.NodePass.watchkitapp.Widget;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=watchsimulator*]" = com.argsment.NodePass.watchkitapp.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -461,7 +685,8 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,4";
+				WATCHOS_DEPLOYMENT_TARGET = 27.0;
 			};
 			name = Debug;
 		};
@@ -490,12 +715,14 @@
 				MACOSX_DEPLOYMENT_TARGET = 27.0;
 				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.argsment.NodePass.Widget;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=watchos*]" = com.argsment.NodePass.watchkitapp.Widget;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=watchsimulator*]" = com.argsment.NodePass.watchkitapp.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -504,7 +731,8 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,4";
+				WATCHOS_DEPLOYMENT_TARGET = 27.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -747,6 +975,15 @@
 			buildConfigurations = (
 				0A0000000000000000000101 /* Debug */,
 				0A0000000000000000000102 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		70A56FA13095E9030072BE4D /* Build configuration list for PBXNativeTarget "NodePass Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70A56FA23095E9030072BE4D /* Debug */,
+				70A56FA33095E9030072BE4D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

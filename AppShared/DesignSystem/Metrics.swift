@@ -7,6 +7,19 @@
 
 import SwiftUI
 
+extension ShapeStyle where Self == Color {
+    /// Background of small cards that sit on grouped content.
+    static var tileBackground: Color {
+        #if os(macOS)
+        Color(nsColor: .quaternarySystemFill)
+        #elseif os(watchOS)
+        Color.white.opacity(0.12)
+        #else
+        Color(uiColor: .secondarySystemGroupedBackground)
+        #endif
+    }
+}
+
 struct MetricTile: View {
     var title: String
     var value: String

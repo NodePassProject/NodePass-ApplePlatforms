@@ -2,7 +2,8 @@
 //  MasterOverviewWidget.swift
 //  NodePass Widget
 //
-//  Host metrics and instances of one master, in every size from small to extra large.
+//  Host metrics and instances of one master: every size from small to extra large on the Home
+//  Screen and the desktop, and the accessory sizes on the Lock Screen and Apple Watch.
 //
 
 import WidgetKit
@@ -18,6 +19,13 @@ struct MasterOverviewEntry: TimelineEntry {
 
     let date: Date
     let content: Content
+
+    /// Masters in trouble come forward in the Smart Stack.
+    var relevance: TimelineEntryRelevance? {
+        guard case .report(let report) = content else { return nil }
+        if !report.isReachable { return TimelineEntryRelevance(score: 2) }
+        return TimelineEntryRelevance(score: report.errors > 0 ? 1 : 0)
+    }
 }
 
 struct MasterOverviewProvider: AppIntentTimelineProvider {
@@ -33,6 +41,15 @@ struct MasterOverviewProvider: AppIntentTimelineProvider {
     func timeline(for configuration: MasterOverviewConfigurationIntent, in context: Context) async -> Timeline<MasterOverviewEntry> {
         let entry = await entry(for: configuration.master)
         return Timeline(entries: [entry], policy: .after(.now.addingTimeInterval(15 * 60)))
+    }
+
+    /// Watch faces offer configured complications rather than a configuration screen: one per
+    /// enabled master.
+    func recommendations() -> [AppIntentRecommendation<MasterOverviewConfigurationIntent>] {
+        let masters = (try? MasterStore.widget.snapshots().filter(\.isEnabled)) ?? []
+        return masters.map { master in
+            AppIntentRecommendation(intent: MasterOverviewConfigurationIntent(master: MasterEntity(master)), description: Text(master.name))
+        }
     }
 
     private func entry(for entity: MasterEntity?) async -> MasterOverviewEntry {
@@ -55,10 +72,43 @@ struct MasterOverviewWidget: Widget {
         }
         .configurationDisplayName("Master Overview")
         .description("Host metrics and instances of a master.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
+        .supportedFamilies(WidgetFamily.nodePassSupported)
     }
 }
 
+#if !os(macOS)
+#Preview(as: .accessoryRectangular) {
+    MasterOverviewWidget()
+} timeline: {
+    MasterOverviewEntry(date: .now, content: .report(.demo))
+    MasterOverviewEntry(date: .now, content: .report(MasterReport.demoFleet[2]))
+    MasterOverviewEntry(date: .now, content: .report(MasterReport.demoFleet[3]))
+}
+
+#Preview(as: .accessoryCircular) {
+    MasterOverviewWidget()
+} timeline: {
+    MasterOverviewEntry(date: .now, content: .report(.demo))
+    MasterOverviewEntry(date: .now, content: .report(MasterReport.demoFleet[3]))
+}
+
+#Preview(as: .accessoryInline) {
+    MasterOverviewWidget()
+} timeline: {
+    MasterOverviewEntry(date: .now, content: .report(.demo))
+}
+#endif
+
+#if os(watchOS)
+#Preview(as: .accessoryCorner) {
+    MasterOverviewWidget()
+} timeline: {
+    MasterOverviewEntry(date: .now, content: .report(.demo))
+    MasterOverviewEntry(date: .now, content: .report(MasterReport.demoFleet[3]))
+}
+#endif
+
+#if !os(watchOS)
 #Preview(as: .systemMedium) {
     MasterOverviewWidget()
 } timeline: {
@@ -77,3 +127,4 @@ struct MasterOverviewWidget: Widget {
 } timeline: {
     MasterOverviewEntry(date: .now, content: .report(.demo))
 }
+#endif

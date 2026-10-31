@@ -2,7 +2,7 @@
 //  Controls.swift
 //  NodePass
 //
-//  Shared small controls: monospaced value rows, copy buttons, flow layout, inline messages.
+//  Shared small controls: monospaced value rows, copy buttons, flow layout, code fields.
 //
 
 import SwiftUI
@@ -102,55 +102,6 @@ struct FlowLayout: Layout {
             subview.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
             x += size.width + spacing
             rowHeight = max(rowHeight, size.height)
-        }
-    }
-}
-
-/// Inline error banner for forms and detail screens.
-struct InlineMessage: View {
-    enum Style { case error, warning, info, success }
-
-    var text: String
-    var style: Style = .error
-
-    private var tint: Color {
-        switch style {
-        case .error: .red
-        case .warning: .orange
-        case .info: .blue
-        case .success: .green
-        }
-    }
-
-    private var symbol: String {
-        switch style {
-        case .error: "xmark.octagon.fill"
-        case .warning: "exclamationmark.triangle.fill"
-        case .info: "info.circle.fill"
-        case .success: "checkmark.circle.fill"
-        }
-    }
-
-    var body: some View {
-        Label {
-            Text(text)
-                .font(.footnote)
-        } icon: {
-            Image(systemName: symbol)
-                .foregroundStyle(tint)
-        }
-        .padding(10)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(tint.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-    }
-}
-
-extension ValidationIssue.Severity {
-    var messageStyle: InlineMessage.Style {
-        switch self {
-        case .error: .error
-        case .warning: .warning
-        case .info: .info
         }
     }
 }

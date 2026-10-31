@@ -3,8 +3,10 @@
 //  NodePass
 //
 //  The App Shortcuts: ready to use in Shortcuts, Spotlight and Siri without setup. Phrases that
-//  name an instance or master rely on `updateAppShortcutParameters()`, which `SystemEntitySync`
-//  calls whenever the known masters and instances change.
+//  name an instance or master rely on `updateAppShortcutParameters()`, which the apps call
+//  whenever the known masters and instances change (`SystemEntitySync` on iOS and macOS, the
+//  watch app whenever its mirrored masters change). Compiled into the iPhone/Mac app and the
+//  watch app alike; the tools live only in the former.
 //
 
 import AppIntents
@@ -81,6 +83,7 @@ nonisolated struct NodePassShortcuts: AppShortcutsProvider {
             shortTitle: "Open Instance",
             systemImageName: "square.stack.3d.up"
         )
+        #if !os(watchOS)
         AppShortcut(
             intent: OpenToolIntent(),
             phrases: [
@@ -90,6 +93,7 @@ nonisolated struct NodePassShortcuts: AppShortcutsProvider {
             shortTitle: "Open Tool",
             systemImageName: "wrench.and.screwdriver"
         )
+        #endif
         AppShortcut(
             intent: TCPingIntent(),
             phrases: [

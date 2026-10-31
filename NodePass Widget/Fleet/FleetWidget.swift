@@ -3,7 +3,7 @@
 //  NodePass Widget
 //
 //  The health of several masters at once — on the Mac desktop, the counterpart of the menu bar
-//  item.
+//  item; on Apple Watch, the complication that says whether everything is up.
 //
 
 import WidgetKit
@@ -13,6 +13,13 @@ import AppIntents
 struct FleetEntry: TimelineEntry {
     let date: Date
     let reports: [MasterReport]
+
+    /// The more masters are down or failing, the further forward the widget comes in the Smart Stack.
+    var relevance: TimelineEntryRelevance? {
+        let unreachable = reports.filter { !$0.isReachable }.count
+        let errors = reports.reduce(0) { $0 + $1.errors }
+        return TimelineEntryRelevance(score: Float(unreachable * 2 + errors))
+    }
 }
 
 struct FleetProvider: AppIntentTimelineProvider {
@@ -31,6 +38,11 @@ struct FleetProvider: AppIntentTimelineProvider {
     func timeline(for configuration: FleetConfigurationIntent, in context: Context) async -> Timeline<FleetEntry> {
         let entry = await entry(for: configuration)
         return Timeline(entries: [entry], policy: .after(.now.addingTimeInterval(15 * 60)))
+    }
+
+    /// Watch faces offer configured complications rather than a configuration screen.
+    func recommendations() -> [AppIntentRecommendation<FleetConfigurationIntent>] {
+        [AppIntentRecommendation(intent: FleetConfigurationIntent(), description: Text("All Masters"))]
     }
 
     private func entry(for configuration: FleetConfigurationIntent) async -> FleetEntry {
@@ -55,10 +67,41 @@ struct FleetWidget: Widget {
         }
         .configurationDisplayName("Masters")
         .description("The health of all your masters at a glance.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
+        .supportedFamilies(WidgetFamily.nodePassSupported)
     }
 }
 
+#if !os(macOS)
+#Preview(as: .accessoryRectangular) {
+    FleetWidget()
+} timeline: {
+    FleetEntry(date: .now, reports: MasterReport.demoFleet)
+    FleetEntry(date: .now, reports: Array(MasterReport.demoFleet.prefix(2)))
+}
+
+#Preview(as: .accessoryCircular) {
+    FleetWidget()
+} timeline: {
+    FleetEntry(date: .now, reports: MasterReport.demoFleet)
+}
+
+#Preview(as: .accessoryInline) {
+    FleetWidget()
+} timeline: {
+    FleetEntry(date: .now, reports: MasterReport.demoFleet)
+    FleetEntry(date: .now, reports: Array(MasterReport.demoFleet.prefix(2)))
+}
+#endif
+
+#if os(watchOS)
+#Preview(as: .accessoryCorner) {
+    FleetWidget()
+} timeline: {
+    FleetEntry(date: .now, reports: MasterReport.demoFleet)
+}
+#endif
+
+#if !os(watchOS)
 #Preview(as: .systemSmall) {
     FleetWidget()
 } timeline: {
@@ -76,3 +119,4 @@ struct FleetWidget: Widget {
 } timeline: {
     FleetEntry(date: .now, reports: MasterReport.demoFleet)
 }
+#endif

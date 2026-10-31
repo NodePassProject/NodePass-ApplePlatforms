@@ -104,8 +104,9 @@ final class Server {
     }
 }
 
-/// Immutable, Sendable copy of a master record.
-nonisolated struct MasterSnapshot: Hashable, Sendable, Identifiable {
+/// Immutable, Sendable copy of a master record. Codable because the iPhone sends its snapshots to
+/// the Apple Watch (`MasterMirrorPayload`).
+nonisolated struct MasterSnapshot: Hashable, Sendable, Identifiable, Codable {
     let id: String
     let name: String
     let url: String

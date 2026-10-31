@@ -21,7 +21,8 @@ struct OpenMasterIntent: nonisolated OpenIntent {
     }
 
     // On iOS the targeted scene handles this through `onAppIntentExecution` (see `RootView`).
-    #if os(macOS)
+    // macOS and watchOS have no such hook; each app provides an `IntentNavigator` instead.
+    #if os(macOS) || os(watchOS)
     @Dependency private var navigator: IntentNavigator
 
     @MainActor

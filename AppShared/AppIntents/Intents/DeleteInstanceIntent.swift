@@ -7,7 +7,9 @@
 //
 
 import AppIntents
+#if canImport(CoreSpotlight)
 import CoreSpotlight
+#endif
 
 struct DeleteInstanceIntent: nonisolated AppIntent {
     nonisolated static let title: LocalizedStringResource = "Delete Instance"
@@ -36,7 +38,9 @@ struct DeleteInstanceIntent: nonisolated AppIntent {
         )
         let master = try model.master(instance.id.masterID)
         try await model.delete(instance.id.instanceID, of: master)
+        #if canImport(CoreSpotlight)
         try? await CSSearchableIndex.default().deleteAppEntities(identifiedBy: [instance.id], ofType: InstanceEntity.self)
+        #endif
         return .result(dialog: "Deleted \(instance.name) from \(master.name).")
     }
 }

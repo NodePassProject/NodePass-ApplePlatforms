@@ -18,12 +18,21 @@ final class SessionStore {
 
     /// Creates, updates and removes sessions so they mirror `masters`.
     func sync(with masters: [Server], configuration: SessionConfiguration) {
+        sync(with: masters.map { ($0.snapshot, $0.flavorSetting == .automatic ? nil : $0.resolvedFlavor) }, configuration: configuration)
+    }
+
+    /// The same for snapshots, as the watch app holds them. A snapshot's flavor is the explicit
+    /// setting or the API path's hint, which is exactly what a session would resolve first, so
+    /// passing it as the override changes nothing.
+    func sync(with snapshots: [MasterSnapshot], configuration: SessionConfiguration) {
+        sync(with: snapshots.map { ($0, $0.flavor) }, configuration: configuration)
+    }
+
+    private func sync(with masters: [(snapshot: MasterSnapshot, flavorOverride: MasterFlavor?)], configuration: SessionConfiguration) {
         var seen = Set<String>()
-        for master in masters {
-            seen.insert(master.id)
-            let snapshot = master.snapshot
-            let override = master.flavorSetting == .automatic ? nil : master.resolvedFlavor
-            if let session = sessions[master.id] {
+        for (snapshot, override) in masters {
+            seen.insert(snapshot.id)
+            if let session = sessions[snapshot.id] {
                 session.update(snapshot: snapshot, flavorOverride: override)
                 if isActive {
                     if snapshot.isEnabled { session.start() } else { session.stop() }
@@ -31,7 +40,7 @@ final class SessionStore {
             } else {
                 let session = MasterSession(snapshot: snapshot, flavorOverride: override)
                 session.apply(configuration)
-                sessions[master.id] = session
+                sessions[snapshot.id] = session
                 if isActive, snapshot.isEnabled { session.start() }
             }
         }

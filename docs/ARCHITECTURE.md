@@ -2,7 +2,8 @@
 
 NodePass 2.0 is a control plane for NodePass **masters** and Nowhere **OpenCtrl**
 controllers. Both expose the same REST + SSE contract; the app treats them as two
-*flavors* of one API.
+*flavors* of one API. It ships as one app for iPhone, iPad and Mac, an Apple Watch app,
+and a widget extension built for all three platforms.
 
 ## Terminology
 
@@ -15,32 +16,44 @@ controllers. Both expose the same REST + SSE contract; the app treats them as tw
 ## Layers
 
 ```
-Shared/                 Pure core, compiled into App, Widget and Tests. No UI, no 3rd-party imports.
+Shared/                 Pure core, compiled into every target. No UI beyond gauge styles, no 3rd-party imports.
   Core/                 Constants, UserDefaults suite, formatters
-  Persistence/          SwiftData container + `Server` model (+ snapshot DTO for extensions), MasterStore (reads for intents)
+  Persistence/          SwiftData container + `Server` model (+ snapshot DTO for extensions), MasterStore (reads for
+                        intents; on watchOS it reads the mirror), MasterMirror (the master list as sent to the watch)
   Models/               Codable wire types: Instance, MasterInfo, InstanceEvent, TCPingResult…
   API/                  MasterClient (actor: REST calls + the SSE event stream), MasterEndpoint, APIError, SSE parser, TLS trust policy
   Grammar/              InstanceURL parser/serializer, Endpoint (host:port, IPv6), ParameterCatalog + validation
-  AppIntents/           MasterEntity + MasterQuery (the app's and the widget's one definition of a master)
+  AppIntents/           MasterEntity + MasterQuery (every target's one definition of a master)
+  UI/                   Ring gauge styles, status colors
+
+AppShared/              Compiled into the iPhone/Mac app and the watch app, not the widget
+  Sessions/             MasterSession: live state per master (SSE, polling fallback, log ring buffer, rate samples), SessionStore
+  AppIntents/           IntentModel, intents, entities, snippets and App Shortcuts (see "App Intents")
+  DesignSystem/         Badges, metric tiles, sparklines, inline messages, presentation bindings
 
 NodePass/               iOS / iPadOS / native macOS app
   App/                  Scenes, per-window NavigationModel, root NavigationSplitView, deep links, shared environment
-  Platform/             Thin wrappers over platform-only APIs (clipboard, haptics, text input, sheet sizing)
-  Sessions/             MasterSession: live state per master (SSE, polling fallback, log ring buffer, rate samples)
+  Platform/             Thin wrappers over platform-only APIs (clipboard, haptics, text input, sheet sizing), WatchBridge (iOS)
   Features/             Masters, Instances (list, detail, editor, console), Tools (TCPing, URL inspector, API console), Settings
     Workspace/          macOS: instance table, filter bar, host status bar, inspector, InstanceWorkspace
     Commands/           macOS: menu bar commands and the focused values they read
     MenuBar/            macOS: status item with fleet health
-  AppIntents/           Intents, entities, snippets and App Shortcuts (see "App Intents")
-  DesignSystem/         Small reusable views (badges, metric tiles, sparkline, key-value rows, mono text)
+  AppIntents/           What only this app has: Spotlight indexing, the tool intent and enum, the macOS IntentNavigator
+  DesignSystem/         Controls that need the clipboard or text input (mono text, key-value rows, code fields)
   Components/           QR rendering, QR scanning (iOS camera) and reading (images, both platforms), text documents
 
-Widget/                 WidgetKit extension
-  Data/                 MasterStore (read-only SwiftData access), MasterReport (one-pass fetch), entities and intents
-  Components/           Status glyphs, host rings, instance rows, size-fitting row lists
-  MasterOverview/       One master, small to extra large
+NodePass Watch App/     watchOS app
+  App/                  Scene and dependencies, NavigationStack root, WatchRoute + IntentNavigator
+  Connectivity/         WatchBridge: receives the masters from the iPhone
+  Features/             Masters list, master detail, instance detail, session health
+  Platform/             Haptics
+
+NodePass Widget/        WidgetKit extension, built for iOS, macOS and watchOS
+  Data/                 MasterReport (one-pass fetch), the configuration intents
+  Components/           Status glyphs, host rings, meters, instance rows, size-fitting row lists, per-platform families
+  MasterOverview/       One master, from accessory sizes to extra large
   Fleet/                Several masters ("Masters" widget)
-NodePassTests/          Swift Testing: grammar round-trips, catalog validation, SSE parsing, formatters
+NodePassTests/          Swift Testing: grammar round-trips, catalog validation, SSE parsing, formatters, intents
 Scripts/                mock_master.py — a local stand-in master for development
 ```
 
@@ -78,6 +91,9 @@ whole; small differences stay inline.
 **iPhone and iPad** use a three-column split view: masters & tools → `InstanceListView` → instance detail or
 master overview.
 
+**Apple Watch** is its own target with its own views (see "Apple Watch"); it shares the sessions, intents and the
+smaller design-system pieces through `AppShared/`.
+
 **macOS** uses two columns and an inspector:
 
 | Piece | Role |
@@ -89,7 +105,42 @@ master overview.
 | `NodePassCommands` | Menu bar commands. They read the key window's `NavigationModel` and `InstanceWorkspace` as focused values, so each window's menus follow its own selection. |
 | Scenes | Main windows, one console window per instance (`ConsoleTarget`), a `Settings` window and a `MenuBarExtra`. |
 
+## Apple Watch
+
+The watch app mirrors the iPhone rather than syncing on its own. The phone is the source of truth for the
+masters; the watch holds a copy and talks to the masters directly.
+
+| Piece | Role |
+|---|---|
+| `MasterMirrorPayload` | The master list (snapshots, keys included) as one JSON `Data` in a Watch Connectivity dictionary, with the time it was sent, so an older reply never overwrites a newer context. |
+| `WatchBridge` (iOS) | Activates `WCSession` at launch, sends the list as the *application context* whenever the saved masters change (`keepsWatchInSync()` on the root view) and whenever the session or watch state changes, and answers the watch's request message. The system delivers the context even while the watch app is closed, and a request wakes the iPhone app in the background. |
+| `WatchBridge` (watchOS) | Takes the stored context on activation, every new context, and replies; asks on the first launch, when the copy is a day old, or on *Sync from iPhone*. |
+| `MasterMirror` | The watch's copy, persisted in the App Group's `UserDefaults` so the widget extension reads the same list. Nothing is ever created on the watch: identifiers stay the ones CloudKit syncs between the other devices, so shortcuts resolve everywhere. |
+| `MasterStore` | On watchOS, reads the mirror instead of SwiftData, with the same interface, so `MasterQuery`, the intents and the widgets are the same code. |
+
+Why not CloudKit on the watch: the watch does not get an iCloud account of its own in the simulator and sync can
+lag by minutes on a new watch, while the phone is right there. Why not SwiftData for the mirror: inserting the
+phone's records into a CloudKit-mirrored store would upload them again as new records and duplicate every master
+on every device.
+
+Sessions are the same `MasterSession`s as on the phone, synced from snapshots (`SessionStore.sync(with:)` has an
+overload for them) and running while the app is on screen, Always On included; the watch configuration polls
+less often and keeps fewer log lines. Navigation is a `NavigationStack` over `WatchRoute`: widget links
+(`onOpenURL`) and the Open intents (through the watch's `IntentNavigator`, since watchOS has no
+`onAppIntentExecution`) set the path.
+
+Design: one list, one master, one instance. Each master's and instance's screen carries a navigation container
+gradient in its health or role color, status reads from symbol shape as well as color, Start/Stop/Restart sit in
+the bottom bar with confirmation for the disruptive two, and `isLuminanceReduced` hides the live rates.
+
 ## Widgets
+
+The one extension target builds for iOS, macOS and watchOS; the apps that embed it pick the platform, and its
+bundle identifier changes under the watch app (`PRODUCT_BUNDLE_IDENTIFIER[sdk=watchos*]`). The families follow the
+platform (`WidgetFamily.nodePassSupported`): the system sizes where they exist, the accessory sizes on iPhone and
+Apple Watch, `accessoryCorner` on the watch only. Accessory layouts never use `Link` or `Button(intent:)`, since
+neither works there. Entries carry a `TimelineEntryRelevance` (unreachable masters and errors score higher) for the
+Smart Stack, and the providers offer `recommendations()` so watch faces list one complication per master.
 
 Widgets fetch for themselves: `MasterReport.load` asks a master for `/info` and `/instances` in parallel with a
 short timeout, and the Masters widget loads its masters concurrently. Timelines refresh every 15 minutes, and the
@@ -106,7 +157,10 @@ Rows link back with `DeepLink.master(_:instance:)`; the app selects the master a
 
 The App Intents layer mirrors Apple's "Adopting App Intents to support system experiences" sample, with the
 synchronized folders standing in for its shared package: `Shared/AppIntents` holds what the widget needs too,
-`NodePass/AppIntents` everything else.
+`AppShared/AppIntents` what both apps share (the intents, entities, snippets and App Shortcuts; the watch app
+registers the same intents and shortcuts, minus the tool), and `NodePass/AppIntents` what only the iPhone/Mac app
+has (Spotlight, the tool, the macOS navigator). The intents are deliberately not compiled into the widget, which
+would register every action a second time.
 
 | Piece | Role |
 |---|---|
@@ -121,7 +175,10 @@ synchronized folders standing in for its shared package: `Shared/AppIntents` hol
 
 Foreground navigation differs per platform, as in the sample: on iOS the targeted scene handles the intent through
 `onAppIntentExecution` in `RootView`; macOS has no such hook, so `IntentNavigator` opens the matching `np://` link,
-which an open window handles (`handlesExternalEvents`) and which otherwise creates one.
+which an open window handles (`handlesExternalEvents`) and which otherwise creates one. watchOS has neither, so its
+`IntentNavigator` is an observable the root view watches. Spotlight does not exist on watchOS; the `IndexedEntity`
+conformances and `SystemEntitySync` stay in the iPhone/Mac app, and the watch calls `updateAppShortcutParameters()`
+whenever its mirrored masters change.
 
 Concurrency: with the module's default `MainActor` isolation, entities are `nonisolated` value types with computed
 properties, while intents and queries stay main-actor types whose conformances are declared `nonisolated` and whose

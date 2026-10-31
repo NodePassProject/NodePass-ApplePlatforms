@@ -1,7 +1,7 @@
 # NodePass for Apple Platforms
 
 A professional control plane for [NodePass](https://github.com/NodePassProject/nodepass) masters and
-[Nowhere](https://github.com/NodePassProject/Nowhere) OpenCtrl controllers on iPhone, iPad and Mac.
+[Nowhere](https://github.com/NodePassProject/Nowhere) OpenCtrl controllers on iPhone, iPad, Mac and Apple Watch.
 
 Both backends speak the same REST + SSE contract; the app treats them as two *flavors* of one API
 (`…/api/v1` with `server`/`client` instances, `…/api/v2` with `portal`/`vector`/`egress` instances).
@@ -25,7 +25,8 @@ Both backends speak the same REST + SSE contract; the app treats them as two *fl
 - **Widgets** — *Master Overview* shows the host gauges and the instances of one master (errors first); *Masters* shows
   the health of several masters at once. Every size from small to extra large, on the Home Screen and the Mac desktop;
   rows open the master or instance in the app. Layouts fit what the widget has room for, and status reads from symbol
-  shape as well as color, so it stays clear on a tinted Home Screen or an inactive Mac desktop.
+  shape as well as color, so it stays clear on a tinted Home Screen or an inactive Mac desktop. Both widgets also come
+  in the accessory sizes: circular, rectangular and inline on the iPhone Lock Screen, those plus corner on Apple Watch.
 - **Shortcuts, Siri and Spotlight** — masters and instances are App Intents entities, so Shortcuts can find them
   (*Find Instances* filters by status, type, master, endpoint or tag) and pass them between actions. Actions: Get Master
   Status, Get Instance Status, Start / Stop / Restart Instance, Reset Instance Traffic, Set Auto-restart, Create Instance,
@@ -34,6 +35,23 @@ Both backends speak the same REST + SSE contract; the app treats them as two *fl
   NodePass". Status answers come with an interactive card (start, stop, restart, open), masters and instances appear in
   Spotlight, and the instance on screen is known to Siri and Apple Intelligence. Everything runs in the background
   without opening the app; API keys never leave the app.
+
+### On Apple Watch
+
+NodePass on Apple Watch is for the glance and the quick fix, not for editing.
+
+- **Your masters, without setup** — the iPhone app sends its saved masters (keys included) to the watch over Watch
+  Connectivity whenever they change, and the watch asks for them on first launch. Nothing is typed on the watch, and the
+  identifiers stay the ones your other devices know, so a shortcut built anywhere works on the watch too.
+- **Live** — while the app is on screen every enabled master streams events, with polling as the fallback. The list
+  shows each master's health and counts; a master shows its connection, CPU and memory rings, throughput and uptime,
+  then its instances with errors first; an instance shows status, endpoint, a throughput sparkline, connections,
+  traffic and latency.
+- **Act** — Start, Stop and Restart in the bottom bar (the disruptive ones ask first), the auto-restart policy as a
+  toggle, haptic feedback when the master has acted. Always On dims to the static numbers.
+- **Complications and Smart Stack** — *Master Overview* and *Masters* as circular, rectangular, inline and corner
+  widgets; watch faces offer one per master, and masters in trouble come forward in the Smart Stack.
+- **Siri and Shortcuts** — the same App Shortcuts and actions as on iPhone (except the tools), run on the watch itself.
 
 ### On the Mac
 
@@ -55,21 +73,26 @@ NodePass is a native macOS app, not a port of the iPad layout.
 ## Project layout
 
 ```
-Shared/          Core compiled into every target: models, MasterClient (REST + SSE), URL grammar, parameter catalog,
-                 the Master entity shared with the widget
-NodePass/        The app: sessions, features (Masters, Instances, Tools, Settings), App Intents, design system
-Widget/          WidgetKit extension: Master Overview and Masters widgets
-NodePassTests/   Swift Testing suite for the grammar, catalog, wire formats and filters
-Scripts/         mock_master.py — a local stand-in master for development
-docs/            Architecture notes
+Shared/               Core compiled into every target: models, MasterClient (REST + SSE), URL grammar, parameter catalog,
+                      the Master entity shared with the widget, the master list as it travels to the watch
+AppShared/            Compiled into both apps but not the widget: sessions, App Intents (intents, entities, snippets,
+                      App Shortcuts), the design system
+NodePass/             The iPhone, iPad and Mac app: features (Masters, Instances, Tools, Settings), Spotlight, menus
+NodePass Watch App/   The Apple Watch app: Watch Connectivity, the three screens, the intent navigator
+NodePass Widget/      WidgetKit extension for iOS, macOS and watchOS: Master Overview and Masters widgets
+NodePassTests/        Swift Testing suite for the grammar, catalog, wire formats, filters and intents
+Scripts/              mock_master.py — a local stand-in master for development
+docs/                 Architecture notes
 ```
 
 All folders are Xcode *synchronized folders*: adding a file on disk adds it to the right target.
 
 ## Development
 
-Requirements: Xcode 27 with the iOS 27 and macOS 27 SDKs. Open `NodePass.xcodeproj` and run the `NodePass` scheme
-on an iPhone, iPad or "My Mac" destination.
+Requirements: Xcode 27 with the iOS 27, macOS 27 and watchOS 27 SDKs. Open `NodePass.xcodeproj` and run the
+`NodePass` scheme on an iPhone, iPad or "My Mac" destination, or the `NodePass Watch App` scheme on an Apple Watch
+simulator. The watch gets its masters from the iPhone app, so run `NodePass` on the simulator paired with that watch and
+add a master there first.
 
 To work without a real master:
 

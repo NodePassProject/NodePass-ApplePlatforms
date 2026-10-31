@@ -3,10 +3,37 @@
 //  NodePass
 //
 //  Read access to the persisted masters for code that runs outside SwiftUI views: the App
-//  Intents queries in the app and in the widget extension.
+//  Intents queries in the app and in the widget extension. On iPhone, iPad and Mac the masters
+//  are SwiftData records; on Apple Watch they are the iPhone's list mirrored through Watch
+//  Connectivity (`MasterMirror`). Either way the store offers the same reads, so `MasterQuery`,
+//  the intents and the widgets work alike on every platform.
 //
 
 import Foundation
+
+#if os(watchOS)
+@MainActor
+final class MasterStore {
+    /// Reads the mirrored list fresh on every call, so the widget extension sees what the watch
+    /// app stored since.
+    init() {}
+
+    /// Every master, in the order the phone keeps them (oldest first).
+    func snapshots() throws -> [MasterSnapshot] {
+        MasterMirror.storedSnapshots()
+    }
+
+    /// The masters with these identifiers, in the order given. Unknown identifiers are skipped.
+    func snapshots(ids: [String]) throws -> [MasterSnapshot] {
+        let all = try snapshots()
+        return ids.compactMap { id in all.first { $0.id == id } }
+    }
+
+    func snapshot(id: String) throws -> MasterSnapshot? {
+        try snapshots(ids: [id]).first
+    }
+}
+#else
 import SwiftData
 
 @MainActor
@@ -51,3 +78,4 @@ final class MasterStore {
         return readsMainContext ? container.mainContext : ModelContext(container)
     }
 }
+#endif

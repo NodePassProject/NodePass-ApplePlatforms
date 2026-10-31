@@ -56,14 +56,3 @@ extension View {
         #endif
     }
 }
-
-extension ShapeStyle where Self == Color {
-    /// Background of small cards that sit on grouped content.
-    static var tileBackground: Color {
-        #if os(macOS)
-        Color(nsColor: .quaternarySystemFill)
-        #else
-        Color(uiColor: .secondarySystemGroupedBackground)
-        #endif
-    }
-}

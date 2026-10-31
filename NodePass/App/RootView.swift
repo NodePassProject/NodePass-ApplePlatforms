@@ -97,6 +97,9 @@ struct RootView: View {
             }
             .keepsSessionsInSync()
             .keepsSystemIndexInSync()
+            #if os(iOS)
+            .keepsWatchInSync()
+            #endif
             .environment(model)
     }
 
