@@ -2,9 +2,10 @@
 //  RootView.swift
 //  NodePass
 //
-//  The window's split view. iPhone and iPad use three columns (masters & tools → instances →
-//  instance detail / master overview) that collapse to a stack on iPhone. macOS uses two columns:
-//  the sidebar and a master workspace that carries its own inspector.
+//  The window's split view. Compact widths (iPhone) use three columns (masters & tools →
+//  instances → instance detail / master overview) that collapse to a stack. Regular widths (iPad)
+//  and macOS use two columns: the sidebar and a master workspace that carries its own inspector,
+//  a grid of cards on iPad and a table on the Mac.
 //
 //  Master-level presentations (add, edit, share, delete, key rotation) live here so the sidebar,
 //  the master overview and the menu bar commands all trigger the same flows.
@@ -27,6 +28,7 @@ struct RootView: View {
     @State private var model = NavigationModel()
     @State private var keyRotationError: String?
     #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
     #endif
 
@@ -91,6 +93,13 @@ struct RootView: View {
             #endif
             .onAppear {
                 if model.sidebarSelection == nil { model.sidebarSelection = windowSelection }
+                #if DEBUG
+                // `xcrun simctl launch <device> com.argsment.NodePass -NPOpenRoute "np://master?id=…"`
+                // opens a screen in the simulator, where opening a link asks for confirmation.
+                if let link = UserDefaults.standard.string(forKey: "NPOpenRoute"), let url = URL(string: link) {
+                    model.handle(deepLink: url)
+                }
+                #endif
             }
             .onChange(of: model.sidebarSelection) { _, selection in
                 windowSelection = selection
@@ -114,14 +123,24 @@ struct RootView: View {
             workspace
         }
         #else
-        NavigationSplitView(columnVisibility: $columnVisibility) {
-            SidebarView(masters: masters)
-        } content: {
-            contentColumn
-        } detail: {
-            detailColumn
+        if sizeClass == .regular {
+            // iPad: the instances get the width; the detail is an inspector, as on the Mac.
+            NavigationSplitView(columnVisibility: $columnVisibility) {
+                SidebarView(masters: masters)
+            } detail: {
+                contentColumn
+            }
+            .navigationSplitViewStyle(.balanced)
+        } else {
+            NavigationSplitView(columnVisibility: $columnVisibility) {
+                SidebarView(masters: masters)
+            } content: {
+                contentColumn
+            } detail: {
+                detailColumn
+            }
+            .navigationSplitViewStyle(.balanced)
         }
-        .navigationSplitViewStyle(.balanced)
         #endif
     }
 
@@ -161,11 +180,14 @@ struct RootView: View {
         if case .master(let id) = model.sidebarSelection,
            let session = sessions.session(for: id),
            let master = masters.first(where: { $0.id == id }) {
-            if let instanceID = model.selectedInstanceID, session.instance(instanceID) != nil {
+            if let instanceID = model.selectedInstanceID, session.instanceIDs.contains(instanceID) {
                 InstanceDetailView(session: session, instanceID: instanceID)
                     .id(instanceID)
             } else {
-                MasterOverviewView(session: session, master: master)
+                // Compact widths only reach the detail column by selecting an instance; the
+                // master overview opens as a sheet from the list. Keep this column inert instead
+                // of evaluating an overview nobody can see on every update of the master.
+                ContentUnavailableView("No Selection", systemImage: "sidebar.right", description: Text("Pick an instance to see its details."))
             }
         } else if case .tool(let tool) = model.sidebarSelection {
             ContentUnavailableView(tool.title, systemImage: tool.symbolName, description: Text(tool.summary))

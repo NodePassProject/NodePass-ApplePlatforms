@@ -60,6 +60,7 @@ nonisolated enum NPCore {
         static let showInstanceIdentifiers = "NPShowInstanceIdentifiers"
         static let confirmDestructiveActions = "NPConfirmDestructiveActions"
         static let instanceDensity = "NPInstanceDensity"
+        static let instanceLayout = "NPInstanceLayout"
         static let instanceSortKey = "NPInstanceSortKey"
         static let instanceSortAscending = "NPInstanceSortAscending"
         static let instanceGrouping = "NPInstanceGrouping"
@@ -87,6 +88,7 @@ nonisolated enum NPCore {
             DefaultsKey.showInstanceIdentifiers: true,
             DefaultsKey.confirmDestructiveActions: true,
             DefaultsKey.instanceDensity: "regular",
+            DefaultsKey.instanceLayout: "automatic",
             DefaultsKey.showsMenuBarExtra: true,
         ])
     }

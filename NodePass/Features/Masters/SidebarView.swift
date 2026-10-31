@@ -115,12 +115,10 @@ struct SidebarView: View {
             ToolbarItem(placement: .primaryAction) {
                 Button("Add Master", systemImage: "plus") { model.isPresentingNewMaster = true }
             }
-            ToolbarItem(placement: .secondaryAction) {
-                Menu("More", systemImage: "ellipsis.circle") {
-                    sortPickers
-                    Divider()
-                    Button("Settings", systemImage: "gear") { model.isPresentingSettings = true }
-                }
+            ToolbarOverflowMenu {
+                sortPickers
+                Divider()
+                Button("Settings", systemImage: "gear") { model.isPresentingSettings = true }
             }
         }
         #endif
@@ -203,64 +201,88 @@ struct SidebarView: View {
     }
 }
 
+/// A master in the sidebar: a tile in its health color carrying the flavor's symbol, the name,
+/// what the connection is doing, and how many instances run, with errors called out.
 struct MasterRowView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var master: Server
     var session: MasterSession?
 
+    private var health: MasterSession.Health {
+        guard master.isEnabled else { return .disabled }
+        return session?.health ?? .connecting
+    }
+
+    private var flavorSymbol: String {
+        (session?.flavor ?? master.resolvedFlavor ?? .nodePass) == .openCtrl ? "circle.hexagongrid" : "server.rack"
+    }
+
+    private var tileSize: CGFloat {
+        #if os(macOS)
+        26
+        #else
+        32
+        #endif
+    }
+
     var body: some View {
         HStack(spacing: 10) {
-            Image(systemName: (session?.flavor ?? master.resolvedFlavor ?? .nodePass) == .openCtrl ? "circle.hexagongrid" : "server.rack")
-                .font(.title3)
-                .foregroundStyle(master.isEnabled ? Color.accentColor : .secondary)
-                .frame(width: 26)
+            ZStack {
+                RoundedRectangle(cornerRadius: tileSize * 0.28, style: .continuous)
+                    .fill(health.tint.gradient)
+                Image(systemName: flavorSymbol)
+                    .font(.system(size: tileSize * 0.46, weight: .semibold))
+                    .foregroundStyle(.white)
+            }
+            .frame(width: tileSize, height: tileSize)
+            .symbolEffect(.pulse, options: .repeating, isActive: health == .connecting && !reduceMotion)
+            .animation(.signal, value: health)
+            .accessibilityLabel(health.title)
             VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 6) {
-                    Text(master.displayName)
-                        .font(.body.weight(.medium))
-                        .lineLimit(1)
-                    if !master.isEnabled {
-                        Pill(text: "Off", tint: .secondary)
-                    }
-                }
-                HStack(spacing: 6) {
-                    if let session, master.isEnabled {
-                        Circle().fill(session.connection.tint).frame(width: 6, height: 6)
-                        Text(summary(for: session))
-                    } else {
-                        Text(master.host ?? master.url)
-                    }
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
+                Text(master.displayName)
+                    .font(.body.weight(.medium))
+                    .lineLimit(1)
+                Text(summary)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
             Spacer(minLength: 0)
             if let session, master.isEnabled, session.hasLoadedInstances {
-                HStack(spacing: 4) {
+                HStack(spacing: 6) {
                     if session.errorCount > 0 {
                         Text("\(session.errorCount)")
-                            .foregroundStyle(.red)
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(InstanceStatus.error.tint, in: Capsule())
+                            .accessibilityLabel("\(session.errorCount) in error")
                     }
-                    Text("\(session.runningCount)/\(session.visibleInstances.count)")
+                    Text("\(session.runningCount)/\(session.counts.total)")
+                        .font(.numeral(.caption, weight: .medium))
                         .foregroundStyle(.secondary)
+                        .contentTransition(.numericText())
+                        .accessibilityLabel("\(session.runningCount) of \(session.counts.total) running")
                 }
-                .font(.caption.monospacedDigit())
             }
         }
         .padding(.vertical, 2)
     }
 
-    private func summary(for session: MasterSession) -> String {
+    private var summary: String {
+        guard master.isEnabled, let session else { return master.host ?? master.url }
         switch session.connection {
-        case .offline(let reason): reason
-        case .connecting: "Connecting…"
-        case .idle: master.host ?? "Idle"
+        case .offline, .connecting:
+            return session.connectionDetail
+        case .idle:
+            return master.host ?? "Idle"
         case .live, .polling:
             if let info = session.info, !info.version.isEmpty {
-                "\(session.flavor.title) \(info.version) · \(master.host ?? "")"
-            } else {
-                master.host ?? session.connection.title
+                return "\(session.flavor.title) \(info.version) · \(master.host ?? "")"
             }
+            return master.host ?? session.connection.title
         }
     }
 }

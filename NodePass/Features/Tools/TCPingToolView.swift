@@ -95,8 +95,9 @@ struct TCPingToolView: View {
                     Button {
                         Task { await runFromAll() }
                     } label: {
-                        Label("From All Masters", systemImage: "square.stack.3d.up")
+                        Label("All Masters", systemImage: "square.stack.3d.up")
                             .frame(maxWidth: .infinity)
+                            .lineLimit(1)
                     }
                     .buttonStyle(.bordered)
                     .disabled(!canRun || enabledMasters.count < 2)
@@ -159,9 +160,7 @@ struct TCPingToolView: View {
             }
             Spacer()
             if case .success(let ping) = probe.result, ping.connected {
-                Text("\(ping.latency) ms")
-                    .font(.title3.monospacedDigit().weight(.semibold))
-                    .foregroundStyle(ping.latency < 100 ? .green : ping.latency < 300 ? .orange : .red)
+                LatencyBadge(milliseconds: Int(ping.latency))
             }
         }
     }
@@ -170,6 +169,28 @@ struct TCPingToolView: View {
         guard let master = selectedMaster else { return }
         await probe(from: [master])
     }
+}
+
+/// A handshake latency graded by color: green under 100 ms, orange under 300 ms, red above.
+struct LatencyBadge: View {
+    var milliseconds: Int
+
+    private var tint: Color {
+        milliseconds < 100 ? .green : milliseconds < 300 ? .orange : .red
+    }
+
+    var body: some View {
+        Text("\(milliseconds) ms")
+            .font(.numeral(.subheadline))
+            .foregroundStyle(tint)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .accessibilityLabel("\(milliseconds) milliseconds")
+    }
+}
+
+extension TCPingToolView {
 
     private func runFromAll() async {
         await probe(from: enabledMasters)

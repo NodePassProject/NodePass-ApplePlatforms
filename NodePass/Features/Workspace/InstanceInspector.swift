@@ -31,49 +31,52 @@ private struct SelectionSummaryView: View {
 
     var body: some View {
         let instances = workspace.targets()
-        Form {
-            Section {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("\(instances.count) Instances")
-                        .font(.title2.weight(.semibold))
-                    HStack(spacing: 6) {
-                        ForEach(InstanceStatus.knownStatuses, id: \.self) { status in
-                            let count = instances.filter { $0.status == status }.count
-                            if count > 0 {
-                                Pill(text: "\(count) \(status.title)", tint: status.tint)
-                            }
-                        }
+        let rates = instances.compactMap { workspace.session.rateTracker(for: $0.id).latest }
+        PanelScreen(tint: .accentColor) {
+            HeroHeader(title: "\(instances.count) Instances") {
+                ForEach(InstanceStatus.knownStatuses, id: \.self) { status in
+                    let count = instances.filter { $0.status == status }.count
+                    if count > 0 {
+                        Pill(text: "\(count) \(status.title)", tint: status.tint)
                     }
                 }
-                .padding(.vertical, 4)
+            } meta: {
+                Text("Actions below apply to every selected instance.")
+            } actions: {
+                InstanceActionBar(enabledActions: Set(InstanceAction.allCases.filter { workspace.canRun($0) })) { workspace.run($0) }
             }
-
-            Section {
-                InstanceActionBar { workspace.canRun($0) } perform: { workspace.run($0) }
-            }
-
-            Section("Traffic") {
-                let rates = instances.compactMap { workspace.session.rateTracker(for: $0.id).latest }
+        } content: {
+            Panel("Traffic", systemImage: "waveform.path.ecg") {
                 RateLegend(received: rates.reduce(0) { $0 + $1.received }, transmitted: rates.reduce(0) { $0 + $1.transmitted })
-                KeyValueRow(key: "Received", value: Format.bytes(instances.reduce(0) { $0 &+ $1.totalReceived }))
-                KeyValueRow(key: "Transmitted", value: Format.bytes(instances.reduce(0) { $0 &+ $1.totalTransmitted }))
-                KeyValueRow(key: "Connections", value: "\(instances.reduce(0) { $0 + $1.totalConnections })")
+                PanelRows {
+                    PropertyRow("Received", value: Format.bytes(instances.reduce(0) { $0 &+ $1.totalReceived }))
+                    PropertyRow("Transmitted", value: Format.bytes(instances.reduce(0) { $0 &+ $1.totalTransmitted }))
+                    PropertyRow("Connections", value: "\(instances.reduce(0) { $0 + $1.totalConnections })")
+                }
             }
-
-            Section("Batch") {
-                Button("Enable Auto-restart", systemImage: "arrow.trianglehead.clockwise") { workspace.setAutoRestart(true) }
-                    .disabled(workspace.autoRestart() == true)
-                Button("Disable Auto-restart", systemImage: "pause.circle") { workspace.setAutoRestart(false) }
-                    .disabled(workspace.autoRestart() == false)
-                Button("Add Tag…", systemImage: "tag") { workspace.beginTagging() }
-                Button("Copy \(instances.count) URLs", systemImage: "document.on.document") { workspace.copyURLs() }
+            Panel("Batch", systemImage: "checklist") {
+                PanelRows {
+                    Button("Enable Auto-restart", systemImage: "arrow.trianglehead.clockwise") { workspace.setAutoRestart(true) }
+                        .disabled(workspace.autoRestart() == true)
+                    Button("Disable Auto-restart", systemImage: "pause.circle") { workspace.setAutoRestart(false) }
+                        .disabled(workspace.autoRestart() == false)
+                    Button("Add Tag…", systemImage: "tag") { workspace.beginTagging() }
+                    Button("Copy \(instances.count) URLs", systemImage: "document.on.document") { workspace.copyURLs() }
+                }
+                .buttonStyle(.borderless)
+                .font(.subheadline)
             }
-
-            Section {
-                Button("Delete \(instances.count) Instances…", systemImage: "trash", role: .destructive) { workspace.delete() }
+            Button(role: .destructive) {
+                workspace.delete()
+            } label: {
+                Label("Delete \(instances.count) Instances…", systemImage: "trash")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 4)
             }
+            .buttonStyle(.bordered)
+            .tint(.red)
+            .spansAllColumns()
         }
-        .formStyle(.grouped)
     }
 }
 #endif

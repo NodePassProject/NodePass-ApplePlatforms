@@ -27,9 +27,10 @@ Shared/                 Pure core, compiled into every target. No UI beyond gaug
   UI/                   Ring gauge styles, status colors
 
 AppShared/              Compiled into the iPhone/Mac app and the watch app, not the widget
-  Sessions/             MasterSession: live state per master (SSE, polling fallback, log ring buffer, rate samples), SessionStore
+  Sessions/             MasterSession: live state per master (SSE, polling fallback, log ring buffer, rate samples), SessionStore,
+                        the master health model (one word, color and glyph per master, shared by every screen)
   AppIntents/           IntentModel, intents, entities, snippets and App Shortcuts (see "App Intents")
-  DesignSystem/         Badges, metric tiles, sparklines, inline messages, presentation bindings
+  DesignSystem/         Design tokens, badges and the signal bar, metric tiles, sparklines, inline messages, presentation bindings
 
 NodePass/               iOS / iPadOS / native macOS app
   App/                  Scenes, per-window NavigationModel, root NavigationSplitView, deep links, shared environment
@@ -39,7 +40,8 @@ NodePass/               iOS / iPadOS / native macOS app
     Commands/           macOS: menu bar commands and the focused values they read
     MenuBar/            macOS: status item with fleet health
   AppIntents/           What only this app has: Spotlight indexing, the tool intent and enum, the macOS IntentNavigator
-  DesignSystem/         Controls that need the clipboard or text input (mono text, key-value rows, code fields)
+  DesignSystem/         Panels and the masonry layout, hero headers, colored instance URLs, the role selector, and controls
+                        that need the clipboard or text input (mono text, key-value rows, code fields); see docs/DESIGN.md
   Components/           QR rendering, QR scanning (iOS camera) and reading (images, both platforms), text documents
 
 NodePass Watch App/     watchOS app
@@ -75,6 +77,28 @@ Sessions stream while any window is on screen (the app-level, aggregated `sceneP
 streaming while the menu bar item is shown, so it reflects health after the last window closes. Settings that
 affect sessions reach them as one `SessionConfiguration` value.
 
+### Update hygiene
+
+A master with live traffic mutates its session several times a second, and every view that read a property
+during its last body is re-evaluated when that property is assigned, so the session and the screens follow
+three rules:
+
+1. **Assign only what moved.** `upsert` compares before writing, `refreshInstances` replaces the table only when
+   it differs, `feedRate` stores a tracker only when it produced a sample, flags such as `hasLoadedInstances`
+   and `connection` are written once, and `lastEventDate` at most once a second.
+2. **Read the narrowest property.** Beside the instance table the session keeps `counts`, `totals`,
+   `instanceIDs` and `catalogFingerprint`, each assigned only when its value changes. Sidebar rows, filter
+   chips, the menu bar and Spotlight indexing read those instead of `instances`, so a traffic counter ticking
+   up does not touch them; `RootView` asks `instanceIDs` whether the selected instance still exists.
+3. **Hand panels values, not the session.** `InstanceDetailView` and `MasterOverviewView` read the session
+   once and pass each hero and panel the values it shows as an `Equatable` view (`.equatable()`); a panel's
+   body runs again only when those values differ. Views that are never visible (the detail column on compact
+   widths, the inspector content when no inspector is presented) are kept empty rather than evaluated.
+
+Measured with `Self._printChanges()` on an iPhone with four live instances over 12 seconds, body evaluations on
+the instance list went from about 900 to 130 and on the instance detail from about 1200 to 350; what remains
+corresponds to values that changed on screen.
+
 ## Windows and navigation
 
 Each window owns a `NavigationModel`: the sidebar selection, the selected instances and the master-level
@@ -84,12 +108,19 @@ set of instance IDs; the list-based layout reads it through `selectedInstanceID`
 
 ## Platforms
 
-Shared views use `Form`, `LabeledContent` and the wrappers in `Platform/`, so the same code reads naturally on
-both platforms. Files that only make sense on one platform are wrapped in `#if os(iOS)` or `#if os(macOS)` as a
+Editors and settings use `Form` and `LabeledContent`; detail screens are panels in a masonry (`PanelScreen`,
+see [DESIGN.md](DESIGN.md)); both go through the wrappers in `Platform/`, so the same code reads naturally on
+every platform. Files that only make sense on one platform are wrapped in `#if os(iOS)` or `#if os(macOS)` as a
 whole; small differences stay inline.
 
-**iPhone and iPad** use a three-column split view: masters & tools → `InstanceListView` → instance detail or
-master overview.
+**iPhone** (compact width) uses a three-column split view that collapses to a stack: masters & tools →
+`InstanceListView` → instance detail or master overview.
+
+**iPad** (regular width) uses two columns, like the Mac: the sidebar and `InstanceListView` with the whole width,
+where the instances are a grid of cards (`InstanceCard`; a list when the settings ask for one) and the selection
+opens in an inspector: the master overview with nothing selected, the instance detail for one instance. `RootView`
+picks the structure from the window's horizontal size class, and `NavigationModel.isInspectorPresented` is shared
+with the Mac workspace.
 
 **Apple Watch** is its own target with its own views (see "Apple Watch"); it shares the sessions, intents and the
 smaller design-system pieces through `AppShared/`.

@@ -117,35 +117,15 @@ struct InstanceLogView: View {
                     .toggleStyle(.button)
                     .help("Keep the newest line in view")
             }
-            ToolbarItem(placement: .secondaryAction) {
-                Menu("More", systemImage: "ellipsis.circle") {
-                    Menu("Levels") {
-                        ForEach(LogLine.Level.allCases, id: \.self) { level in
-                            Toggle(level.title, isOn: Binding(
-                                get: { levels.contains(level) },
-                                set: { if $0 { levels.insert(level) } else { levels.remove(level) } }))
-                        }
-                        if !levels.isEmpty {
-                            Divider()
-                            Button("Show All") { levels.removeAll() }
-                        }
-                    }
-                    #if os(macOS)
-                    Button("Save Log…", systemImage: "square.and.arrow.down") { isExporting = true }
-                        .disabled(buffer.isEmpty)
-                    #else
-                    ShareLink(item: buffer.exportText, preview: SharePreview("Instance Log")) {
-                        Label("Export…", systemImage: "square.and.arrow.up")
-                    }
-                    .disabled(buffer.isEmpty)
-                    #endif
-                    Button("Copy All", systemImage: "document.on.document") { Clipboard.copy(buffer.exportText) }
-                        .disabled(buffer.isEmpty)
-                    Divider()
-                    Button("Clear", systemImage: "trash", role: .destructive) { session.clearLogs(for: instanceID) }
-                        .disabled(buffer.isEmpty)
-                }
+            #if os(iOS)
+            ToolbarOverflowMenu {
+                consoleMenuItems
             }
+            #else
+            ToolbarItem(placement: .secondaryAction) {
+                consoleMenuItems
+            }
+            #endif
         }
         .safeAreaBar(edge: .bottom) {
             HStack {
@@ -158,6 +138,36 @@ struct InstanceLogView: View {
             .padding(.horizontal)
             .padding(.vertical, 6)
         }
+    }
+
+    /// Level filter, export, copy and clear: the overflow menu on iOS, a More menu on the Mac.
+    @ViewBuilder
+    private var consoleMenuItems: some View {
+        Menu("Levels") {
+            ForEach(LogLine.Level.allCases, id: \.self) { level in
+                Toggle(level.title, isOn: Binding(
+                    get: { levels.contains(level) },
+                    set: { if $0 { levels.insert(level) } else { levels.remove(level) } }))
+            }
+            if !levels.isEmpty {
+                Divider()
+                Button("Show All") { levels.removeAll() }
+            }
+        }
+        #if os(macOS)
+        Button("Save Log…", systemImage: "square.and.arrow.down") { isExporting = true }
+            .disabled(buffer.isEmpty)
+        #else
+        ShareLink(item: buffer.exportText, preview: SharePreview("Instance Log")) {
+            Label("Export…", systemImage: "square.and.arrow.up")
+        }
+        .disabled(buffer.isEmpty)
+        #endif
+        Button("Copy All", systemImage: "document.on.document") { Clipboard.copy(buffer.exportText) }
+            .disabled(buffer.isEmpty)
+        Divider()
+        Button("Clear", systemImage: "trash", role: .destructive) { session.clearLogs(for: instanceID) }
+            .disabled(buffer.isEmpty)
     }
 
     @ViewBuilder

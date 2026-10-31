@@ -151,17 +151,10 @@ struct InstanceEditorView: View {
     }
 
     private var roleSection: some View {
-        Section {
-            Picker("Type", selection: Binding(get: { model.role }, set: { model.setRole($0) })) {
-                ForEach(model.flavor.roles, id: \.self) { role in
-                    Label(role.title, systemImage: role.symbolName).tag(role)
-                }
-            }
-            .pickerStyle(.segmented)
-            .listRowSeparator(.hidden)
-            Text(model.role.summary)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+        Section("Type") {
+            RoleSelector(roles: model.flavor.roles, selection: Binding(get: { model.role }, set: { model.setRole($0) }))
+                .listRowSeparator(.hidden)
+                .padding(.vertical, DS.Spacing.xs)
         }
     }
 
@@ -361,8 +354,17 @@ struct InstanceEditorView: View {
 
     private var previewSection: some View {
         Section {
-            MonoText(text: model.urlString.isEmpty ? "—" : model.urlString, size: .caption)
-                .foregroundStyle(model.urlString.isEmpty ? .tertiary : .primary)
+            if model.urlString.isEmpty {
+                Text("—")
+                    .font(.code(.caption))
+                    .foregroundStyle(.tertiary)
+            } else {
+                InstanceURLText(url: model.urlString, font: .code(.caption))
+                    .textSelection(.enabled)
+                    .contextMenu {
+                        Button("Copy", systemImage: "document.on.document") { Clipboard.copy(model.urlString) }
+                    }
+            }
             ForEach(model.issues) { issue in
                 InlineMessage(text: issue.message, style: issue.severity.messageStyle)
                     .listRowSeparator(.hidden)

@@ -196,7 +196,7 @@ struct MasterWorkspaceView: View {
 
     private var viewOptionsMenu: some View {
         @Bindable var workspace = workspace
-        return Menu("View Options", systemImage: "line.3.horizontal.decrease.circle") {
+        return Menu("View Options", systemImage: "line.3.horizontal.decrease") {
             Menu("Status") {
                 ForEach(InstanceStatus.knownStatuses, id: \.self) { status in
                     Toggle(status.title, isOn: Binding(

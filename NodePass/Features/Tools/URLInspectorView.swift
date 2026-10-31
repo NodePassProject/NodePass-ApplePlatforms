@@ -60,10 +60,10 @@ struct URLInspectorView: View {
                         Button {
                             text = example
                         } label: {
-                            Text(example)
-                                .font(.caption.monospaced())
+                            InstanceURLText(url: example, font: .code(.caption))
                                 .foregroundStyle(.primary)
                                 .lineLimit(2)
+                                .multilineTextAlignment(.leading)
                         }
                     }
                 } header: {
@@ -190,7 +190,11 @@ struct URLInspectorView: View {
         }
 
         Section {
-            MonoText(text: url.string, size: .caption)
+            InstanceURLText(url: url.string, font: .code(.caption))
+                .textSelection(.enabled)
+                .contextMenu {
+                    Button("Copy", systemImage: "document.on.document") { Clipboard.copy(url.string) }
+                }
             CopyButton(text: url.string, label: "Copy Normalized URL")
                 .buttonStyle(.borderless)
             let candidates = masters.filter { $0.isEnabled && (sessions.session(for: $0.id)?.flavor ?? $0.resolvedFlavor) == url.flavor }

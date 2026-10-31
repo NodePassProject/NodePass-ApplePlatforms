@@ -52,10 +52,9 @@ extension MasterSession {
         switch connection {
         case .offline:
             return .offline
-        case .idle, .connecting:
+        case .idle, .connecting, .live, .polling:
+            // Polling starts before the first instance list arrives; until then nothing is known.
             return hasLoadedInstances ? loadedHealth : .connecting
-        case .live, .polling:
-            return loadedHealth
         }
     }
 

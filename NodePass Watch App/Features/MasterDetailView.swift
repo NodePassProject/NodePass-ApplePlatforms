@@ -125,7 +125,7 @@ struct MasterDetailView: View {
                 Text("Instances")
                 Spacer()
                 if session.hasLoadedInstances {
-                    Text("\(session.runningCount)/\(session.visibleInstances.count)")
+                    Text("\(session.runningCount)/\(session.counts.total)")
                         .monospacedDigit()
                 }
             }

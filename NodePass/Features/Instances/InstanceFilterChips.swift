@@ -22,19 +22,26 @@ struct InstanceFilterChips: View {
                 }
             }
             if filter.isNarrowing {
-                Button("Clear Filters", systemImage: "xmark.circle.fill") { filter.clearNarrowing() }
-                    .labelStyle(.iconOnly)
-                    .buttonStyle(.borderless)
-                    .foregroundStyle(.secondary)
-                    .help("Clear Filters")
+                Button("Clear Filters", systemImage: "xmark.circle.fill") {
+                    withAnimation(.signal) { filter.clearNarrowing() }
+                }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.borderless)
+                .foregroundStyle(.secondary)
+                .help("Clear Filters")
+                .transition(.scale.combined(with: .opacity))
             }
         }
+        .animation(.signal, value: filter.isNarrowing)
+        .sensoryFeedback(.selection, trigger: filter)
     }
 
     private func statusChip(_ status: InstanceStatus, count: Int) -> some View {
         let isOn = filter.statuses.contains(status)
         return Button {
-            if isOn { filter.statuses.remove(status) } else { filter.statuses.insert(status) }
+            withAnimation(.signal) {
+                if isOn { filter.statuses.remove(status) } else { filter.statuses.insert(status) }
+            }
         } label: {
             Pill(text: "\(count) \(status.title)", tint: status.tint, prominent: isOn)
         }
@@ -44,9 +51,11 @@ struct InstanceFilterChips: View {
 
     private func roleChip(_ role: InstanceRole) -> some View {
         let isOn = filter.roles.contains(role)
-        let count = session.visibleInstances.filter { $0.role == role }.count
+        let count = session.counts.byRole[role] ?? 0
         return Button {
-            if isOn { filter.roles.remove(role) } else { filter.roles.insert(role) }
+            withAnimation(.signal) {
+                if isOn { filter.roles.remove(role) } else { filter.roles.insert(role) }
+            }
         } label: {
             Pill(text: "\(count) \(role.title)", tint: role.tint, prominent: isOn)
         }

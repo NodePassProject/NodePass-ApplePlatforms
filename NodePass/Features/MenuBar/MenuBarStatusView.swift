@@ -167,7 +167,7 @@ private struct MenuBarMasterRow: View {
                                 Text("\(session.errorCount)")
                                     .foregroundStyle(.red)
                             }
-                            Text("\(session.runningCount)/\(session.visibleInstances.count)")
+                            Text("\(session.runningCount)/\(session.counts.total)")
                         }
                         .font(.callout.monospacedDigit())
                         let rate = session.aggregateRate

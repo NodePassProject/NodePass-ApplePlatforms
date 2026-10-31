@@ -53,6 +53,13 @@ NodePass on Apple Watch is for the glance and the quick fix, not for editing.
   widgets; watch faces offer one per master, and masters in trouble come forward in the Smart Stack.
 - **Siri and Shortcuts** — the same App Shortcuts and actions as on iPhone (except the tools), run on the watch itself.
 
+### On iPad
+
+The instances of a master fill the width beside the sidebar as a grid of cards — status on the leading edge,
+type, endpoint, a live throughput sparkline and the connection counts — and the selection opens in an inspector:
+the master's health, host gauges and identity with nothing selected, the instance's controls, traffic,
+configuration, metadata and logs for one instance. A setting switches the grid back to a list.
+
 ### On the Mac
 
 NodePass is a native macOS app, not a port of the iPad layout.
@@ -106,7 +113,8 @@ Then add a master with URL `http://127.0.0.1:9090/api/v1` (NodePass flavor) or `
 Run the tests with `xcodebuild test -scheme NodePass -destination 'platform=iOS Simulator,name=iPhone 18 Pro'` or
 `-destination 'platform=macOS'`.
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the design.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the architecture and [docs/DESIGN.md](docs/DESIGN.md) for
+the design language.
 
 ## License
 

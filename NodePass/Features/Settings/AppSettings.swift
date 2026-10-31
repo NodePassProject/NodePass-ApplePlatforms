@@ -44,6 +44,30 @@ enum InstanceDensity: String, CaseIterable, Identifiable {
     }
 }
 
+/// How the instances of a master are laid out on iPhone and iPad.
+enum InstanceLayout: String, CaseIterable, Identifiable {
+    /// A grid of cards where every column of the split view is on screen, a list otherwise.
+    case automatic
+    /// A list everywhere.
+    case list
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .automatic: "Grid Where Room Allows"
+        case .list: "Always a List"
+        }
+    }
+
+    var symbolName: String {
+        switch self {
+        case .automatic: "square.grid.2x2"
+        case .list: "list.bullet"
+        }
+    }
+}
+
 @Observable
 @MainActor
 final class AppSettings {
@@ -59,6 +83,7 @@ final class AppSettings {
     var showInstanceIdentifiers: Bool { didSet { defaults.set(showInstanceIdentifiers, forKey: NPCore.DefaultsKey.showInstanceIdentifiers) } }
     var confirmDestructiveActions: Bool { didSet { defaults.set(confirmDestructiveActions, forKey: NPCore.DefaultsKey.confirmDestructiveActions) } }
     var instanceDensity: InstanceDensity { didSet { defaults.set(instanceDensity.rawValue, forKey: NPCore.DefaultsKey.instanceDensity) } }
+    var instanceLayout: InstanceLayout { didSet { defaults.set(instanceLayout.rawValue, forKey: NPCore.DefaultsKey.instanceLayout) } }
     /// macOS: keep a status item in the menu bar, which also keeps sessions live without windows.
     var showsMenuBarExtra: Bool { didSet { defaults.set(showsMenuBarExtra, forKey: NPCore.DefaultsKey.showsMenuBarExtra) } }
 
@@ -74,6 +99,7 @@ final class AppSettings {
         showInstanceIdentifiers = defaults.object(forKey: NPCore.DefaultsKey.showInstanceIdentifiers) as? Bool ?? true
         confirmDestructiveActions = defaults.object(forKey: NPCore.DefaultsKey.confirmDestructiveActions) as? Bool ?? true
         instanceDensity = InstanceDensity(rawValue: defaults.string(forKey: NPCore.DefaultsKey.instanceDensity) ?? "") ?? .regular
+        instanceLayout = InstanceLayout(rawValue: defaults.string(forKey: NPCore.DefaultsKey.instanceLayout) ?? "") ?? .automatic
         showsMenuBarExtra = defaults.object(forKey: NPCore.DefaultsKey.showsMenuBarExtra) as? Bool ?? true
     }
 

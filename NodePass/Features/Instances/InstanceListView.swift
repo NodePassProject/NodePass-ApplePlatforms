@@ -2,8 +2,9 @@
 //  InstanceListView.swift
 //  NodePass
 //
-//  Live instance list of one master with filtering, grouping and batch operations (iPhone and
-//  iPad). macOS shows the same data in `MasterWorkspaceView`.
+//  Live instances of one master with filtering, grouping and batch operations (iPhone and iPad).
+//  Compact widths get a list; regular widths get a grid of cards unless the settings ask for a
+//  list. macOS shows the same data in `MasterWorkspaceView`.
 //
 
 #if os(iOS)
@@ -46,17 +47,28 @@ struct InstanceListView: View {
     private var filtered: [Instance] { effectiveFilter.apply(to: allInstances) }
     private var groups: [InstanceGroup] { effectiveFilter.grouped(filtered) }
 
+    /// On regular widths this view has the whole window beside the sidebar: the selection opens
+    /// in an inspector, as on the Mac. On compact widths the list navigates to the detail.
+    private var usesInspector: Bool { sizeClass == .regular }
+
+    private var usesGrid: Bool {
+        usesInspector && settings.instanceLayout == .automatic
+    }
+
     var body: some View {
         @Bindable var model = model
         Group {
-            if isSelecting {
+            if usesGrid {
+                grid
+            } else if isSelecting {
                 List(selection: $multiSelection) { listContent }
+                    .listStyle(.plain)
                     .environment(\.editMode, .constant(.active))
             } else {
                 List(selection: $model.selectedInstanceID) { listContent }
+                    .listStyle(.plain)
             }
         }
-        .listStyle(.plain)
         .animation(.default, value: filtered.map(\.id))
         .overlay { overlay }
         .navigationTitle(master.displayName)
@@ -67,6 +79,15 @@ struct InstanceListView: View {
             await session.refreshInfo()
         }
         .toolbar { toolbarContent }
+        .inspector(isPresented: Binding(
+            get: { usesInspector && model.isInspectorPresented },
+            set: { model.isInspectorPresented = $0 })) {
+            inspector
+                .inspectorColumnWidth(min: 320, ideal: 380, max: 600)
+        }
+        .onChange(of: model.selectedInstanceID) { _, id in
+            if usesInspector, id != nil { model.isInspectorPresented = true }
+        }
         .sheet(item: $editorMode) { mode in
             InstanceEditorView(session: session, mode: mode) { created in
                 if let created { model.select(instance: created.id, on: session.id) }
@@ -94,6 +115,9 @@ struct InstanceListView: View {
         .onChange(of: isSelecting) { _, selecting in
             if !selecting { multiSelection.removeAll() }
         }
+        .onChange(of: usesGrid) { _, _ in
+            exitSelection()
+        }
     }
 
     // MARK: List
@@ -111,7 +135,7 @@ struct InstanceListView: View {
                 ForEach(group.instances) { instance in
                     InstanceRowView(instance: instance, isBusy: session.isBusy(instance.id), rate: session.rateTracker(for: instance.id).latest)
                         .tag(instance.id)
-                        .appEntityIdentifier(EntityIdentifier(for: InstanceEntity.self, identifier: InstanceEntity.ID(masterID: session.id, instanceID: instance.id)))
+                        .appEntityIdentifier(entityIdentifier(for: instance))
                         .contextMenu { contextMenu(for: instance) }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             if instance.status == .running {
@@ -152,19 +176,94 @@ struct InstanceListView: View {
         }
     }
 
+    // MARK: Grid
+
+    private var grid: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: DS.Spacing.m) {
+                summaryStrip
+                ForEach(groups) { group in
+                    if !group.title.isEmpty {
+                        Text("\(group.title) · \(group.instances.count)")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                            .padding(.top, DS.Spacing.s)
+                            .accessibilityAddTraits(.isHeader)
+                    }
+                    // Narrow enough for the column beside a sidebar and an inspector on a portrait iPad.
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 240, maximum: 480), spacing: DS.Spacing.m)], spacing: DS.Spacing.m) {
+                        ForEach(group.instances) { instance in
+                            card(instance)
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, DS.Spacing.l)
+            .padding(.vertical, DS.Spacing.s)
+        }
+        .background(Color.canvasBackground.ignoresSafeArea())
+    }
+
+    private func card(_ instance: Instance) -> some View {
+        let isChecked = multiSelection.contains(instance.id)
+        return Button {
+            if isSelecting {
+                if isChecked { multiSelection.remove(instance.id) } else { multiSelection.insert(instance.id) }
+            } else {
+                model.selectedInstanceID = instance.id
+                model.isInspectorPresented = true
+            }
+        } label: {
+            InstanceCard(
+                instance: instance,
+                isBusy: session.isBusy(instance.id),
+                samples: session.rateTracker(for: instance.id).samples,
+                isSelected: !isSelecting && model.selectedInstanceID == instance.id,
+                selectionMode: isSelecting,
+                isChecked: isChecked)
+        }
+        .buttonStyle(CardButtonStyle())
+        .appEntityIdentifier(entityIdentifier(for: instance))
+        .contextMenu { contextMenu(for: instance) }
+    }
+
+    // MARK: Pieces
+
+    /// The inspector beside the grid or list: the master overview with nothing selected, the
+    /// instance detail for one instance. On compact widths the inspector is never presented, and
+    /// its content stays empty so a hidden overview is not evaluated on every update.
+    @ViewBuilder
+    private var inspector: some View {
+        if !usesInspector {
+            EmptyView()
+        } else if let id = model.selectedInstanceID, session.instanceIDs.contains(id) {
+            InstanceDetailView(session: session, instanceID: id, showsInlineActions: true)
+                .id(id)
+        } else {
+            MasterOverviewView(session: session, master: master, showsInlineActions: true)
+        }
+    }
+
+    private func showOverview() {
+        if usesInspector {
+            model.selectedInstanceID = nil
+            model.isInspectorPresented = true
+        } else {
+            isShowingOverview = true
+        }
+    }
+
     private var summaryStrip: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Button {
-                    isShowingOverview = true
+                    showOverview()
                 } label: {
                     HStack(spacing: 4) {
                         ConnectionIndicator(state: session.connection)
-                        if sizeClass == .compact {
-                            Image(systemName: "info.circle")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                        Image(systemName: "info.circle")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .buttonStyle(.plain)
@@ -241,12 +340,17 @@ struct InstanceListView: View {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button("Create Instance", systemImage: "plus") { editorMode = .create(prefill: nil) }
                 viewMenu
+                if usesInspector {
+                    Button("Inspector", systemImage: "sidebar.trailing") { model.isInspectorPresented.toggle() }
+                        .help(model.isInspectorPresented ? "Hide Inspector" : "Show Inspector")
+                }
             }
         }
     }
 
     private var viewMenu: some View {
-        Menu("View Options", systemImage: "line.3.horizontal.decrease.circle") {
+        @Bindable var settings = settings
+        return Menu("View Options", systemImage: "line.3.horizontal.decrease") {
             Button("Select Instances", systemImage: "checkmark.circle") {
                 isSelecting = true
             }
@@ -285,13 +389,18 @@ struct InstanceListView: View {
                     }
                 }
             }
+            if sizeClass == .regular {
+                Picker("Layout", selection: $settings.instanceLayout) {
+                    ForEach(InstanceLayout.allCases) { layout in
+                        Label(layout.title, systemImage: layout.symbolName).tag(layout)
+                    }
+                }
+            }
             Divider()
             Button("Refresh", systemImage: "arrow.clockwise") {
                 Task { await session.refreshInstances() }
             }
-            if sizeClass == .compact {
-                Button("Master Info", systemImage: "info.circle") { isShowingOverview = true }
-            }
+            Button("Master Info", systemImage: "info.circle") { showOverview() }
         }
     }
 
@@ -306,13 +415,15 @@ struct InstanceListView: View {
                 }
             }
         } label: {
-            Label("Control", systemImage: "play.circle")
+            Label("Control", systemImage: "playpause")
         }
         .disabled(ids.isEmpty)
         Spacer()
         Text(ids.isEmpty ? "Select instances" : "\(ids.count) selected")
             .font(.footnote)
             .foregroundStyle(.secondary)
+            .contentTransition(.numericText())
+            .animation(.signal, value: ids.count)
         Spacer()
         Menu {
             Button("Enable Auto-restart", systemImage: "arrow.trianglehead.clockwise") {
@@ -333,7 +444,7 @@ struct InstanceListView: View {
                 commander.delete(ids, session: session, settings: settings) { exitSelection() }
             }
         } label: {
-            Label("More", systemImage: "ellipsis.circle")
+            Label("More", systemImage: "ellipsis")
         }
         .disabled(ids.isEmpty)
     }
@@ -341,6 +452,10 @@ struct InstanceListView: View {
     private func exitSelection() {
         isSelecting = false
         multiSelection.removeAll()
+    }
+
+    private func entityIdentifier(for instance: Instance) -> EntityIdentifier {
+        EntityIdentifier(for: InstanceEntity.self, identifier: InstanceEntity.ID(masterID: session.id, instanceID: instance.id))
     }
 
     // MARK: Context menu
@@ -374,6 +489,15 @@ struct InstanceListView: View {
                 model.selectedInstanceIDs.remove(instance.id)
             }
         }
+    }
+}
+
+/// Presses a card down a touch instead of dimming it.
+private struct CardButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .animation(.signal, value: configuration.isPressed)
     }
 }
 #endif

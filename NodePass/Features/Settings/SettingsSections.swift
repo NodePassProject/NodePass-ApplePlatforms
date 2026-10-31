@@ -21,6 +21,11 @@ struct AppearanceSettingsSection: View {
             }
             #if os(iOS)
             // The macOS table has its own column and row layout.
+            Picker("Instance Layout", selection: $settings.instanceLayout) {
+                ForEach(InstanceLayout.allCases) { layout in
+                    Label(layout.title, systemImage: layout.symbolName).tag(layout)
+                }
+            }
             Picker("Instance Rows", selection: $settings.instanceDensity) {
                 ForEach(InstanceDensity.allCases) { density in
                     Text(density.title).tag(density)

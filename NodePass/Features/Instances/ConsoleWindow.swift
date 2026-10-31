@@ -31,7 +31,7 @@ struct ConsoleWindow: View {
     @ViewBuilder
     private var content: some View {
         if let target, let session = sessions.session(for: target.masterID) {
-            if session.instance(target.instanceID) != nil || !session.hasLoadedInstances {
+            if session.instanceIDs.contains(target.instanceID) || !session.hasLoadedInstances {
                 InstanceLogView(session: session, instanceID: target.instanceID)
             } else {
                 ContentUnavailableView("Instance Removed", systemImage: "trash", description: Text("This instance no longer exists on \(session.displayName)."))

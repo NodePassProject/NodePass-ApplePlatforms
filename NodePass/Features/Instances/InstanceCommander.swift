@@ -193,12 +193,10 @@ struct BatchReportView: View {
         NavigationStack {
             List {
                 Section {
-                    HStack(spacing: 12) {
+                    MetricGrid {
                         MetricTile(title: "Succeeded", value: "\(report.successCount)", systemImage: "checkmark.circle.fill", tint: .green)
                         MetricTile(title: "Failed", value: "\(report.failures.count)", systemImage: "xmark.octagon.fill", tint: report.failures.isEmpty ? .secondary : .red)
                     }
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
                 }
                 if !report.failures.isEmpty {
                     Section("Failures") {

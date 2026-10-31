@@ -2,6 +2,9 @@
 //  InstanceRowView.swift
 //  NodePass
 //
+//  One instance as a list row. The status sits on the leading edge as the signal bar; a stopped
+//  instance recedes, an instance in error carries the warning glyph next to its name.
+//
 
 import SwiftUI
 
@@ -13,63 +16,59 @@ struct InstanceRowView: View {
     var rate: RateSample?
 
     var body: some View {
-        switch settings.instanceDensity {
-        case .compact: compact
-        case .regular: regular
+        Group {
+            switch settings.instanceDensity {
+            case .compact: compact
+            case .regular: regular
+            }
         }
+        .signalBar(instance.status.tint)
+        .animation(.signal, value: instance.status)
     }
 
     private var regular: some View {
-        HStack(alignment: .top, spacing: 10) {
-            StatusDot(status: instance.status)
-                .padding(.top, 6)
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 6) {
-                    Text(instance.displayName)
-                        .font(.body.weight(.medium))
-                        .lineLimit(1)
-                    RolePill(role: instance.role)
-                    Spacer(minLength: 4)
-                    if instance.restart {
-                        Image(systemName: "arrow.trianglehead.clockwise")
-                            .font(.caption2)
-                            .foregroundStyle(.tertiary)
-                            .accessibilityLabel("Auto-restart on")
-                    }
-                    if isBusy {
-                        ProgressView().controlSize(.mini)
-                    }
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(spacing: 6) {
+                name
+                RolePill(role: instance.role)
+                Spacer(minLength: 4)
+                if instance.restart {
+                    Image(systemName: "arrow.trianglehead.clockwise")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                        .accessibilityLabel("Auto-restart on")
                 }
-                Text(instance.url)
-                    .font(.caption.monospaced())
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                metrics
-                if !instance.meta.tags.isEmpty {
-                    FlowLayout(spacing: 4) {
-                        ForEach(instance.meta.sortedTags.prefix(6), id: \.key) { tag in
-                            TagChip(key: tag.key, value: tag.value)
-                        }
+                if isBusy {
+                    ProgressView().controlSize(.mini)
+                }
+            }
+            InstanceURLText(url: instance.url, masksCredential: true, font: .code(.caption))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .truncationMode(.middle)
+            metrics
+            if !instance.meta.tags.isEmpty {
+                FlowLayout(spacing: 4) {
+                    ForEach(instance.meta.sortedTags.prefix(6), id: \.key) { tag in
+                        TagChip(key: tag.key, value: tag.value)
                     }
                 }
             }
         }
-        .padding(.vertical, 3)
+        .padding(.vertical, 4)
     }
 
     private var compact: some View {
         HStack(spacing: 8) {
-            StatusDot(status: instance.status, size: 8)
-            Text(instance.displayName)
+            name
                 .font(.callout.weight(.medium))
-                .lineLimit(1)
                 .frame(minWidth: 60, alignment: .leading)
             Text(instance.role.title.prefix(1))
                 .font(.caption2.weight(.bold))
                 .foregroundStyle(instance.role.tint)
-            Text(instance.url)
-                .font(.caption.monospaced())
+                .accessibilityLabel(instance.role.title)
+            Text(instance.endpointSummary)
+                .font(.code(.caption))
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -82,6 +81,24 @@ struct InstanceRowView: View {
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
+        }
+        .padding(.vertical, 2)
+    }
+
+    /// The name, muted for a stopped instance, with the warning glyph for one in error so the
+    /// state reads from shape as well as from the signal bar's color.
+    private var name: some View {
+        HStack(spacing: 4) {
+            if instance.status == .error {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.caption)
+                    .foregroundStyle(InstanceStatus.error.tint)
+                    .accessibilityLabel("Error")
+            }
+            Text(instance.displayName)
+                .font(.body.weight(.medium))
+                .foregroundStyle(instance.status == .stopped ? .secondary : .primary)
+                .lineLimit(1)
         }
     }
 
@@ -104,11 +121,12 @@ struct InstanceRowView: View {
             if let rate, rate.received + rate.transmitted > 0 {
                 Label(Format.bitRate(bytesPerSecond: rate.received + rate.transmitted), systemImage: "waveform.path.ecg")
                     .foregroundStyle(.blue)
+                    .contentTransition(.numericText())
             } else {
                 Text("↓\(Format.bytes(instance.totalReceived, decimals: 0)) ↑\(Format.bytes(instance.totalTransmitted, decimals: 0))")
             }
             if instance.ping > 0 {
-                Text("\(instance.ping)ms")
+                Text("\(instance.ping) ms")
             }
             if showsPool, instance.pool > 0 {
                 Label("\(instance.pool)", systemImage: "square.stack.3d.up")

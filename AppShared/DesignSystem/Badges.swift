@@ -2,7 +2,7 @@
 //  Badges.swift
 //  NodePass
 //
-//  Small status and role indicators used across lists and headers.
+//  Small status and role indicators used across lists, cards and headers.
 //
 
 import SwiftUI
@@ -29,16 +29,59 @@ extension ConnectionState {
     }
 }
 
-/// Filled status dot with optional pulsing when running.
+/// Filled status dot. With `ripples`, a running instance sends out a soft ring every couple of
+/// seconds; that is reserved for the one subject on screen, lists stay still.
 struct StatusDot: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var status: InstanceStatus
     var size: CGFloat = 9
+    var ripples = false
+
+    private var isAnimating: Bool { ripples && status == .running && !reduceMotion }
 
     var body: some View {
-        Circle()
-            .fill(status.tint)
-            .frame(width: size, height: size)
+        ZStack {
+            if ripples {
+                TimelineView(.animation(minimumInterval: 1 / 30, paused: !isAnimating)) { context in
+                    let period = 2.0
+                    let progress = isAnimating ? context.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: period) / period : 0
+                    Circle()
+                        .stroke(status.tint.opacity(isAnimating ? (1 - progress) * 0.7 : 0), lineWidth: 1.5)
+                        .scaleEffect(1 + progress * 1.8)
+                }
+            }
+            Circle()
+                .fill(status.tint)
+        }
+        .frame(width: size, height: size)
+        .accessibilityLabel(status.title)
+    }
+}
+
+/// Status of an instance as a symbol whose shape alone tells the state apart.
+struct StatusGlyph: View {
+    var status: InstanceStatus
+
+    var body: some View {
+        Image(systemName: status.symbolName)
+            .foregroundStyle(status.tint)
             .accessibilityLabel(status.title)
+    }
+}
+
+extension View {
+    /// The signal bar: a thin capsule along the leading edge in the status or role tint. Rows and
+    /// cards carry their state here, where the eye lands first.
+    func signalBar(_ tint: Color, width: CGFloat = 3, spacing: CGFloat = 10) -> some View {
+        padding(.leading, width + spacing)
+            .overlay(alignment: .leading) {
+                Capsule()
+                    .fill(tint)
+                    .frame(width: width)
+                    .padding(.vertical, 1)
+                    .accessibilityHidden(true)
+            }
     }
 }
 
@@ -78,6 +121,7 @@ struct Pill: View {
         .padding(.vertical, 3)
         .foregroundStyle(foreground)
         .background(background, in: Capsule())
+        .animation(.signal, value: prominent)
     }
 }
 
@@ -99,6 +143,8 @@ struct RolePill: View {
 }
 
 struct ConnectionIndicator: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var state: ConnectionState
     var showsTitle = true
 
@@ -106,7 +152,8 @@ struct ConnectionIndicator: View {
         HStack(spacing: 4) {
             Image(systemName: state.symbolName)
                 .foregroundStyle(state.tint)
-                .symbolEffect(.pulse, options: .repeating, isActive: state == .connecting)
+                .symbolEffect(.pulse, options: .repeating, isActive: state == .connecting && !reduceMotion)
+                .symbolEffect(.breathe, options: .repeating, isActive: state == .live && !reduceMotion)
             if showsTitle {
                 Text(state.title)
                     .foregroundStyle(.secondary)

@@ -7,19 +7,7 @@
 
 import SwiftUI
 
-extension ShapeStyle where Self == Color {
-    /// Background of small cards that sit on grouped content.
-    static var tileBackground: Color {
-        #if os(macOS)
-        Color(nsColor: .quaternarySystemFill)
-        #elseif os(watchOS)
-        Color.white.opacity(0.12)
-        #else
-        Color(uiColor: .secondarySystemGroupedBackground)
-        #endif
-    }
-}
-
+/// A labeled number. The value is set in the rounded numeral face and animates between values.
 struct MetricTile: View {
     var title: String
     var value: String
@@ -38,11 +26,13 @@ struct MetricTile: View {
             }
             .font(.caption)
             .foregroundStyle(.secondary)
+            .lineLimit(1)
             Text(value)
-                .font(.title3.weight(.semibold))
-                .monospacedDigit()
+                .font(.numeral(.title3))
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
+                .contentTransition(.numericText())
+                .animation(.liveValue, value: value)
             if let detail {
                 Text(detail)
                     .font(.caption2)
@@ -51,8 +41,21 @@ struct MetricTile: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
-        .background(.tileBackground, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .padding(DS.Spacing.m)
+        .background(.tileBackground, in: RoundedRectangle(cornerRadius: DS.Radius.tile, style: .continuous))
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// Lays metric tiles into as many equal columns as the width allows.
+struct MetricGrid<Content: View>: View {
+    var minimumTileWidth: CGFloat = 92
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: minimumTileWidth, maximum: 260), spacing: DS.Spacing.s)], spacing: DS.Spacing.s) {
+            content
+        }
     }
 }
 
@@ -122,5 +125,7 @@ struct RateLegend: View {
         }
         .font(.caption.monospacedDigit())
         .labelStyle(.titleAndIcon)
+        .contentTransition(.numericText())
+        .animation(.liveValue, value: received + transmitted)
     }
 }

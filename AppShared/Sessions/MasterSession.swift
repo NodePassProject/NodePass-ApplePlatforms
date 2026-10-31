@@ -58,6 +58,45 @@ struct InfoSample: Hashable, Identifiable {
     var id: Date { date }
 }
 
+/// How many instances a master has in each state. Kept as one stored value so views that show
+/// only the counts are not invalidated by every traffic update of the instance table.
+nonisolated struct InstanceCounts: Hashable, Sendable {
+    var total = 0
+    var running = 0
+    var stopped = 0
+    var error = 0
+    var byRole: [InstanceRole: Int] = [:]
+
+    init() {}
+
+    init(_ instances: some Sequence<Instance>) {
+        for instance in instances {
+            total += 1
+            switch instance.status {
+            case .running: running += 1
+            case .stopped: stopped += 1
+            case .error: error += 1
+            case .other: break
+            }
+            byRole[instance.role, default: 0] += 1
+        }
+    }
+}
+
+/// Cumulative traffic across the instances of a master.
+nonisolated struct TrafficTotals: Hashable, Sendable {
+    var received: UInt64 = 0
+    var transmitted: UInt64 = 0
+}
+
+/// A throughput in bytes per second.
+nonisolated struct Throughput: Hashable, Sendable {
+    var received: Double = 0
+    var transmitted: Double = 0
+
+    var total: Double { received + transmitted }
+}
+
 @Observable
 @MainActor
 final class MasterSession: Identifiable {
@@ -67,6 +106,13 @@ final class MasterSession: Identifiable {
     private(set) var flavorOverride: MasterFlavor?
 
     private(set) var instances: [String: Instance] = [:]
+    /// Identifiers of the visible instances; changes only when one appears or disappears.
+    private(set) var instanceIDs: Set<String> = []
+    private(set) var counts = InstanceCounts()
+    private(set) var totals = TrafficTotals()
+    /// Identity of the instance set (ids, aliases, types, URLs), for indexes that must follow
+    /// renames but not counters.
+    private(set) var catalogFingerprint = ""
     private(set) var info: MasterInfo?
     private(set) var infoError: APIError?
     private(set) var connection: ConnectionState = .idle
@@ -126,28 +172,28 @@ final class MasterSession: Identifiable {
         return apiKeyHolder?.config ?? ""
     }
 
-    var runningCount: Int { visibleInstances.filter { $0.status == .running }.count }
-    var stoppedCount: Int { visibleInstances.filter { $0.status == .stopped }.count }
-    var errorCount: Int { visibleInstances.filter { $0.status == .error }.count }
+    var runningCount: Int { counts.running }
+    var stoppedCount: Int { counts.stopped }
+    var errorCount: Int { counts.error }
 
-    var totalReceived: UInt64 { visibleInstances.reduce(0) { $0 &+ $1.totalReceived } }
-    var totalTransmitted: UInt64 { visibleInstances.reduce(0) { $0 &+ $1.totalTransmitted } }
+    var totalReceived: UInt64 { totals.received }
+    var totalTransmitted: UInt64 { totals.transmitted }
 
     /// Aggregate throughput over the latest samples of every instance.
-    var aggregateRate: (received: Double, transmitted: Double) {
-        var rx = 0.0, tx = 0.0
+    var aggregateRate: Throughput {
+        var rate = Throughput()
         for tracker in rates.values {
             if let latest = tracker.latest, Date.now.timeIntervalSince(latest.date) < 15 {
-                rx += latest.received
-                tx += latest.transmitted
+                rate.received += latest.received
+                rate.transmitted += latest.transmitted
             }
         }
-        return (rx, tx)
+        return rate
     }
 
-    var networkRate: (received: Double, transmitted: Double)? {
+    var networkRate: Throughput? {
         guard let sample = infoHistory.last, Date.now.timeIntervalSince(sample.date) < infoRefreshInterval * 3 else { return nil }
-        return (sample.networkReceiveRate, sample.networkTransmitRate)
+        return Throughput(received: sample.networkReceiveRate, transmitted: sample.networkTransmitRate)
     }
 
     func instance(_ id: String) -> Instance? { instances[id] }
@@ -166,6 +212,8 @@ final class MasterSession: Identifiable {
             stop()
             client = snapshot.credentials.map { MasterClient(credentials: $0) }
             instances.removeAll()
+            rates.removeAll()
+            tableDidChange(catalogChanged: true)
             info = nil
             infoHistory.removeAll()
             hasLoadedInstances = false
@@ -221,7 +269,7 @@ final class MasterSession: Identifiable {
     private func runEventLoop() async {
         guard let client else { return }
         while !Task.isCancelled {
-            connection = connection == .live ? .live : .connecting
+            if connection != .live, connection != .connecting { connection = .connecting }
             // Reconcile through REST on every (re)connect: the stream's `initial` burst has no
             // terminator, so this is what removes instances that vanished while we were away.
             Task { [weak self] in await self?.refreshInstances() }
@@ -235,12 +283,16 @@ final class MasterSession: Identifiable {
                         stopPolling()
                         lastError = nil
                     }
-                    lastEventDate = event.time
+                    // Screens show this as "just now" or whole seconds; one write per second
+                    // is all they can tell apart, and every write re-evaluates them.
+                    if lastEventDate.map({ event.time.timeIntervalSince($0) >= 1 }) ?? true {
+                        lastEventDate = event.time
+                    }
                     switch event.kind {
                     case .initial, .create, .update:
                         if let instance = event.instance {
                             upsert(instance, at: event.time)
-                            hasLoadedInstances = true
+                            if !hasLoadedInstances { hasLoadedInstances = true }
                         }
                     case .delete:
                         if let instance = event.instance { remove(instance.id) }
@@ -311,13 +363,20 @@ final class MasterSession: Identifiable {
             var table: [String: Instance] = [:]
             for instance in fetched {
                 table[instance.id] = instance
+            }
+            // Every assignment notifies observers, so the table and the flags that describe it
+            // are only touched when they actually move.
+            if table != instances {
+                instances = table
+                tableDidChange(catalogChanged: true)
+            }
+            for instance in fetched {
                 feedRate(for: instance, at: now)
             }
-            instances = table
-            hasLoadedInstances = true
+            if !hasLoadedInstances { hasLoadedInstances = true }
             lastInstanceRefresh = now
-            lastError = nil
-            if connection != .live { connection = .polling }
+            if lastError != nil { lastError = nil }
+            if connection != .live, connection != .polling { connection = .polling }
         } catch let error as APIError {
             lastError = error
             if !hasLoadedInstances || !connection.isReachable || error.isAuthenticationFailure {
@@ -453,20 +512,50 @@ final class MasterSession: Identifiable {
     // MARK: Table maintenance
 
     private func upsert(_ instance: Instance, at date: Date) {
-        instances[instance.id] = instance
+        let previous = instances[instance.id]
+        if previous != instance {
+            instances[instance.id] = instance
+            let catalogChanged = previous == nil
+                || previous?.alias != instance.alias || previous?.role != instance.role || previous?.url != instance.url
+            tableDidChange(catalogChanged: catalogChanged)
+        }
         feedRate(for: instance, at: date)
     }
 
     private func remove(_ id: String) {
-        instances.removeValue(forKey: id)
+        guard instances.removeValue(forKey: id) != nil else { return }
         rates.removeValue(forKey: id)
+        tableDidChange(catalogChanged: true)
     }
 
     private func feedRate(for instance: Instance, at date: Date) {
         guard !instance.isAPIKeyHolder else { return }
         var tracker = rates[instance.id] ?? TrafficRateTracker()
-        tracker.record(received: instance.totalReceived, transmitted: instance.totalTransmitted, at: date)
-        rates[instance.id] = tracker
+        // Readings that produce no sample leave `rates` alone, so sparklines and rate labels are
+        // not redrawn for nothing.
+        if tracker.record(received: instance.totalReceived, transmitted: instance.totalTransmitted, at: date) {
+            rates[instance.id] = tracker
+        }
+    }
+
+    /// Refreshes the stored summaries after the table changed, assigning each only when its
+    /// value moved so that views reading just a summary stay untouched by counter updates.
+    private func tableDidChange(catalogChanged: Bool) {
+        let visible = visibleInstances
+        let newCounts = InstanceCounts(visible)
+        if newCounts != counts { counts = newCounts }
+        var newTotals = TrafficTotals()
+        for instance in visible {
+            newTotals.received &+= instance.totalReceived
+            newTotals.transmitted &+= instance.totalTransmitted
+        }
+        if newTotals != totals { totals = newTotals }
+        if catalogChanged {
+            let ids = Set(visible.map(\.id))
+            if ids != instanceIDs { instanceIDs = ids }
+            let fingerprint = visible.map { "\($0.id)|\($0.alias)|\($0.role.rawValue)|\($0.url)" }.sorted().joined(separator: "\n")
+            if fingerprint != catalogFingerprint { catalogFingerprint = fingerprint }
+        }
     }
 
     private func appendLog(_ text: String, for id: String, at date: Date) {

@@ -34,11 +34,13 @@ private struct SystemEntitySyncModifier: ViewModifier {
     }
 
     /// Changes when a master or instance appears, disappears or is renamed. Status and counters
-    /// stay out of it: Spotlight does not show them, and they change constantly.
+    /// stay out of it: Spotlight does not show them, and they change constantly. The sessions'
+    /// catalog fingerprints are read instead of their instance tables, so this modifier, and the
+    /// window root it is attached to, are not re-evaluated by every counter update.
     private var fingerprint: [String] {
         var parts = masters.map { "\($0.id)|\($0.name)|\($0.url)|\($0.isEnabled)|\($0.flavorRawValue ?? "")" }
         for session in sessions.sessions.values where session.hasLoadedInstances {
-            parts += session.visibleInstances.map { "\(session.id)/\($0.id)|\($0.alias)|\($0.role.rawValue)|\($0.url)" }
+            parts.append("\(session.id)\n\(session.catalogFingerprint)")
         }
         return parts.sorted()
     }
