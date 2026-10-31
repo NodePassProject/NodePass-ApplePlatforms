@@ -7,6 +7,7 @@
 
 import WidgetKit
 import SwiftUI
+import AppIntents
 
 struct MasterOverviewEntry: TimelineEntry {
     enum Content {
@@ -38,7 +39,7 @@ struct MasterOverviewProvider: AppIntentTimelineProvider {
         guard let entity else {
             return MasterOverviewEntry(date: .now, content: .message("Choose a master in the widget settings."))
         }
-        guard let snapshot = try? MasterStore.snapshots(ids: [entity.id]).first else {
+        guard let snapshot = try? MasterStore.widget.snapshot(id: entity.id) else {
             return MasterOverviewEntry(date: .now, content: .message("This master was removed."))
         }
         return MasterOverviewEntry(date: .now, content: .report(await MasterReport.load(snapshot)))

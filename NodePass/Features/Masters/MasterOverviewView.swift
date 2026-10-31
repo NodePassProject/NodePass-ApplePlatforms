@@ -5,6 +5,7 @@
 //  Health, identity and administration of a master.
 //
 
+import AppIntents
 import SwiftUI
 
 struct MasterOverviewView: View {
@@ -44,6 +45,7 @@ struct MasterOverviewView: View {
         .formStyle(.grouped)
         .navigationTitle(master.displayName)
         .inlineNavigationTitle()
+        .appEntityIdentifier(EntityIdentifier(for: MasterEntity.self, identifier: master.id))
         #if os(iOS)
         .toolbar {
             if isSheet {

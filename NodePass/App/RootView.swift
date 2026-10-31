@@ -10,6 +10,7 @@
 //  the master overview and the menu bar commands all trigger the same flows.
 //
 
+import AppIntents
 import SwiftUI
 import SwiftData
 
@@ -69,6 +70,19 @@ struct RootView: View {
             .onOpenURL { url in
                 model.handle(deepLink: url)
             }
+            #if os(iOS)
+            // Foreground intents land in the scene the system targets. macOS has no such hook;
+            // there the intents open the matching deep link instead (`IntentNavigator`).
+            .onAppIntentExecution(OpenMasterIntent.self) { intent in
+                model.select(master: intent.target.id)
+            }
+            .onAppIntentExecution(OpenInstanceIntent.self) { intent in
+                model.select(instance: intent.target.id.instanceID, on: intent.target.id.masterID)
+            }
+            .onAppIntentExecution(OpenToolIntent.self) { intent in
+                model.sidebarSelection = .tool(intent.tool)
+            }
+            #endif
             #if os(macOS)
             // Route deep links and widget taps to an open window instead of opening a new one.
             .handlesExternalEvents(preferring: ["*"], allowing: ["*"])
@@ -82,6 +96,7 @@ struct RootView: View {
                 windowSelection = selection
             }
             .keepsSessionsInSync()
+            .keepsSystemIndexInSync()
             .environment(model)
     }
 

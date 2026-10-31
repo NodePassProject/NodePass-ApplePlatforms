@@ -26,6 +26,14 @@ Both backends speak the same REST + SSE contract; the app treats them as two *fl
   the health of several masters at once. Every size from small to extra large, on the Home Screen and the Mac desktop;
   rows open the master or instance in the app. Layouts fit what the widget has room for, and status reads from symbol
   shape as well as color, so it stays clear on a tinted Home Screen or an inactive Mac desktop.
+- **Shortcuts, Siri and Spotlight** — masters and instances are App Intents entities, so Shortcuts can find them
+  (*Find Instances* filters by status, type, master, endpoint or tag) and pass them between actions. Actions: Get Master
+  Status, Get Instance Status, Start / Stop / Restart Instance, Reset Instance Traffic, Set Auto-restart, Create Instance,
+  Delete Instance (confirmed), TCP Ping, Open Master / Instance / Tool. App Shortcuts work out of the box: "Restart
+  *edge-tunnel* in NodePass", "Is *edge-tunnel* running in NodePass", "Check *Home Lab* in NodePass", "Open TCP Ping in
+  NodePass". Status answers come with an interactive card (start, stop, restart, open), masters and instances appear in
+  Spotlight, and the instance on screen is known to Siri and Apple Intelligence. Everything runs in the background
+  without opening the app; API keys never leave the app.
 
 ### On the Mac
 
@@ -47,8 +55,9 @@ NodePass is a native macOS app, not a port of the iPad layout.
 ## Project layout
 
 ```
-Shared/          Core compiled into every target: models, MasterClient (REST + SSE), URL grammar, parameter catalog
-NodePass/        The app: sessions, features (Masters, Instances, Tools, Settings), design system
+Shared/          Core compiled into every target: models, MasterClient (REST + SSE), URL grammar, parameter catalog,
+                 the Master entity shared with the widget
+NodePass/        The app: sessions, features (Masters, Instances, Tools, Settings), App Intents, design system
 Widget/          WidgetKit extension: Master Overview and Masters widgets
 NodePassTests/   Swift Testing suite for the grammar, catalog, wire formats and filters
 Scripts/         mock_master.py — a local stand-in master for development

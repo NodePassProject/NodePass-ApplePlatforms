@@ -5,6 +5,7 @@
 //  Everything about one instance: controls, live metrics, configuration, metadata and logs.
 //
 
+import AppIntents
 import SwiftUI
 
 struct InstanceDetailView: View {
@@ -45,6 +46,12 @@ struct InstanceDetailView: View {
         .formStyle(.grouped)
         .navigationTitle(instance.displayName)
         .inlineNavigationTitle()
+        // Tells Siri and Apple Intelligence which instance is on screen.
+        .appEntityIdentifier(entityIdentifier(for: instance))
+        .userActivity(InstanceEntity.viewingActivityType) { activity in
+            activity.title = instance.displayName
+            activity.appEntityIdentifier = entityIdentifier(for: instance)
+        }
         #if os(iOS)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -374,5 +381,9 @@ struct InstanceDetailView: View {
         commander.delete([instance.id], session: session, settings: settings) {
             model.selectedInstanceIDs.remove(instance.id)
         }
+    }
+
+    private func entityIdentifier(for instance: Instance) -> EntityIdentifier {
+        EntityIdentifier(for: InstanceEntity.self, identifier: InstanceEntity.ID(masterID: session.id, instanceID: instance.id))
     }
 }

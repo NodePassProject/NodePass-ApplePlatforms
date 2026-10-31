@@ -3,6 +3,7 @@
 //  NodePass
 //
 
+import AppIntents
 import SwiftUI
 import SwiftData
 import WidgetKit
@@ -13,7 +14,7 @@ import RevenueCat
 struct NodePassApp: App {
     @Environment(\.scenePhase) private var scenePhase
     @State private var settings = AppSettings()
-    @State private var sessions = SessionStore()
+    @State private var sessions: SessionStore
     private let container: ModelContainer
 
     init() {
@@ -23,6 +24,19 @@ struct NodePassApp: App {
         } catch {
             fatalError("Could not create the model container: \(error)")
         }
+
+        // App Intents resolve these from here, whether the app is on screen or the system launched
+        // it in the background for Siri, Shortcuts or Spotlight.
+        let sessions = SessionStore()
+        _sessions = State(initialValue: sessions)
+        let masters = MasterStore(container: container)
+        let intentModel = IntentModel(masters: masters, sessions: sessions)
+        AppDependencyManager.shared.add(dependency: masters)
+        AppDependencyManager.shared.add(dependency: intentModel)
+        #if os(macOS)
+        let navigator = IntentNavigator()
+        AppDependencyManager.shared.add(dependency: navigator)
+        #endif
 
         let analyticsEnabled = NPCore.userDefaults.object(forKey: NPCore.DefaultsKey.analyticsEnabled) as? Bool ?? true
         if analyticsEnabled {

@@ -8,6 +8,7 @@
 
 import WidgetKit
 import SwiftUI
+import AppIntents
 
 struct FleetEntry: TimelineEntry {
     let date: Date
@@ -36,9 +37,9 @@ struct FleetProvider: AppIntentTimelineProvider {
         let chosen = configuration.masters ?? []
         let snapshots: [MasterSnapshot]
         if chosen.isEmpty {
-            snapshots = (try? MasterStore.snapshots().filter(\.isEnabled)) ?? []
+            snapshots = (try? MasterStore.widget.snapshots().filter(\.isEnabled)) ?? []
         } else {
-            snapshots = (try? MasterStore.snapshots(ids: chosen.map(\.id))) ?? []
+            snapshots = (try? MasterStore.widget.snapshots(ids: chosen.map(\.id))) ?? []
         }
         let reports = await MasterReport.load(Array(snapshots.prefix(Self.maximumMasters)))
         return FleetEntry(date: .now, reports: reports)

@@ -7,6 +7,7 @@
 //
 
 #if os(macOS)
+import AppIntents
 import SwiftUI
 
 struct InstanceTable: View {
@@ -37,6 +38,10 @@ struct InstanceTable: View {
             }
         }
         .alternatingRowBackgrounds()
+        // Tells Siri and Apple Intelligence which instances are selected.
+        .appEntityIdentifier(forSelectionType: Instance.ID.self) { [masterID = session.id] id in
+            EntityIdentifier(for: InstanceEntity.self, identifier: InstanceEntity.ID(masterID: masterID, instanceID: id))
+        }
         .contextMenu(forSelectionType: Instance.ID.self) { ids in
             if ids.isEmpty {
                 Button("New Instance…", systemImage: "plus") { workspace.createInstance() }

@@ -9,7 +9,7 @@
 import Foundation
 import Observation
 
-enum Tool: String, CaseIterable, Identifiable, Hashable, Codable {
+nonisolated enum Tool: String, CaseIterable, Identifiable, Hashable, Codable, Sendable {
     case tcping
     case urlInspector
     case apiConsole
@@ -102,13 +102,19 @@ final class NavigationModel {
             pendingImport = master
             return
         }
-        guard url.host()?.lowercased() == "server" || url.host()?.lowercased() == "master",
-              let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems,
+        guard let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems,
               let id = items.first(where: { $0.name == "id" })?.value else { return }
-        if let instanceID = items.first(where: { $0.name == "instance" })?.value {
-            select(instance: instanceID, on: id)
-        } else {
-            select(master: id)
+        switch url.host()?.lowercased() {
+        case "server", "master":
+            if let instanceID = items.first(where: { $0.name == "instance" })?.value {
+                select(instance: instanceID, on: id)
+            } else {
+                select(master: id)
+            }
+        case "tool":
+            if let tool = Tool(rawValue: id) { sidebarSelection = .tool(tool) }
+        default:
+            break
         }
     }
 }

@@ -8,6 +8,7 @@
 //
 
 #if os(macOS)
+import AppIntents
 import SwiftUI
 import SwiftData
 
@@ -60,6 +61,7 @@ struct MasterWorkspaceView: View {
             .safeAreaBar(edge: .bottom) { HostStatusBar(session: session) }
             .navigationTitle(master.displayName)
             .navigationSubtitle(subtitle)
+            .appEntityIdentifier(EntityIdentifier(for: MasterEntity.self, identifier: master.id))
             .searchable(text: $workspace.filter.searchText, placement: .toolbar, prompt: "Search, tag:value or #tag")
             .toolbar(id: "master-workspace") { toolbar }
             .inspector(isPresented: $navigation.isInspectorPresented) {

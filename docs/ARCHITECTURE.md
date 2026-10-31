@@ -17,10 +17,11 @@ controllers. Both expose the same REST + SSE contract; the app treats them as tw
 ```
 Shared/                 Pure core, compiled into App, Widget and Tests. No UI, no 3rd-party imports.
   Core/                 Constants, UserDefaults suite, formatters
-  Persistence/          SwiftData container + `Server` model (+ snapshot DTO for extensions)
+  Persistence/          SwiftData container + `Server` model (+ snapshot DTO for extensions), MasterStore (reads for intents)
   Models/               Codable wire types: Instance, MasterInfo, InstanceEvent, TCPingResult…
   API/                  MasterClient (actor: REST calls + the SSE event stream), MasterEndpoint, APIError, SSE parser, TLS trust policy
   Grammar/              InstanceURL parser/serializer, Endpoint (host:port, IPv6), ParameterCatalog + validation
+  AppIntents/           MasterEntity + MasterQuery (the app's and the widget's one definition of a master)
 
 NodePass/               iOS / iPadOS / native macOS app
   App/                  Scenes, per-window NavigationModel, root NavigationSplitView, deep links, shared environment
@@ -30,6 +31,7 @@ NodePass/               iOS / iPadOS / native macOS app
     Workspace/          macOS: instance table, filter bar, host status bar, inspector, InstanceWorkspace
     Commands/           macOS: menu bar commands and the focused values they read
     MenuBar/            macOS: status item with fleet health
+  AppIntents/           Intents, entities, snippets and App Shortcuts (see "App Intents")
   DesignSystem/         Small reusable views (badges, metric tiles, sparkline, key-value rows, mono text)
   Components/           QR rendering, QR scanning (iOS camera) and reading (images, both platforms), text documents
 
@@ -99,6 +101,32 @@ shape as well as color (`StatusGlyph`, `MasterHealthGlyph`), and colors go throu
 `WidgetRenderingMode.tint`, so widgets stay legible in the accented and vibrant rendering modes.
 
 Rows link back with `DeepLink.master(_:instance:)`; the app selects the master and, when given, the instance.
+
+## App Intents
+
+The App Intents layer mirrors Apple's "Adopting App Intents to support system experiences" sample, with the
+synchronized folders standing in for its shared package: `Shared/AppIntents` holds what the widget needs too,
+`NodePass/AppIntents` everything else.
+
+| Piece | Role |
+|---|---|
+| `MasterEntity`, `MasterQuery` | A saved master. The identifier is the `Server` id, which CloudKit syncs, so shortcuts resolve on every device. Both the app and the widget register a `MasterStore` with `AppDependencyManager` at launch; the widget's master picker and the app's intents run the same query. |
+| `InstanceEntity`, `InstanceQuery` | A managed instance. The identifier is `<master id>/<instance id>`; the system stores only that and asks the query for the rest, so status and counters are always current. Properties are `@ComputedProperty` over the wire `Instance`. |
+| `IntentModel` | What intents act on. Masters come from `MasterStore`; instances come from the live `MasterSession` when the app is connected (no network, and the UI reflects changes at once) and straight from `MasterClient` otherwise, since Siri and Shortcuts run intents in the background. Recent answers are kept for a few seconds so a snippet rendered after an intent does not ask the master twice. |
+| Intents | `Open{Master,Instance,Tool}` (foreground), `Get{Master,Instance}Status`, `Start/Stop/Restart/ResetInstanceTraffic` (one verb each, so Siri phrases can name the instance), `SetAutoRestart`, `CreateInstance` (parses and validates the URL like the editor), `DeleteInstance` (asks for confirmation), `TCPing`. Results are entities or transient entities (`MasterStatus`, `TCPingResultEntity`), so later actions in a shortcut can read their properties. |
+| Snippets | `InstanceSnippetIntent` and `MasterStatusSnippetIntent` render the cards Siri shows. Their buttons are the control intents; the system performs the snippet again afterwards. |
+| `NodePassShortcuts` | The App Shortcuts and their phrases. `SystemEntitySync` calls `updateAppShortcutParameters()` whenever masters or instances change, so Siri learns their names. |
+| Spotlight | `MasterEntity` and `InstanceEntity` are `IndexedEntity`; `SystemEntitySync` donates masters and the instances of connected masters whenever the set or the names change, and removes what disappeared. Choosing a result runs the matching `Open…Intent`. |
+| On-screen context | Instance rows, the macOS table selection, the instance detail and the master views carry `appEntityIdentifier`, and the detail advertises an `NSUserActivity` with the entity, so Siri and Apple Intelligence know what is on screen. Entities are `Transferable` as plain text without credentials. |
+
+Foreground navigation differs per platform, as in the sample: on iOS the targeted scene handles the intent through
+`onAppIntentExecution` in `RootView`; macOS has no such hook, so `IntentNavigator` opens the matching `np://` link,
+which an open window handles (`handlesExternalEvents`) and which otherwise creates one.
+
+Concurrency: with the module's default `MainActor` isolation, entities are `nonisolated` value types with computed
+properties, while intents and queries stay main-actor types whose conformances are declared `nonisolated` and whose
+`perform()` / query methods are `@MainActor`. Static metadata and `init()` are `nonisolated` so the system can read
+and construct them off the main actor.
 
 ## Instance editor
 

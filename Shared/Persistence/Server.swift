@@ -84,7 +84,8 @@ final class Server {
 
     /// Sendable snapshot for use outside the main actor (widgets, intents).
     var snapshot: MasterSnapshot {
-        MasterSnapshot(id: id, name: displayName, url: url, key: key, isEnabled: isEnabled, timestamp: timestamp, trustsSelfSignedCertificates: trustsSelfSignedCertificates)
+        MasterSnapshot(id: id, name: displayName, url: url, key: key, isEnabled: isEnabled, timestamp: timestamp,
+                       trustsSelfSignedCertificates: trustsSelfSignedCertificates, flavor: resolvedFlavor)
     }
 
     /// Deep link that lets another device import this master.
@@ -112,10 +113,17 @@ nonisolated struct MasterSnapshot: Hashable, Sendable, Identifiable {
     let isEnabled: Bool
     let timestamp: Date
     let trustsSelfSignedCertificates: Bool
+    /// Flavor from the explicit setting or the API path; `nil` until instances reveal it.
+    var flavor: MasterFlavor? = nil
 
     var credentials: MasterCredentials? {
         guard let baseURL = MasterCredentials.normalizeBaseURL(url) else { return nil }
         return MasterCredentials(baseURL: baseURL, apiKey: key, trustsSelfSignedCertificates: trustsSelfSignedCertificates)
+    }
+
+    /// Host component of the API URL, if parseable.
+    var host: String? {
+        URLComponents(string: url)?.host
     }
 }
 

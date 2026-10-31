@@ -33,7 +33,7 @@ nonisolated struct ValidationIssue: Hashable, Sendable, Identifiable {
     var id: String { "\(severity.rawValue)-\(field)-\(message)" }
 }
 
-extension InstanceURL {
+nonisolated extension InstanceURL {
     /// All issues found, most severe first.
     func validate() -> [ValidationIssue] {
         var issues: [ValidationIssue] = []

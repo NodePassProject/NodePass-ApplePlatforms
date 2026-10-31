@@ -7,6 +7,7 @@
 //
 
 #if os(iOS)
+import AppIntents
 import SwiftUI
 
 struct InstanceListView: View {
@@ -110,6 +111,7 @@ struct InstanceListView: View {
                 ForEach(group.instances) { instance in
                     InstanceRowView(instance: instance, isBusy: session.isBusy(instance.id), rate: session.rateTracker(for: instance.id).latest)
                         .tag(instance.id)
+                        .appEntityIdentifier(EntityIdentifier(for: InstanceEntity.self, identifier: InstanceEntity.ID(masterID: session.id, instanceID: instance.id)))
                         .contextMenu { contextMenu(for: instance) }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             if instance.status == .running {
