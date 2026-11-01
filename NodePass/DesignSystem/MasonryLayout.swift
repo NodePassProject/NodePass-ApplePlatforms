@@ -15,7 +15,9 @@ struct MasonryLayout: Layout {
     var spacing: CGFloat = 12
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let width = proposal.width ?? minColumnWidth
+        // No width, or an unbounded one (an inspector measuring its content), asks for the ideal:
+        // one column. Answering with more than that makes the hosting view re-measure forever.
+        let width = proposal.width.map { $0.isFinite ? $0 : minColumnWidth } ?? minColumnWidth
         let frames = frames(forWidth: width, subviews: subviews)
         return CGSize(width: width, height: frames.map(\.maxY).max() ?? 0)
     }
@@ -30,6 +32,7 @@ struct MasonryLayout: Layout {
     }
 
     private func frames(forWidth width: CGFloat, subviews: Subviews) -> [CGRect] {
+        let width = width.isFinite ? width : minColumnWidth
         let columns = max(1, min(maxColumns, Int((width + spacing) / (minColumnWidth + spacing))))
         let columnWidth = (width - spacing * CGFloat(columns - 1)) / CGFloat(columns)
         // Bottom edge of the last item in each column; 0 while the column is empty.

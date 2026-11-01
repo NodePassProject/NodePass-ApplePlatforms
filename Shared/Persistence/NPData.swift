@@ -21,6 +21,17 @@ nonisolated enum NPData {
             return try ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)])
         }
 
+        #if DEBUG
+        // `NodePass -NPStoreDirectory <dir>` keeps a run's masters apart from the real store, for
+        // screenshots and experiments on a Mac where the app is in daily use. Never synced.
+        if let directory = UserDefaults.standard.string(forKey: "NPStoreDirectory") {
+            let directoryURL = URL(filePath: directory, directoryHint: .isDirectory)
+            try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+            let configuration = ModelConfiguration(schema: schema, url: directoryURL.appending(path: "NodePass.store"), cloudKitDatabase: .none)
+            return try ModelContainer(for: schema, configurations: [configuration])
+        }
+        #endif
+
         var attempts: [ModelConfiguration] = []
         if NPCore.isAppGroupAvailable {
             attempts.append(ModelConfiguration(schema: schema, isStoredInMemoryOnly: false,

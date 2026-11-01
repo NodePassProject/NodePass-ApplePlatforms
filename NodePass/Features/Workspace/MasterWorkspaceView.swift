@@ -107,7 +107,12 @@ struct MasterWorkspaceView: View {
     private var filterBar: some View {
         @Bindable var workspace = workspace
         return HStack(spacing: 10) {
-            InstanceFilterChips(session: session, filter: $workspace.filter)
+            // The chips scroll rather than widen the column; a narrow window could not hold them.
+            ScrollView(.horizontal) {
+                InstanceFilterChips(session: session, filter: $workspace.filter)
+            }
+            .scrollIndicators(.hidden)
+            .scrollClipDisabled()
             Spacer(minLength: 0)
             if workspace.filter.isNarrowing {
                 Text("\(filtered.count) of \(allInstances.count)")

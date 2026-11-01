@@ -122,7 +122,8 @@ struct InstanceTable: View {
             .foregroundStyle(instance.totalConnections > 0 ? .primary : .secondary)
             .fixedSize()
         }
-        .width(min: 90, ideal: 104)
+        // Two counts with their glyphs; five-digit counts need the room or the cell clips.
+        .width(min: 110, ideal: 150)
         .customizationID("connections")
 
         TableColumn("Pool", value: \.pool) { instance in
