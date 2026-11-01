@@ -125,6 +125,11 @@ struct RateLegend: View {
         }
         .font(.caption.monospacedDigit())
         .labelStyle(.titleAndIcon)
+        .lineLimit(1)
+        // An HStack hands each flexible child an equal share of its width before it knows what
+        // the child needs, so next to another label in a narrow column the unit wrapped onto a
+        // second line ("4.8\nMbps"). A rate is always one line; the neighbours give way instead.
+        .fixedSize(horizontal: true, vertical: false)
         .contentTransition(.numericText())
         .animation(.liveValue, value: received + transmitted)
     }

@@ -236,6 +236,7 @@ private struct HostPanel: View, Equatable {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text("CPU · last \(history.count) samples")
+                            .lineLimit(1)
                         Spacer()
                         if let networkRate {
                             RateLegend(received: networkRate.received, transmitted: networkRate.transmitted)
