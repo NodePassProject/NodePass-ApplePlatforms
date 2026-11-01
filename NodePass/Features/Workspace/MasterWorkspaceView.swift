@@ -3,7 +3,7 @@
 //  NodePass
 //
 //  The macOS view of one master: filter chips on top, the instance table, live host metrics at
-//  the bottom, and an inspector for the selection. iPhone and iPad show the same data in
+//  the bottom, and an inspector pane for the selection. iPhone and iPad show the same data in
 //  `InstanceListView`.
 //
 
@@ -17,6 +17,7 @@ struct MasterWorkspaceView: View {
 
     @State private var workspace: InstanceWorkspace
     @SceneStorage("NPInstanceTableColumns") private var columnCustomization = TableColumnCustomization<Instance>()
+    @SceneStorage("NPInspectorWidth") private var inspectorWidth = 380.0
     @AppStorage(NPCore.DefaultsKey.instanceSortKey, store: NPCore.userDefaults) private var sortKeyRaw = InstanceSortKey.name.rawValue
     @AppStorage(NPCore.DefaultsKey.instanceSortAscending, store: NPCore.userDefaults) private var sortAscending = true
     @AppStorage(NPCore.DefaultsKey.instanceGrouping, store: NPCore.userDefaults) private var groupingRaw = InstanceGrouping.none.rawValue
@@ -53,21 +54,21 @@ struct MasterWorkspaceView: View {
     }
 
     var body: some View {
-        @Bindable var navigation = navigation
         @Bindable var workspace = workspace
-        InstanceTable(workspace: workspace, groups: effectiveFilter.grouped(filtered), sortOrder: sortOrder, columnCustomization: $columnCustomization)
-            .overlay { overlay }
-            .safeAreaBar(edge: .top) { filterBar }
-            .safeAreaBar(edge: .bottom) { HostStatusBar(session: session) }
+        // See `InspectorSplit` for why this is not `.inspector`.
+        InspectorSplit(isPresented: navigation.isInspectorPresented, width: $inspectorWidth) {
+            InstanceTable(workspace: workspace, groups: effectiveFilter.grouped(filtered), sortOrder: sortOrder, columnCustomization: $columnCustomization)
+                .overlay { overlay }
+                .safeAreaBar(edge: .top) { filterBar }
+                .safeAreaBar(edge: .bottom) { HostStatusBar(session: session) }
+        } inspector: {
+            InstanceInspector(workspace: workspace)
+        }
             .navigationTitle(master.displayName)
             .navigationSubtitle(subtitle)
             .appEntityIdentifier(EntityIdentifier(for: MasterEntity.self, identifier: master.id))
             .searchable(text: $workspace.filter.searchText, placement: .toolbar, prompt: "Search, tag:value or #tag")
             .toolbar(id: "master-workspace") { toolbar }
-            .inspector(isPresented: $navigation.isInspectorPresented) {
-                InstanceInspector(workspace: workspace)
-                    .inspectorColumnWidth(min: 320, ideal: 380, max: 560)
-            }
             .sheet(item: $workspace.editorMode) { mode in
                 InstanceEditorView(session: session, mode: mode) { created in
                     if let created { workspace.didCreate(created) }
